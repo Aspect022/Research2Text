@@ -372,7 +372,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support & Contact
 
-- 📧 **Email**: [your.email@example.com](mailto:your.email@example.com)
+- 📧 **Email**: [jayeshrl2005@gmail.com](mailto:jayeshrl2005@gmail.com)
 - 🐛 **Issues**: [GitHub Issues](https://github.com/yourusername/research2text/issues)
 - 💬 **Discussions**: [GitHub Discussions](https://github.com/yourusername/research2text/discussions)
 - 📖 **Documentation**: [Wiki](https://github.com/yourusername/research2text/wiki)
