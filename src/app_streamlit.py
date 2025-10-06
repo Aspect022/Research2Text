@@ -6,6 +6,8 @@ import streamlit as st
 from utils import extract_text_from_pdf, chunk_text_by_words
 from index_documents import index_all
 from query_rag import retrieve, format_context, answer_with_ollama
+from export_utils import build_artifacts_zip, list_known_bases, build_code_zip
+from paper_to_code import run_paper_to_code
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -52,7 +54,10 @@ def main():
             index_all()
         st.success("Index updated.")
 
-    st.header("Ask a question")
+    tabs = st.tabs(["RAG Search", "Paper → Code"])
+
+    with tabs[0]:
+        st.header("Ask a question")
     q = st.text_input("Your question")
     if st.button("Search") and q:
         with st.spinner("Retrieving relevant chunks..."):
@@ -84,6 +89,65 @@ def main():
                         st.write(ans)
                 except Exception as e:
                     st.error(f"Answer generation failed: {e}")
+
+    with tabs[1]:
+        st.header("Executable Research (Phase 2)")
+        # Option A: upload a PDF and use it directly
+        up = st.file_uploader("Upload a PDF to generate code", type=["pdf"], key="p2_pdf")
+        base_name = None
+        if up is not None:
+            # Save and ingest + index
+            pdf_path = save_uploaded_pdf(up)
+            base_name, n_chunks = ingest_pdf(pdf_path)
+            with st.spinner("Indexing chunks into Chroma..."):
+                index_all()
+            st.success(f"Prepared {base_name}: {n_chunks} chunks indexed")
+        else:
+            # Option B: pick an existing base
+            bases = list_known_bases()
+            base_name = st.selectbox(
+                "Or select an existing paper base",
+                options=bases,
+                index=0 if bases else None,
+                placeholder="No processed papers found yet",
+            )
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("Generate Code") and base_name:
+                with st.spinner("Running paper → code pipeline..."):
+                    try:
+                        out_dir = run_paper_to_code(base_name)
+                        st.success(f"Artifacts created in: {out_dir}")
+                    except Exception as e:
+                        st.error(f"Pipeline failed: {e}")
+        with col2:
+            if st.button("Download Artifacts Zip") and base_name:
+                try:
+                    data = build_artifacts_zip(base_name)
+                    st.download_button(
+                        label="Download ZIP",
+                        data=data,
+                        file_name=f"{base_name}_artifacts.zip",
+                        mime="application/zip",
+                    )
+                except Exception as e:
+                    st.error(f"Failed to build zip: {e}")
+        # Code-only download next to artifacts
+        with st.container():
+            if base_name:
+                colA, colB = st.columns(2)
+                with colA:
+                    if st.button("Download Code Only ZIP"):
+                        try:
+                            data = build_code_zip(base_name)
+                            st.download_button(
+                                label="Download Code ZIP",
+                                data=data,
+                                file_name=f"{base_name}_code.zip",
+                                mime="application/zip",
+                            )
+                        except Exception as e:
+                            st.error(f"Failed to build code zip: {e}")
 
 
 if __name__ == "__main__":
