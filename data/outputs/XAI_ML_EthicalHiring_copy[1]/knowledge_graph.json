@@ -1,0 +1,34 @@
+{
+  "nodes": [
+    {
+      "id": "paper_XAI_ML_EthicalHiring_copy[1]",
+      "type": "Paper",
+      "label": "XAI_ML_EthicalHiring_copy[1]",
+      "properties": {}
+    },
+    {
+      "id": "algorithm_XAI_ML_EthicalHiring_copy[1]",
+      "type": "Algorithm",
+      "label": "Shapley Additive Explanations (SHAP) and Local Interpretable Model-agnostic Explanations (LIME)",
+      "properties": {}
+    },
+    {
+      "id": "dataset_UCI Adult Dataset",
+      "type": "Dataset",
+      "label": "UCI Adult Dataset",
+      "properties": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "paper_XAI_ML_EthicalHiring_copy[1]",
+      "target": "algorithm_XAI_ML_EthicalHiring_copy[1]",
+      "type": "contains"
+    },
+    {
+      "source": "paper_XAI_ML_EthicalHiring_copy[1]",
+      "target": "dataset_UCI Adult Dataset",
+      "type": "uses"
+    }
+  ]
+}

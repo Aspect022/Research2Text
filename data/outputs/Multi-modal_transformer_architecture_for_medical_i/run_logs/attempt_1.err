@@ -1,0 +1,9 @@
+D:\CodingResources\MiniConda\envs\Research2Text\Lib\site-packages\torch\nn\modules\transformer.py:392: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.self_attn.batch_first was not True(use batch_first for better inference performance)
+  warnings.warn(
+Traceback (most recent call last):
+  File "D:\Projects\Research2Text\data\outputs\Multi-modal_transformer_architecture_for_medical_i\sandbox\train.py", line 39, in <module>
+    main()
+  File "D:\Projects\Research2Text\data\outputs\Multi-modal_transformer_architecture_for_medical_i\sandbox\train.py", line 32, in main
+    loss = criterion(output.view(-1, vocab_size), tgt_output.view(-1))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: view size is not compatible with input tensor's size and stride (at least one dimension spans across two contiguous subspaces). Use .reshape(...) instead.

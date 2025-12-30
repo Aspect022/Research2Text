@@ -1,0 +1,23 @@
+{
+  "algorithm_name": "Shapley Additive Explanations (SHAP) and Local Interpretable Model-agnostic Explanations (LIME)",
+  "equations": [],
+  "datasets": [
+    "UCI Adult Dataset"
+  ],
+  "training": {
+    "optimizer": null,
+    "loss": null,
+    "epochs": null,
+    "learning_rate": null,
+    "batch_size": null
+  },
+  "inputs": {
+    "candidate_features": "Structured attributes of job applicants (e.g., education, experience, demographic information) used as input to the hiring prediction model"
+  },
+  "outputs": {
+    "hiring_prediction": "Binary or probabilistic decision indicating candidate suitability",
+    "explanations": "SHAP and LIME importance values highlighting feature contributions to the prediction",
+    "fairness_metrics": "Quantitative measures of bias (e.g., demographic parity, equal opportunity)"
+  },
+  "references": []
+}

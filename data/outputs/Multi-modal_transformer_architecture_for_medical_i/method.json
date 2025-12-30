@@ -1,0 +1,21 @@
+{
+  "algorithm_name": "Transformer",
+  "equations": [
+    "SoftMax",
+    "SoftMax",
+    "softmax",
+    "QKT",
+    "softmax"
+  ],
+  "datasets": [],
+  "training": {
+    "optimizer": null,
+    "loss": null,
+    "epochs": null,
+    "learning_rate": null,
+    "batch_size": null
+  },
+  "inputs": {},
+  "outputs": {},
+  "references": []
+}

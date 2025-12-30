@@ -1,0 +1,24 @@
+D:\CodingResources\MiniConda\Lib\site-packages\torch\nn\modules\transformer.py:392: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.self_attn.batch_first was not True(use batch_first for better inference performance)
+  warnings.warn(
+Traceback (most recent call last):
+  File "D:\Projects\Research2Text-main\data\outputs\KnoAD-Net_Multimodal_Learning_Investigation-1_compressed\sandbox\train.py", line 44, in <module>
+    main()
+    ~~~~^^
+  File "D:\Projects\Research2Text-main\data\outputs\KnoAD-Net_Multimodal_Learning_Investigation-1_compressed\sandbox\train.py", line 36, in main
+    output = model(src, tgt_input, src_mask=src_mask, tgt_mask=tgt_mask)
+  File "D:\CodingResources\MiniConda\Lib\site-packages\torch\nn\modules\module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\CodingResources\MiniConda\Lib\site-packages\torch\nn\modules\module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "D:\Projects\Research2Text-main\data\outputs\KnoAD-Net_Multimodal_Learning_Investigation-1_compressed\sandbox\model.py", line 42, in forward
+    src_emb = self.pos_encoder(self.src_embedding(src) * math.sqrt(self.transformer.d_model))
+  File "D:\CodingResources\MiniConda\Lib\site-packages\torch\nn\modules\module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\CodingResources\MiniConda\Lib\site-packages\torch\nn\modules\module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "D:\Projects\Research2Text-main\data\outputs\KnoAD-Net_Multimodal_Learning_Investigation-1_compressed\sandbox\model.py", line 22, in forward
+    x = x + self.pe[:, :x.size(0), :]
+        ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+RuntimeError: The size of tensor a (32) must match the size of tensor b (20) at non-singleton dimension 1
