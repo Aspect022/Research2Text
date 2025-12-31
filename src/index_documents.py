@@ -14,20 +14,41 @@ COLLECTION_NAME = "research_papers"
 
 
 def load_chunks_for_base(base_name: str) -> List[Dict[str, str]]:
+    """Load chunks for a specific base name, handling special characters in filenames."""
     chunks: List[Dict[str, str]] = []
-    for p in sorted(RAW_TEXT_DIR.glob(f"{base_name}_chunk_*.txt")):
+    
+    # Instead of using glob with special characters, iterate all chunk files
+    # and filter by base name manually
+    all_chunk_files = list(RAW_TEXT_DIR.glob("*_chunk_*.txt"))
+    
+    for p in all_chunk_files:
         try:
-            idx_part = p.stem.split("_chunk_")[-1]
+            # Extract base and chunk_id from filename
+            stem = p.stem
+            if "_chunk_" not in stem:
+                continue
+            
+            file_base = stem.split("_chunk_")[0]
+            # Match base name (handle special characters)
+            if file_base != base_name:
+                continue
+            
+            idx_part = stem.split("_chunk_")[-1]
             chunk_id = int(idx_part)
-        except ValueError:
+            
+            text = p.read_text(encoding="utf-8", errors="ignore")
+            chunks.append({
+                "id": f"{base_name}:{chunk_id}",
+                "text": text,
+                "chunk_id": chunk_id,
+                "base": base_name,
+            })
+        except (ValueError, IndexError) as e:
+            # Skip files that don't match expected pattern
             continue
-        text = p.read_text(encoding="utf-8", errors="ignore")
-        chunks.append({
-            "id": f"{base_name}:{chunk_id}",
-            "text": text,
-            "chunk_id": chunk_id,
-            "base": base_name,
-        })
+    
+    # Sort by chunk_id
+    chunks.sort(key=lambda x: x["chunk_id"])
     return chunks
 
 
@@ -46,7 +67,18 @@ def index_all() -> None:
         metadata={"hnsw:space": "cosine"},
     )
 
-    bases = sorted({p.stem.split("_chunk_")[0] for p in RAW_TEXT_DIR.glob("*_chunk_*.txt")})
+    # Find all chunk files - need to escape special characters in glob
+    # Get all files ending with _chunk_*.txt and extract base names
+    all_chunk_files = list(RAW_TEXT_DIR.glob("*_chunk_*.txt"))
+    bases = set()
+    for p in all_chunk_files:
+        # Extract base name by finding _chunk_ in the stem
+        stem = p.stem
+        if "_chunk_" in stem:
+            base = stem.split("_chunk_")[0]
+            bases.add(base)
+    
+    bases = sorted(bases)
     if not bases:
         print("No chunk files found in", RAW_TEXT_DIR)
         return

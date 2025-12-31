@@ -24,12 +24,29 @@ def save_uploaded_pdf(upload) -> Path:
 
 def ingest_pdf(pdf_path: Path):
     RAW_TEXT_DIR.mkdir(parents=True, exist_ok=True)
-    text = extract_text_from_pdf(str(pdf_path))
+    
+    # Extract text
+    try:
+        text = extract_text_from_pdf(str(pdf_path))
+        if not text or len(text.strip()) < 10:
+            raise ValueError(f"PDF extraction returned empty or very short text ({len(text)} chars). The PDF might be scanned or corrupted.")
+    except Exception as e:
+        raise ValueError(f"Failed to extract text from PDF: {str(e)}")
+    
     base = pdf_path.stem
+    # Save main text file
     (RAW_TEXT_DIR / f"{base}.txt").write_text(text, encoding="utf-8")
+    
+    # Create chunks
     chunks = chunk_text_by_words(text)
+    if not chunks:
+        raise ValueError(f"No chunks created from text. Text length: {len(text)} characters, {len(text.split())} words.")
+    
+    # Save chunk files
     for i, c in enumerate(chunks):
-        (RAW_TEXT_DIR / f"{base}_chunk_{i}.txt").write_text(c, encoding="utf-8")
+        chunk_path = RAW_TEXT_DIR / f"{base}_chunk_{i}.txt"
+        chunk_path.write_text(c, encoding="utf-8")
+    
     return base, len(chunks)
 
 
@@ -105,49 +122,122 @@ def main():
             else:
                 st.error(f"❌ Cleaner failed: {response.error}")
 
-    if uploaded is not None and st.button("Process PDF"):
-        pdf_path = save_uploaded_pdf(uploaded)
-        base, n_chunks = ingest_pdf(pdf_path)
-        st.success(f"Ingested {uploaded.name}: {n_chunks} chunks")
-        with st.spinner("Indexing chunks into Chroma..."):
-            index_all()
-        st.success("Index updated.")
+    if uploaded is not None:
+        # Option to clean old chunks before processing new paper
+        clean_old_before_processing = st.checkbox(
+            "Clean old chunks before processing (recommended if switching papers)",
+            value=False,
+            help="Remove chunks from previously processed papers to avoid confusion"
+        )
+        
+        if st.button("Process PDF"):
+            try:
+                pdf_path = save_uploaded_pdf(uploaded)
+                
+                # Clean old chunks if requested
+                if clean_old_before_processing:
+                    with st.spinner("Cleaning old chunks..."):
+                        from agents.cleaner_agent import CleanerAgent
+                        from agents.base import AgentMessage
+                        
+                        cleaner = CleanerAgent()
+                        # Clean chunks older than 1 day (essentially all except just-uploaded)
+                        msg = AgentMessage(
+                            agent_id="user",
+                            message_type="request",
+                            payload={"action": "clean_old", "days_old": 1, "dry_run": False}
+                        )
+                        response = cleaner.process(msg)
+                        if response.success:
+                            st.info(f"🧹 Cleaned {response.data.get('deleted_ids', 0)} old chunks")
+                
+                # Ingest and chunk the PDF
+                with st.spinner(f"Extracting text and chunking {uploaded.name}..."):
+                    base, n_chunks = ingest_pdf(pdf_path)
+                
+                if n_chunks == 0:
+                    st.error("❌ No chunks were created! The PDF might be empty or corrupted.")
+                    st.stop()
+                
+                st.success(f"✅ Ingested {uploaded.name}: Created {n_chunks} chunks")
+                
+                # Verify chunks were created
+                chunk_files = list(RAW_TEXT_DIR.glob(f"{base}_chunk_*.txt"))
+                if len(chunk_files) != n_chunks:
+                    st.warning(f"⚠️ Warning: Expected {n_chunks} chunk files, but found {len(chunk_files)}")
+                
+                # Index chunks
+                with st.spinner("Indexing chunks into ChromaDB..."):
+                    index_all()
+                
+                # Verify indexing
+                chunk_files_after = list(RAW_TEXT_DIR.glob(f"{base}_chunk_*.txt"))
+                if chunk_files_after:
+                    st.success(f"✅ Index updated. {len(chunk_files_after)} chunks are now searchable.")
+                    st.info(f"💡 Tip: Select '{base}' in the RAG Search tab to search only within this paper.")
+                else:
+                    st.error("❌ Error: Chunk files were not found after indexing!")
+                    
+            except Exception as e:
+                st.error(f"❌ Error processing PDF: {str(e)}")
+                import traceback
+                with st.expander("Error Details"):
+                    st.code(traceback.format_exc())
 
     tabs = st.tabs(["RAG Search", "Paper → Code"])
 
     with tabs[0]:
         st.header("Ask a question")
-    q = st.text_input("Your question")
-    if st.button("Search") and q:
-        with st.spinner("Retrieving relevant chunks..."):
-            hits = retrieve(q, top_k=top_k)
-        if not hits:
-            st.warning("No results found.")
-        else:
-            for i, h in enumerate(hits, 1):
-                with st.expander(f"[{i}] {h['id']}  (distance={h['distance']:.4f})"):
-                    st.write(f"Base: {h['metadata'].get('base')}  |  Chunk: {h['metadata'].get('chunk_id')}")
-                    st.write(h["text"])
+        
+        # Add paper selection for RAG search
+        bases = list_known_bases()
+        search_base = st.selectbox(
+            "Select paper to search (or 'All Papers' to search across all)",
+            options=["All Papers"] + bases if bases else ["All Papers"],
+            index=0,
+            help="Filter search to a specific paper, or search across all papers"
+        )
+        
+        # Convert "All Papers" to None for the retrieve function
+        selected_base = None if search_base == "All Papers" else search_base
+        
+        q = st.text_input("Your question")
+        if st.button("Search") and q:
+            with st.spinner("Retrieving relevant chunks..."):
+                hits = retrieve(q, top_k=top_k, base_name=selected_base)
+            if not hits:
+                st.warning("No results found.")
+            else:
+                # Show which paper is being searched
+                if selected_base:
+                    st.info(f"🔍 Searching within: **{selected_base}**")
+                else:
+                    st.info("🔍 Searching across all papers")
+                
+                for i, h in enumerate(hits, 1):
+                    with st.expander(f"[{i}] {h['id']}  (distance={h['distance']:.4f})"):
+                        st.write(f"Base: {h['metadata'].get('base')}  |  Chunk: {h['metadata'].get('chunk_id')}")
+                        st.write(h["text"])
 
-            if run_answer:
-                try:
-                    ctx = format_context(hits, max_chars=int(max_ctx))
-                    st.subheader("Answer")
-                    if stream:
-                        ph = st.empty()
-                        acc = []
-                        with st.spinner("Generating answer with Ollama (streaming)..."):
-                            for chunk in answer_with_ollama(q, ctx, model, stream=True):
-                                content = chunk.get("message", {}).get("content", "")
-                                if content:
-                                    acc.append(content)
-                                    ph.markdown("".join(acc))
-                    else:
-                        with st.spinner("Generating answer with Ollama..."):
-                            ans = answer_with_ollama(q, ctx, model)
-                        st.write(ans)
-                except Exception as e:
-                    st.error(f"Answer generation failed: {e}")
+                if run_answer:
+                    try:
+                        ctx = format_context(hits, max_chars=int(max_ctx))
+                        st.subheader("Answer")
+                        if stream:
+                            ph = st.empty()
+                            acc = []
+                            with st.spinner("Generating answer with Ollama (streaming)..."):
+                                for chunk in answer_with_ollama(q, ctx, model, stream=True):
+                                    content = chunk.get("message", {}).get("content", "")
+                                    if content:
+                                        acc.append(content)
+                                        ph.markdown("".join(acc))
+                        else:
+                            with st.spinner("Generating answer with Ollama..."):
+                                ans = answer_with_ollama(q, ctx, model)
+                            st.write(ans)
+                    except Exception as e:
+                        st.error(f"Answer generation failed: {e}")
 
     with tabs[1]:
         st.header("Executable Research (Phase 2)")

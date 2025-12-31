@@ -48,10 +48,26 @@ def build_artifacts_zip(base_name: str) -> bytes:
 
 
 def list_known_bases() -> list[str]:
-    bases = {p.stem.split("_chunk_")[0] for p in RAW_TEXT_DIR.glob("*_chunk_*.txt")}
+    """List all known paper bases, handling special characters in filenames."""
+    bases = set()
+    
+    # Get bases from chunk files
+    all_chunk_files = list(RAW_TEXT_DIR.glob("*_chunk_*.txt"))
+    for p in all_chunk_files:
+        stem = p.stem
+        if "_chunk_" in stem:
+            base = stem.split("_chunk_")[0]
+            bases.add(base)
+    
+    # Also include bases from main text files (in case chunks don't exist yet)
+    for p in RAW_TEXT_DIR.glob("*.txt"):
+        if "_chunk_" not in p.stem:
+            bases.add(p.stem)
+    
     # also include outputs bases
     if OUTPUTS_DIR.exists():
         bases.update({p.name for p in OUTPUTS_DIR.iterdir() if p.is_dir()})
+    
     return sorted(bases)
 
 
