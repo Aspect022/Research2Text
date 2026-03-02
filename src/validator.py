@@ -2,6 +2,7 @@ import subprocess
 from pathlib import Path
 from typing import List
 
+from config import DEFAULT_OLLAMA_MODEL
 from schemas import GeneratedFile, RunResult, ValidationResult, MethodStruct
 
 
@@ -38,7 +39,7 @@ Fix the code. Output JSON only.
         err=error_text,
         files="\n\n".join(f"[{f.path}]\n{f.content}" for f in files),
     )
-    resp = ollama.chat(model="gpt-oss:120b-cloud", messages=[
+    resp = ollama.chat(model=DEFAULT_OLLAMA_MODEL, messages=[
         {"role": "system", "content": sys_prompt},
         {"role": "user", "content": user_prompt},
     ])

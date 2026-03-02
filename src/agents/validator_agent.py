@@ -20,6 +20,12 @@ from typing import Any, Dict, List, Optional
 
 from .base import BaseAgent, AgentMessage, AgentResponse
 
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from config import (
+    MAX_HEAL_ATTEMPTS, EXECUTION_TIMEOUT, DOCKER_BUILD_TIMEOUT,
+    DOCKER_MEMORY_LIMIT, DOCKER_CPU_LIMIT, SELF_HEAL_TEMPERATURE,
+)
+
 logger = logging.getLogger(__name__)
 
 # Add project src to path for schema/validator imports
@@ -29,7 +35,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 class ValidatorAgent(BaseAgent):
     """Agent for validating generated code via static + dynamic analysis."""
 
-    def __init__(self, max_heal_attempts: int = 3, execution_timeout: int = 90):
+    def __init__(self, max_heal_attempts: int = MAX_HEAL_ATTEMPTS, execution_timeout: int = EXECUTION_TIMEOUT):
         super().__init__("validator", "Validator Agent")
         self._max_heal_attempts = max_heal_attempts
         self._execution_timeout = execution_timeout
@@ -343,7 +349,7 @@ CMD ["python", "{entry}"]
             build_result = subprocess.run(
                 ["docker", "build", "-t", tag, "."],
                 cwd=str(sandbox_path),
-                capture_output=True, text=True, timeout=120,
+                capture_output=True, text=True, timeout=DOCKER_BUILD_TIMEOUT,
             )
             if build_result.returncode != 0:
                 return {
@@ -355,7 +361,7 @@ CMD ["python", "{entry}"]
             # Run container
             run_result = subprocess.run(
                 ["docker", "run", "--rm", "--network=none",
-                 "--memory=512m", "--cpus=1",
+                 f"--memory={DOCKER_MEMORY_LIMIT}", f"--cpus={DOCKER_CPU_LIMIT}",
                  tag],
                 capture_output=True, text=True,
                 timeout=self._execution_timeout,
@@ -418,7 +424,7 @@ Return ONLY a JSON array of objects with 'path' and 'content' keys. No markdown,
             resp = ollama.chat(
                 model=model,
                 messages=[{"role": "user", "content": prompt}],
-                options={"temperature": 0.1},
+                options={"temperature": SELF_HEAL_TEMPERATURE},
             )
 
             import json

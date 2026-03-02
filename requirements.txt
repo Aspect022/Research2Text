@@ -1,27 +1,53 @@
-# Core dependencies
+# ═══════════════════════════════════════════════════
+# Research2Code-GenAI — All Dependencies (Phases 1-5)
+# Install: pip install -r requirements.txt
+# ═══════════════════════════════════════════════════
+
+# ─── Core (Phase 1: Multi-Agent Architecture) ─────
 pymupdf>=1.24.0
-sentence-transformers>=3.0.0
-chromadb>=0.5.0
-langchain-community>=0.3.0
-streamlit>=1.36.0
-numpy>=1.26.0
 pydantic>=2.7.0
+numpy>=1.26.0
+
+# ─── RAG Pipeline ─────────────────────────────────
+chromadb>=0.5.0
+sentence-transformers>=3.0.0
+langchain-community>=0.3.0
 scikit-learn>=1.4.0
 
-# LLM and AI
+# ─── LLM Integration ─────────────────────────────
 ollama>=0.3.0
 
-# Phase 2: Paper-to-Code dependencies
+# ─── UI (Phase 5: Streamlit Overhaul) ────────────
+streamlit>=1.36.0
+
+# ─── Phase 2: Perception Layer ───────────────────
+# PyMuPDF is already listed above (pymupdf)
+pytesseract>=0.3.10
+camelot-py[cv]>=0.11.0
+opencv-python>=4.8.0
+ghostscript>=0.7
+
+# ─── Phase 2: Paper-to-Code ─────────────────────
 sympy>=1.12
 psutil>=6.0.0
+networkx>=3.2
 
-# Development and testing
+# ─── Phase 3: Cognitive Layer ────────────────────
+# (Uses pydantic + ollama, already listed above)
+
+# ─── Phase 4: Action Layer (Sandbox Execution) ──
+torch>=2.1.0
+torchvision>=0.16.0
+
+# ─── Development & Testing ──────────────────────
 pytest>=7.0.0
 pytest-cov>=4.0.0
 black>=22.0.0
 flake8>=5.0.0
 mypy>=1.0.0
 
-# Optional: Enhanced equation parsing
-# latex2sympy2>=1.9.1
-
+# ─── Optional: Enhanced Extraction ──────────────
+# Uncomment these if you want the best extraction:
+# mineru[all]          # MinerU (best PDF extraction)
+# olmocr[gpu]          # olmOCR (VLM-based fallback)
+# latex2sympy2>=1.9.1  # Enhanced equation parsing

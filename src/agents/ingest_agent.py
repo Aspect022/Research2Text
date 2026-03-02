@@ -12,7 +12,11 @@ import json
 import logging
 import subprocess
 import tempfile
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from config import OLMOCR_TIMEOUT
 from typing import Any, Dict, List, Optional
 
 from .base import BaseAgent, AgentMessage, AgentResponse
@@ -216,7 +220,7 @@ class IngestAgent(BaseAgent):
                 cmd,
                 capture_output=True,
                 text=True,
-                timeout=300,
+                timeout=OLMOCR_TIMEOUT,
             )
 
             if result.returncode != 0:

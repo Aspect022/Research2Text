@@ -5,9 +5,7 @@ from typing import List
 import chromadb
 from chromadb.utils import embedding_functions
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-CHROMA_DIR = PROJECT_ROOT / "data" / "chroma_db"
-COLLECTION_NAME = "research_papers"
+from config import CHROMA_DIR, COLLECTION_NAME, EMBEDDING_MODEL, DEFAULT_OLLAMA_MODEL
 
 
 def retrieve(query: str, top_k: int = 5, base_name: str = None) -> List[dict]:
@@ -24,7 +22,7 @@ def retrieve(query: str, top_k: int = 5, base_name: str = None) -> List[dict]:
     """
     client = chromadb.PersistentClient(path=str(CHROMA_DIR))
     embed_fn = embedding_functions.SentenceTransformerEmbeddingFunction(
-        model_name="sentence-transformers/all-MiniLM-L6-v2"
+        model_name=EMBEDDING_MODEL
     )
     collection = client.get_collection(name=COLLECTION_NAME, embedding_function=embed_fn)
     
@@ -106,7 +104,7 @@ if __name__ == "__main__":
     parser.add_argument("query", type=str, help="Query text")
     parser.add_argument("--k", type=int, default=5)
     parser.add_argument("--answer", action="store_true", help="Generate an answer with Ollama")
-    parser.add_argument("--model", type=str, default="gpt-oss:120b-cloud", help="Ollama model name")
+    parser.add_argument("--model", type=str, default=DEFAULT_OLLAMA_MODEL, help="Ollama model name")
     parser.add_argument("--stream", action="store_true", help="Stream tokens from Ollama")
     parser.add_argument("--max-context-chars", type=int, default=4000)
     parser.add_argument("--base", type=str, default=None, help="Filter search to a specific paper base name")

@@ -21,20 +21,15 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
+from config import MODEL_CHAIN, EXTRACTION_TEMPERATURE, MAX_TEXT_LENGTH_FOR_LLM, LOW_CONFIDENCE_THRESHOLD
 from method_extractor import find_method_sections, extract_method_entities
 from schemas import ConfidenceScore, MethodStruct
 from .base import BaseAgent, AgentMessage, AgentResponse
 
 logger = logging.getLogger(__name__)
 
-# Models to try in order of preference
-DEFAULT_MODEL_CHAIN = [
-    "deepseek-coder-v2:latest",
-    "qwen2.5-coder:latest",
-    "codellama:latest",
-    "llama3:latest",
-    "mistral:latest",
-]
+# Models imported from config.py
+DEFAULT_MODEL_CHAIN = MODEL_CHAIN
 
 
 class MethodExtractorAgent(BaseAgent):
@@ -161,7 +156,7 @@ class MethodExtractorAgent(BaseAgent):
         prompt = f"""You are a precise scientific paper analyzer. Extract ONLY information that is EXPLICITLY stated in the text below. Do NOT guess or infer values that are not mentioned.
 
 TEXT:
-{text[:6000]}
+{text[:MAX_TEXT_LENGTH_FOR_LLM]}
 
 Extract a JSON object with these fields. For each field, ONLY include values you can directly quote from the text. Leave fields as null/empty if not explicitly stated:
 
@@ -191,7 +186,7 @@ CRITICAL RULES:
             response = ollama_module.chat(
                 model=model,
                 messages=[{"role": "user", "content": prompt}],
-                options={"temperature": 0.1},  # Low temperature for factual extraction
+                options={"temperature": EXTRACTION_TEMPERATURE},
             )
 
             content = response.get("message", {}).get("content", "")

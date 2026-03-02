@@ -14,18 +14,13 @@ import logging
 from pathlib import Path
 from typing import Any, List, Optional
 
+from config import MODEL_CHAIN, CODE_GEN_TEMPERATURE
 from schemas import GeneratedFile, MethodStruct
 
 logger = logging.getLogger(__name__)
 
 # Models to try in order of preference for code generation
-CODE_MODEL_CHAIN = [
-    "deepseek-coder-v2:latest",
-    "qwen2.5-coder:latest",
-    "codellama:latest",
-    "llama3:latest",
-    "mistral:latest",
-]
+CODE_MODEL_CHAIN = MODEL_CHAIN
 
 
 def _resolve_model(ollama_module: Any) -> Optional[str]:
@@ -223,7 +218,7 @@ def generate_code(
                 {"role": "system", "content": sys_prompt},
                 {"role": "user", "content": user_prompt},
             ],
-            options={"temperature": 0.2},
+            options={"temperature": CODE_GEN_TEMPERATURE},
         )
         content = resp.get("message", {}).get("content", "")
         return _parse_files_json(content)

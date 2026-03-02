@@ -17,16 +17,16 @@ from typing import Any, Dict, List, Optional
 import streamlit as st
 
 # ─── Project Imports ──────────────────────────────────
+from config import (
+    PROJECT_ROOT, RAW_PDF_DIR, RAW_TEXT_DIR, OUTPUTS_DIR,
+    DEFAULT_OLLAMA_MODEL, DEFAULT_TOP_K, MAX_CONTEXT_CHARS,
+    APP_TITLE, APP_ICON, APP_SUBTITLE,
+)
 from utils import extract_text_from_pdf, chunk_text_by_words
 from index_documents import index_all
 from query_rag import retrieve, format_context, answer_with_ollama
 from export_utils import build_artifacts_zip, list_known_bases, build_code_zip
 from paper_to_code import run_paper_to_code
-
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-RAW_PDF_DIR = PROJECT_ROOT / "data" / "raw_pdfs"
-RAW_TEXT_DIR = PROJECT_ROOT / "data" / "raw_texts"
-OUTPUTS_DIR = PROJECT_ROOT / "outputs"
 
 
 # ═══════════════════════════════════════════════════════
@@ -330,9 +330,9 @@ def render_rag_tab():
 
     col1, col2, col3 = st.columns([2, 1, 1])
     with col1:
-        model = st.text_input("Ollama model", value="gpt-oss:120b-cloud", label_visibility="collapsed")
+        model = st.text_input("Ollama model", value=DEFAULT_OLLAMA_MODEL, label_visibility="collapsed")
     with col2:
-        top_k = st.slider("Chunks", 3, 10, 5, label_visibility="collapsed")
+        top_k = st.slider("Chunks", 3, 10, DEFAULT_TOP_K, label_visibility="collapsed")
     with col3:
         stream = st.checkbox("Stream", value=True)
 
@@ -351,7 +351,7 @@ def render_rag_tab():
                     st.write(h["text"])
 
             try:
-                ctx = format_context(hits, max_chars=4000)
+                ctx = format_context(hits, max_chars=MAX_CONTEXT_CHARS)
                 st.subheader("💡 Answer")
                 if stream:
                     ph = st.empty()
@@ -663,8 +663,8 @@ def render_cleaner_sidebar():
 
 def main():
     st.set_page_config(
-        page_title="Research2Code-GenAI",
-        page_icon="🧬",
+        page_title=APP_TITLE,
+        page_icon=APP_ICON,
         layout="wide",
         initial_sidebar_state="collapsed",
     )
@@ -672,10 +672,10 @@ def main():
     st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 
     # Header
-    st.markdown("""
+    st.markdown(f"""
     <div class="app-header">
-        <h1>Research2Code-GenAI</h1>
-        <p class="app-subtitle">Autonomous Scientific Paper → Executable Code with Conformal Prediction</p>
+        <h1>{APP_TITLE}</h1>
+        <p class="app-subtitle">{APP_SUBTITLE}</p>
     </div>
     """, unsafe_allow_html=True)
 
