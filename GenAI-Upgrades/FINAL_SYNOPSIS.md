@@ -1,0 +1,186 @@
+# Synopsis: Research2Code-GenAI
+## A Conformal Generative Vision-Language Framework for Autonomous Scientific Reproduction
+
+### 1. Title of the Project
+**Research2Code-GenAI:** A Conformal Generative Vision-Language Framework for Autonomous Scientific Reproduction.
+
+### 2. Introduction
+Scientific research, particularly in the field of machine learning and deep learning, is increasingly facing a **reproducibility crisis**. Although research papers describe novel models, algorithms, and experimental results, reproducing these results in practice often proves to be difficult or, in some cases, impossible. This challenge arises due to ambiguous methodological descriptions, missing implementation details, and the inherent complexity involved in translating mathematical formulations and experimental setups into executable code.
+
+Traditional approaches to research paper parsing rely heavily on Optical Character Recognition (OCR) techniques that treat documents as plain text. Such methods fail to preserve critical **layout semantics**, mathematical structures, and tabular relationships, leading to significant loss of contextual information. Furthermore, modern Large Language Models (LLMs), when employed for code generation, often hallucinate architectural components or hyperparameters, producing implementations that may execute successfully but deviate from the original research intent.
+
+To address these limitations, **Research2Code-GenAI** proposes an autonomous, closed-loop system that integrates **Vision-Language Models (VLMs)**, **Conformal Prediction**, and agent-based execution frameworks to automatically read, implement, and validate scientific experiments directly from research papers. The project moves beyond conventional code generation and aims to achieve **true experimental reproduction**.
+
+### 3. Problem Statement
+Despite rapid advancements in AI-assisted coding, several critical challenges remain in reproducing computational research:
+
+*   **Modality Gap:** Research papers are distributed as unstructured PDF documents containing text, equations, figures, and tables, whereas executable code requires strict structure and precision. Existing RAG-based systems and PDF parsers frequently destroy the semantic linkage between mathematical definitions and their corresponding implementations.
+*   **Hallucinated Implementations:** LLMs often infer missing hyperparameters or architectural details, resulting in mathematically incorrect or unverifiable implementations.
+*   **Lack of Verification and Closure:** Most existing systems operate in an open-loop manner, generating code without executing, debugging, or validating results against the original paper’s reported metrics.
+
+This project addresses these issues by introducing a **self-correcting, execution-aware framework** capable of validating its own outputs.
+
+### 4. Objectives of the Study
+*   **General Objective:** To design and implement an autonomous system capable of accurately reproducing computational research experiments directly from scientific papers.
+*   **Specific Objectives:**
+    *   To develop a visual-semantic ingestion pipeline that preserves equations, tables, and layout information from research PDFs.
+    *   To integrate Conformal Prediction for uncertainty quantification and hallucination prevention during code generation.
+    *   To build a closed-loop autonomous agent that generates, executes, and iteratively corrects code until experimental results match published findings.
+    *   To evaluate the system’s reproducibility performance using standardized benchmarks.
+
+### 5. Scope of the Project
+*   **In Scope:**
+    *   Processing deep learning research papers in PDF format.
+    *   Generation of complete PyTorch-based repositories, including model architectures, training scripts, and dataset loaders.
+    *   Local execution on consumer or workstation-grade GPUs (e.g., NVIDIA RTX 3090/4090).
+    *   Handling complex layouts such as multi-column text, mathematical equations, and result tables.
+*   **Out of Scope:**
+    *   Reproduction of non-computational research (e.g., wet-lab biology or chemistry experiments).
+    *   Pre-training of large foundation models from scratch.
+    *   Web-based or cloud-dependent execution environments.
+
+### 6. Literature Survey (Brief)
+Recent research has made notable progress in document understanding and autonomous AI agents:
+*   **MinerU (2024)** introduced high-fidelity visual PDF parsing capable of accurately extracting mathematical expressions and structured content.
+*   **olmOCR (2025)** demonstrated the effectiveness of fine-tuned Vision-Language Models in visually reading academic documents, outperforming heuristic-based parsers.
+*   **The AI Scientist** (Sakana AI, 2024) showcased autonomous research workflows but relied on rigid templates rather than dynamic reproduction.
+*   **Conformal Prediction in NLP** has emerged as a promising approach to provide statistical guarantees for LLM outputs, significantly reducing hallucinations.
+
+**Research Gap:** No existing system integrates **visual document understanding**, **uncertainty-aware reasoning**, and **autonomous execution** into a unified framework for scientific reproduction.
+
+### 7. Proposed Methodology
+The proposed system follows a **Perception–Cognition–Action** loop:
+
+*   **A. Perception Layer:**
+    *   **Primary Extraction:** **MinerU** is used to parse PDFs into structured JSON while preserving LaTeX equations.
+    *   **Fallback Mechanism:** **olmOCR** is triggered for visually complex pages where heuristic parsing fails.
+*   **B. Cognitive Layer:**
+    *   A local LLM (e.g., DeepSeek-V3 or Qwen-2.5-Coder) analyzes extracted content.
+    *   A Conformal Prediction module estimates confidence for extracted parameters. When confidence falls below a predefined threshold, the system abstains from guessing and initiates a search or validation step.
+*   **C. Action Layer:**
+    *   **OpenHands** orchestrates a sandboxed Docker environment for execution.
+    *   The agent writes unit tests based on paper equations, implements code, executes it, and evaluates results.
+    *   Errors and metric mismatches are fed back into the reasoning loop for iterative correction.
+
+### 8. Tools and Technologies Used
+*   **Programming Language:** Python 3.10+
+*   **Perception Tools:** MinerU, olmOCR, UniMERNet
+*   **LLM Inference:** vLLM, Ollama
+*   **Agent Framework:** OpenHands
+*   **Vector Database:** ChromaDB
+*   **Uncertainty Estimation:** Conformal Prediction libraries (e.g., Fortuna)
+*   **Hardware:** NVIDIA RTX-series GPUs
+
+### 9. Expected Outcomes
+*   A functional Research2Code-GenAI prototype capable of converting research PDFs into executable PyTorch repositories.
+*   Significant reduction in hallucinated hyperparameters and architectural errors.
+*   Demonstration of autonomous verification by matching generated results with reported metrics.
+*   Quantitative evaluation on reproducibility benchmarks such as **LMR-Bench**.
+
+### 10. Applications
+*   **Automated Peer Review:** Rapid verification of experimental claims.
+*   **Research Acceleration:** Fast conversion of new research papers into runnable baselines.
+*   **Legacy Research Revival:** Modern re-implementation of older, code-less research papers.
+
+### 11. Project Schedule / Timeline
+
+| Phase | Duration | Activities |
+| :--- | :--- | :--- |
+| **Phase I** | Weeks 1–2 | Literature survey and environment setup |
+| **Phase II** | Weeks 3–4 | Hybrid VLM perception pipeline implementation |
+| **Phase III** | Weeks 5–6 | Conformal prediction integration and reasoning logic |
+| **Phase IV** | Weeks 7–8 | Autonomous agent execution and self-correction |
+| **Phase V** | Weeks 9–10 | Benchmark evaluation and final documentation |
+
+### 12. Conclusion
+Research2Code-GenAI proposes a significant shift from assisted code generation to autonomous scientific reproduction. By combining visual understanding, uncertainty-aware reasoning, and execution-based validation, the system directly addresses the core challenges responsible for the reproducibility crisis in modern AI research. The project aims to ensure that scientific knowledge remains verifiable, executable, and practically usable.
+
+### 13. System Architecture Diagrams
+This section presents the architectural design and internal workflows of the Research2Code-GenAI system, highlighting its autonomous and self-correcting nature.
+
+#### Figure 1: High-Level Autonomous Framework
+This figure illustrates the end-to-end architecture of the Research2Code-GenAI system. It shows how a research paper in PDF format is processed through the Perception, Cognition, and Action layers, ultimately resulting in a verified and reproducible PyTorch implementation.
+
+```mermaid
+graph TD
+    subgraph "Phase 1: Perception Engine"
+        A[PDF Input] --> B{Layout Analysis}
+        B -- Text Stream --> C[PyMuPDF]
+        B -- Math/Table/Figure --> D[MinerU / olmOCR]
+        C & D --> E[Semantic Chunking]
+        E --> F[(ChromaDB Vector Store)]
+    end
+
+    subgraph "Phase 2: Cognitive Engine"
+        F --> G[Context Retrieval]
+        G --> H[DeepSeek-V3 LLM]
+        H --> I{Conformal Guardrails}
+        I -- High Confidence --> J[Methodology JSON]
+        I -- Low Confidence --> K[Active Search / Abstain]
+        K --> G
+    end
+
+    subgraph "Phase 3: Action Engine"
+        J --> L[Code Architect Agent]
+        L --> M[Generate Model/Train/Data]
+        M --> N[Docker Sandbox]
+        N -- Execution Success --> O[Verified PyTorch Repo]
+        N -- Error/Mismatch --> P[Error Analyzer]
+        P --> H
+    end
+```
+
+#### Figure 2: Self-Healing Verification Loop
+This diagram details the iterative verification process where generated code is executed in a sandboxed environment. Runtime errors and result mismatches are analyzed and fed back into the reasoning engine, enabling autonomous correction and refinement.
+
+```mermaid
+sequenceDiagram
+    participant Agent as Cognitive Agent
+    participant Code as Code Generator
+    participant Env as Docker Sandbox
+    participant Paper as Methodology JSON
+
+    Agent->>Code: Generate initial model.py
+    Code->>Env: Write file & Run Unit Test
+    Env-->>Agent: ❌ RuntimeError: Shape Mismatch (64, 128) vs (32, 128)
+    
+    rect rgb(255, 200, 200)
+        Note over Agent: Error Analysis Mode
+        Agent->>Paper: Check expected input dimensions
+        Paper-->>Agent: Input dim = 32
+        Agent->>Code: Refine Layer 1 definition
+    end
+    
+    Code->>Env: Write patch & Run Unit Test
+    Env-->>Agent: ✅ Test Passed
+    Agent->>Env: Run Full Training Loop
+```
+
+#### Figure 3: Conformal Prediction Trust Mechanism
+This figure explains how Conformal Prediction is used to calibrate uncertainty in parameter extraction and code generation, allowing the system to distinguish between high-confidence decisions, uncertain cases, and out-of-distribution scenarios.
+
+```mermaid
+flowchart LR
+    A[LLM Output Logits] --> B{Conformal Scorer}
+    B --> C[Calculate Coverage Set]
+    C --> D{Set Size Check}
+    
+    D -- Size = 1 --> E[High Confidence Prediction]
+    D -- Size > 1 --> F[Uncertain / Multi-modal]
+    D -- Size = 0 --> G[Out of Distribution]
+    
+    E --> H[Commit Parameter]
+    F --> I[Search Appendix for Details]
+    G --> J[Flag for Human Review]
+    
+    style E fill:#9f9,stroke:#333
+    style F fill:#ff9,stroke:#333
+    style G fill:#f99,stroke:#333
+```
+
+### 14. References
+1.  *MinerU: A Comprehensive Toolkit for High-Quality PDF Content Extraction*, OpenDataLab, 2024.
+2.  *olmOCR: Efficient PDF Text Extraction with Vision Language Models*, AllenAI, 2025.
+3.  *The AI Scientist: Towards Fully Automated Open-Ended Scientific Discovery*, Sakana AI, 2024.
+4.  *OpenHands: An Open Platform for AI Software Developers*, OpenHands Team, 2025.
+5.  *Conformal Prediction for Natural Language Processing: A Survey*, MIT Press, 2024.

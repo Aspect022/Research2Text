@@ -1,0 +1,374 @@
+Title 
+Calibrated Conformal GeneraƟve Document ExtracƟon: End-to-End OCR-Free Vision–Language 
+Modeling with Structured Coverage Guarantees 
+Abstract 
+This work presents a fully generaƟve, OCR-free mulƟmodal vision–language model for structured 
+document informaƟon extracƟon with formally calibrated uncertainty. Unlike prior approaches that 
+bolt standard Monte Carlo dropout or heurisƟc conﬁdence heads onto Donut-style architectures, the 
+proposed framework embeds token- and ﬁeld-level conformal predicƟon directly into a T5-style 
+generaƟve decoder, yielding coverage-guaranteed predicƟon sets over structured outputs (key–value 
+pairs, tables, ﬁelds). A geometry-aware conformal scoring funcƟon leverages visual layout, reading 
+order, and content embeddings to construct region-sensiƟve nonconformity scores, while a 
+hierarchical calibraƟon scheme enforces coverage at token-, ﬁeld-, and document-level 
+simultaneously. The model is trained end-to-end with a joint objecƟve that couples sequence 
+likelihood, conformal score regularizaƟon, and diﬀerenƟable surrogate coverage losses. At inference, 
+the model produces structured predicƟon sets and an abstenƟon-aware extracƟon policy that 
+opƟmizes expected uƟlity under coverage constraints. Extensive experiments on revised, de-
+templated versions of FUNSD, CORD, SROIE, and mulƟ-page DocVQA, with syntheƟc and real noise, 
+demonstrate that the method matches or improves SOTA accuracy while signiﬁcantly improving 
+calibraƟon, coverage, and selecƟve risk. The design is opƟmized to be trainable on a single RTX 5050 
+GPU via parameter-eﬃcient adaptaƟon and conformal calibraƟon atop small open-source 
+backbones. The result is a TPAMI/ACL-grade framework that turns generaƟve document extracƟon 
+into a rigorously calibrated, uncertainty-aware predicƟon problem. 
+Core idea (2–3 lines) 
+End-to-end OCR-free generaƟve document extracƟon with hierarchical, geometry-aware conformal 
+predicƟon directly embedded in the decoder, producing token/ﬁeld/document-level predicƟon sets 
+with provable coverage. The model outputs not just values, but calibrated sets and abstenƟons, 
+enabling trustworthy extracƟon under explicit risk–coverage tradeoﬀs, all trainable on a single 
+consumer GPU via parameter-eﬃcient tuning. 
+Research hypothesis 
+A conformal-predicƟon-integrated generaƟve vision–language model with geometry-aware 
+nonconformity scores and hierarchical coverage constraints can (1) match or exceed SOTA accuracy 
+on document extracƟon benchmarks, and (2) signiﬁcantly improve calibraƟon, selecƟve risk, and 
+robustness to layout/noise compared to standard MC-dropout- or conﬁdence-head-based 
+uncertainty baselines, while remaining trainable on a single RTX 5050 GPU. 
+Key novelty contribuƟons 
+1. Hierarchical Conformal GeneraƟve Decoder: A new decoder formulaƟon that produces 
+token-, ﬁeld-, and document-level predicƟon sets for structured document outputs, with 
+mulƟ-level conformal coverage constraints baked into the decoding and training objecƟves. 
+2. Geometry-Aware Nonconformity Scoring: A mulƟmodal nonconformity score that fuses 
+visual layout, spaƟal structure, and semanƟc content to deﬁne document-speciﬁc conformal 
+scores for key–value pairs and tables, rather than treaƟng outputs as ﬂat sequences. 
+3. DiﬀerenƟable Surrogate Coverage Loss: A novel loss that encourages conformal scores and 
+predicƟon set sizes to approximate desired coverage levels during training, enabling end-to-
+end opƟmizaƟon of calibraƟon quality instead of post-hoc conformal wrapping only. 
+
+4. AbstenƟon-Aware Structured Decoding Policy: A decoding algorithm that jointly chooses 
+predicƟon sets and abstenƟons under a uƟlity funcƟon (e.g., F1–coverage tradeoﬀ), 
+extending selecƟve classiﬁcaƟon to fully generaƟve structured outputs. 
+5. Single-GPU-Eﬃcient Design: A parameter-eﬃcient adaptaƟon scheme (LoRA + layer-wise 
+scaling + low-rank visual adapters) and calibraƟon protocol explicitly engineered to ﬁt within 
+RTX 5050 constraints, demonstraƟng that rigorous uncertainty with conformal predicƟon is 
+feasible on consumer hardware for document extracƟon. 
+Final architecture design 
+ 
+Backbone encoder: 
+o 
+OCR-free vision encoder (small ViT/Swin) operaƟng directly on document images 
+(single and mulƟ-page via page-wise encoding + learned page-posiƟon embeddings). 
+o 
+OpƟonal shallow text encoder for weak supervision using pseudo-OCR tokens if 
+available, fused via cross-aƩenƟon but not required at inference (sƟll OCR-free by 
+default). 
+ 
+GeneraƟve decoder: 
+o 
+T5-small/base-sized transformer decoder with: 
+ 
+Standard autoregressive generaƟon over a structured serializaƟon of 
+document ﬁelds (JSON-like schema with slots for keys, values, table 
+rows/columns). 
+ 
+AddiƟonal conformal score head at each decoding step producing per-token 
+nonconformity logits. 
+ 
+Field-level aggregaƟon modules that pool token nonconformity into ﬁeld 
+scores via aƩenƟon over layout-aware token embeddings. 
+ 
+Geometry-aware fusion: 
+o 
+For each token posiƟon, a fused representaƟon concatenaƟng: visual region 
+features, posiƟonal/layout embeddings (absolute and relaƟve 2D coordinates, block 
+indices), and semanƟc context. 
+o 
+A small MLP projects the fused representaƟon to nonconformity scores used by the 
+conformal predicƟon layer. 
+ 
+Hierarchical conformal layer (nonparametric component atop decoder outputs): 
+o 
+Uses calibraƟon splits to compute quanƟles of nonconformity at token, ﬁeld, and 
+document level. 
+o 
+Stores per-task, per-ﬁeld quanƟles used in decoding to deﬁne predicƟon sets and 
+abstenƟons. 
+Learning objecƟves / loss funcƟons 
+Let y be the structured output (sequence of tokens with ﬁeld segmentaƟon), ŷ the model output, s(·) 
+nonconformity scores, and τ the learned/target quanƟle thresholds. 
+1. GeneraƟve loss (L_gen) 
+
+o 
+Standard negaƟve log-likelihood over the serialized sequence: 
+ 
+L_gen = − log pθ(y | x) 
+o 
+Encourages accurate structured generaƟon. 
+2. Conformal score regularizaƟon (L_conf) 
+o 
+For each token i with nonconformity score si and empirical calibraƟon quanƟle qα 
+(for target coverage 1−α): 
+ 
+Encourage scores to be well-separated: posiƟves near or below qα, 
+incorrect/hard examples above qα. 
+o 
+Implemented as a margin-based loss: 
+ 
+L_conf = E[(si − qα + m)+ for correct tokens] + E[(qα − si + m)+ for incorrect 
+tokens] 
+o 
+m is a margin hyperparameter. 
+3. DiﬀerenƟable surrogate coverage loss (L_cov) 
+o 
+Approximate the coverage constraint by a soŌ indicator over whether true 
+tokens/ﬁelds fall into the learned predicƟon set (deﬁned by si ≤ τ̂, where τ̂ is a 
+diﬀerenƟable approximaƟon of qα). 
+o 
+L_cov penalizes empirical deviaƟon of coverage from target (1−α) at mulƟple levels: 
+ 
+L_cov = |Ĉ_token − (1−α_token)| + |Ĉ_ﬁeld − (1−α_ﬁeld)| + |Ĉ_doc − 
+(1−α_doc)| 
+o 
+Ĉ_* are diﬀerenƟable coverage surrogates using sigmoid relaxaƟons. 
+4. RegularizaƟon of set size (L_size) 
+o 
+Penalize overly large predicƟon sets: 
+ 
+L_size = λ_size · E[#candidates per token/ﬁeld] 
+5. Total loss 
+o 
+L_total = L_gen + λ_conf L_conf + λ_cov L_cov + λ_size L_size 
+o 
+λ_conf, λ_cov, λ_size tuned via small grid search; ablaƟons will test their impact. 
+Training strategy 
+ 
+Stage 1: Backbone warm-start 
+o 
+IniƟalize encoder and decoder from compact OCR-free checkpoints (e.g., Donut-base 
+or Pix2Struct-base) using HF models. 
+o 
+Freeze encoder (or apply small LoRA adapters) and ﬁne-tune decoder on supervised 
+document extracƟon without uncertainty modules (only L_gen). 
+ 
+Stage 2: Uncertainty module acƟvaƟon 
+
+o 
+Unfreeze conformal score heads and geometry-aware fusion layers; keep most 
+backbone weights frozen or LoRA-tuned to stay within RTX 5050 limits. 
+o 
+Train with L_total on training split; maintain a held-out calibraƟon split. 
+ 
+Stage 3: Conformal calibraƟon 
+o 
+AŌer training, ﬁx θ and compute empirical nonconformity scores on calibraƟon set. 
+o 
+Compute per-task, per-ﬁeld quanƟles qα for token/ﬁeld/doc levels. 
+o 
+OpƟonally iterate a short ﬁne-tuning phase where τ̂ (threshold approximators) are 
+learned to emulate these quanƟles, minimizing L_cov. 
+ 
+ImplementaƟon details 
+o 
+Mixed precision training (FP16 or BF16) 
+o 
+LoRA on selected decoder layers and aƩenƟon matrices 
+o 
+Gradient checkpoinƟng for memory 
+o 
+Batch size 1–2 with gradient accumulaƟon to achieve eﬀecƟve batch size 16–32 
+o 
+Early stopping based on validaƟon coverage + F1. 
+Inference strategy 
+1. Base generaƟon 
+o 
+Run encoder + decoder with beam search or constrained sampling over structured 
+schema. 
+o 
+For each token and ﬁeld generated, also produce nonconformity scores si. 
+2. PredicƟon set construcƟon 
+o 
+Use stored quanƟles qα (or learned τ̂) to deﬁne predicƟon sets: 
+ 
+Token-level: include candidates whose si ≤ qα_token. 
+ 
+Field-level: aggregate token scores to ﬁeld score and include ﬁeld predicƟon 
+if sﬁeld ≤ qα_ﬁeld. 
+3. AbstenƟon-aware decision 
+o 
+Deﬁne a uƟlity funcƟon U(F1, coverage, abstenƟon_rate). 
+o 
+For each ﬁeld or document, decide to accept, re-prompt/re-generate, or abstain 
+based on: 
+ 
+Whether true coverage constraints are saƟsﬁed (approximate) 
+ 
+Expected improvement vs. cost of re-generaƟon 
+o 
+Implement a simple policy learned on validaƟon set: thresholds on set size and 
+nonconformity staƟsƟcs. 
+4. Output 
+
+o 
+Final outputs include: 
+ 
+Single best structured extracƟon (for downstream systems) 
+ 
+PredicƟon sets for criƟcal ﬁelds (e.g., total amount, date, address) 
+ 
+Conﬁdence/coverage esƟmates at ﬁeld/document level 
+ 
+Flags/abstenƟons for low-conﬁdence documents. 
+Uncertainty modeling 
+ 
+Type: Nonparametric distribuƟon-free uncertainty via conformal predicƟon, not Bayesian 
+approximaƟon. 
+ 
+Granularity: Token-level, ﬁeld-level, document-level. 
+ 
+Signals: Geometry-aware nonconformity scores combining visual locaƟon, layout, and 
+context; not just soŌmax entropy. 
+ 
+Guarantees: Empirical coverage at or near target levels (e.g., 90–95%) for held-out 
+calibraƟon data; evaluated across document types and corrupƟon levels. 
+ 
+Comparison: Directly compare against MC Dropout, soŌmax entropy, and auxiliary 
+conﬁdence heads for calibraƟon error (ECE), Brier score, and selecƟve risk. 
+EvaluaƟon protocol 
+ 
+Datasets (using revised / de-templated versions where available): 
+o 
+FUNSD-r (resampled to reduce template leakage) 
+o 
+CORD-r / CORD (with template straƟﬁcaƟon) 
+o 
+SROIE-r (re-split to reduce template duplicaƟon) 
+o 
+DocVQA (single and mulƟpage subsets) 
+o 
+AddiƟonal real noisy scans and syntheƟc corrupƟons (blur, rotaƟon, JPEG arƟfacts, 
+occlusion). 
+ 
+Metrics: 
+o 
+Accuracy: F1, EM for ﬁeld extracƟon and table reconstrucƟon. 
+o 
+CalibraƟon: ECE, MCE, Brier score at token, ﬁeld, and document level. 
+o 
+Coverage & set quality: Empirical coverage vs target, predicƟon set size 
+distribuƟons, token/ﬁeld-level oracle F1 given sets. 
+o 
+SelecƟve predicƟon: Risk–coverage curves, AURC, abstenƟon curves (F1 vs. 
+coverage), under both natural and corrupted distribuƟons. 
+o 
+Robustness: Performance under diﬀerent noise types/levels and layout shiŌs. 
+o 
+Eﬃciency: Inference Ɵme and memory on RTX 5050, comparing conﬁdence 
+methods. 
+Baselines 
+
+1. Donut-style OCR-free generaƟve model with: 
+o 
+Plain soŌmax conﬁdence (no uncertainty modeling) 
+o 
+MC Dropout-based uncertainty 
+o 
+Auxiliary conﬁdence head + calibraƟon loss. 
+2. Pix2Struct-style OCR-free model, similarly augmented. 
+3. DocFormerv2-style encoder + standard generaƟve decoder with conﬁdence head (where 
+feasible within compute). 
+4. Conformal wrap baseline: Post-hoc conformal predicƟon applied to oﬀ-the-shelf 
+Donut/Pix2Struct using simple nonconformity (negaƟve log-probability) without geometry-
+aware scoring or hierarchical coverage. 
+5. SelecƟve predicƟon baselines from NLP (calibrated conﬁdence thresholds, entropy-based 
+selecƟon). 
+AblaƟons 
+ 
+Architecture-level: 
+o 
+With vs without geometry-aware nonconformity (using only sequence logits). 
+o 
+With vs without hierarchical (token+ﬁeld+doc) coverage vs token-only coverage. 
+ 
+Loss components: 
+o 
+L_gen only vs L_gen + L_conf vs L_gen + L_conf + L_cov vs full L_total. 
+o 
+Vary λ_conf, λ_cov, λ_size to show eﬀect on coverage and set size. 
+ 
+Conformal vs classical uncertainty: 
+o 
+Conformal predicƟon vs MC Dropout vs entropy vs conﬁdence head. 
+ 
+CalibraƟon regimes: 
+o 
+Global quanƟles vs per-ﬁeld quanƟles vs per-document-type quanƟles. 
+ 
+Decoding policy: 
+o 
+Greedy decoding vs beam search vs constrained decoding; eﬀect on calibraƟon and 
+coverage. 
+ 
+Hardware-aware: 
+o 
+LoRA/adapter conﬁguraƟons and their impact on accuracy and calibraƟon under 
+VRAM constraints. 
+Expected results 
+ 
+Comparable or slightly beƩer F1/EM than strong OCR-free baselines on revised 
+CORD/FUNSD/SROIE/DocVQA while: 
+o 
+Reducing ECE and Brier score signiﬁcantly (e.g., 30–50% relaƟve reducƟon vs MC 
+Dropout/conﬁdence head). 
+
+o 
+Achieving empirical coverage close to targets (e.g., 90–95%) at token, ﬁeld, 
+document level, even under noise and layout shiŌs. 
+o 
+Producing compeƟƟve risk–coverage curves and AURC, clearly outperforming MC 
+Dropout and entropy-based selecƟon. 
+o 
+DemonstraƟng that predicƟon sets and abstenƟon policies materially improve 
+reliability for high-stakes ﬁelds (totals, dates, idenƟﬁers). 
+ 
+DemonstraƟng feasible training on RTX 5050 with wall-clock Ɵmes on the order of a few 
+days per dataset using parameter-eﬃcient tuning. 
+Why this is novel 
+Because it integrates conformal predicƟon and structured coverage control into the generaƟve 
+decoding process itself, with geometry-aware nonconformity scoring and hierarchical, diﬀerenƟable 
+surrogate coverage objecƟves, rather than treaƟng uncertainty as a post-hoc heurisƟc add-on. This 
+shiŌs document extracƟon from “Donut + MC Dropout” engineering to a principled, coverage-
+guaranteed, uncertainty-aware generaƟve framework, tailored to structured, mulƟmodal document 
+outputs and explicitly engineered to be viable on a single consumer GPU. 
+Compute feasibility plan 
+ 
+Use T5-small/base-scale decoder (≤ 220M params) and small ViT/Swin encoder (≤ 100M) 
+with: 
+o 
+LoRA on selected aƩenƟon and feed-forward layers; freeze most backbone 
+parameters. 
+o 
+FP16/BF16 training with gradient checkpoinƟng and gradient accumulaƟon. 
+o 
+Batch size 1–2, eﬀecƟve batch size 16–32 via accumulaƟon. 
+o 
+Dataset sizes limited to standard benchmarks (tens of thousands samples, not 
+pretraining-scale). 
+o 
+Conformal calibraƟon computed oﬄine on calibraƟon splits with small batches. 
+ 
+EsƟmated: 
+o 
+Fine-tuning per dataset: 2–4 days on RTX 5050. 
+o 
+Total project: 2–3 weeks acƟve training, within realisƟc PhD Ɵmeline. 
+Target venues 
+ 
+Primary: IEEE TPAMI, ACL main conference (core methodology: structured generaƟve 
+modeling + principled uncertainty). 
+ 
+Secondary: NeurIPS/ICLR workshops on uncertainty and structured predicƟon; CVPR/ICCV 
+document understanding workshops for extended applicaƟons. 
+Final verdict (1 sentence) 
+This project is a single, coherent, TPAMI/ACL-level research direcƟon: a rigorously calibrated, 
+conformal-predicƟon-integrated, end-to-end OCR-free generaƟve vision–language architecture for 
+document extracƟon with genuine algorithmic novelty and realisƟc single-GPU feasibility. 
+
+ 

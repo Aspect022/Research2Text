@@ -6,6 +6,7 @@ Coordinates task dispatch, result aggregation, and error recovery.
 from typing import Dict, List, Optional, Any
 from pathlib import Path
 import time
+import logging
 
 from .base import BaseAgent, AgentMessage, AgentResponse
 from .ingest_agent import IngestAgent
@@ -19,6 +20,8 @@ from .graph_builder_agent import GraphBuilderAgent
 from .validator_agent import ValidatorAgent
 from .cleaner_agent import CleanerAgent
 
+logger = logging.getLogger(__name__)
+
 
 class Orchestrator:
     """
@@ -31,7 +34,7 @@ class Orchestrator:
         self._initialize_agents()
     
     def _initialize_agents(self):
-        """Initialize all 9 specialized agents."""
+        """Initialize all specialized agents."""
         self.agents["ingest"] = IngestAgent()
         self.agents["vision"] = VisionAgent()
         self.agents["chunking"] = ChunkingAgent()
@@ -69,14 +72,20 @@ class Orchestrator:
         
         start_time = time.time()
         try:
+            logger.info(f"[Orchestrator] Dispatching to '{agent_id}'...")
             response = agent.process(message)
             response.processing_time = time.time() - start_time
+            logger.info(f"[Orchestrator] '{agent_id}' completed in {response.processing_time:.2f}s (success={response.success})")
+            if not response.success:
+                logger.warning(f"[Orchestrator] '{agent_id}' failed: {response.error}")
             return response
         except Exception as e:
+            elapsed = time.time() - start_time
+            logger.error(f"[Orchestrator] '{agent_id}' raised exception after {elapsed:.2f}s: {e}")
             return AgentResponse(
                 success=False,
                 error=f"Agent '{agent_id}' raised exception: {str(e)}",
-                processing_time=time.time() - start_time
+                processing_time=elapsed
             )
     
     def process_paper(self, pdf_path: Optional[Path] = None, paper_base: Optional[str] = None, text: Optional[str] = None) -> Dict[str, Any]:
@@ -112,7 +121,10 @@ class Orchestrator:
             "errors": []
         }
         
+        # ──────────────────────────────────────────────
         # Stage 1: Document Ingestion
+        # ──────────────────────────────────────────────
+        logger.info(f"[Pipeline] Stage 1: Ingestion for '{paper_base}'")
         if pdf_path and pdf_path.exists():
             ingest_msg = AgentMessage(
                 agent_id="orchestrator",
@@ -130,59 +142,72 @@ class Orchestrator:
             return results
         
         ingest_response = self.dispatch("ingest", ingest_msg)
-        results["stages"]["ingestion"] = ingest_response.dict()
+        results["stages"]["ingestion"] = ingest_response.model_dump()
         
         if not ingest_response.success:
             results["errors"].append(f"Ingestion failed: {ingest_response.error}")
-            # Try to continue with text if available
+            # Try to continue with raw text if available
             if not text:
                 return results
             extracted_text = text
         else:
             extracted_text = ingest_response.data.get("text", text or "")
         
-        extracted_text = ingest_response.data.get("text", "")
         images = ingest_response.data.get("images", [])
         metadata = ingest_response.data.get("metadata", {})
         
-        # Stage 2: Vision Processing (if images found)
+        # ──────────────────────────────────────────────
+        # Stage 2: Vision Processing (only for images with actual paths)
+        # ──────────────────────────────────────────────
+        logger.info(f"[Pipeline] Stage 2: Vision Processing ({len(images)} images found)")
         vision_results = []
-        if images:
-            for img_info in images:
-                vision_msg = AgentMessage(
-                    agent_id="orchestrator",
-                    message_type="request",
-                    payload={"image_path": img_info.get("path"), "image_type": img_info.get("type")}
-                )
-                vision_response = self.dispatch("vision", vision_msg)
-                vision_results.append(vision_response.dict())
+        for img_info in images:
+            img_path = img_info.get("path")
+            if not img_path:
+                # Skip images without saved paths (not yet extracted to disk)
+                continue
+            vision_msg = AgentMessage(
+                agent_id="orchestrator",
+                message_type="request",
+                payload={"image_path": img_path, "image_type": img_info.get("type", "unknown")}
+            )
+            vision_response = self.dispatch("vision", vision_msg)
+            vision_results.append(vision_response.model_dump())
         results["stages"]["vision"] = vision_results
         
+        # ──────────────────────────────────────────────
         # Stage 3: Chunking
+        # ──────────────────────────────────────────────
+        logger.info(f"[Pipeline] Stage 3: Chunking ({len(extracted_text)} chars)")
         chunking_msg = AgentMessage(
             agent_id="orchestrator",
             message_type="request",
             payload={"text": extracted_text, "paper_base": paper_base}
         )
         chunking_response = self.dispatch("chunking", chunking_msg)
-        results["stages"]["chunking"] = chunking_response.dict()
+        results["stages"]["chunking"] = chunking_response.model_dump()
         
         chunks = chunking_response.data.get("chunks", [])
-        embeddings = chunking_response.data.get("embeddings", [])
         
+        # ──────────────────────────────────────────────
         # Stage 4: Method Extraction
+        # ──────────────────────────────────────────────
+        logger.info(f"[Pipeline] Stage 4: Method Extraction")
         method_msg = AgentMessage(
             agent_id="orchestrator",
             message_type="request",
             payload={"text": extracted_text, "chunks": chunks}
         )
         method_response = self.dispatch("method_extractor", method_msg)
-        results["stages"]["method_extraction"] = method_response.dict()
+        results["stages"]["method_extraction"] = method_response.model_dump()
         
         method_struct = method_response.data.get("method_struct", {})
         
+        # ──────────────────────────────────────────────
         # Stage 5: Equation Processing
+        # ──────────────────────────────────────────────
         equations = method_struct.get("equations", [])
+        logger.info(f"[Pipeline] Stage 5: Equation Processing ({len(equations)} equations)")
         equation_results = []
         for eq in equations:
             eq_msg = AgentMessage(
@@ -191,20 +216,26 @@ class Orchestrator:
                 payload={"equation": eq, "format": "latex"}
             )
             eq_response = self.dispatch("equation", eq_msg)
-            equation_results.append(eq_response.dict())
+            equation_results.append(eq_response.model_dump())
         results["stages"]["equations"] = equation_results
         
+        # ──────────────────────────────────────────────
         # Stage 6: Dataset Processing
+        # ──────────────────────────────────────────────
         datasets = method_struct.get("datasets", [])
+        logger.info(f"[Pipeline] Stage 6: Dataset Processing ({len(datasets)} datasets)")
         dataset_msg = AgentMessage(
             agent_id="orchestrator",
             message_type="request",
             payload={"datasets": datasets}
         )
         dataset_response = self.dispatch("dataset_loader", dataset_msg)
-        results["stages"]["datasets"] = dataset_response.dict()
+        results["stages"]["datasets"] = dataset_response.model_dump()
         
+        # ──────────────────────────────────────────────
         # Stage 7: Code Generation
+        # ──────────────────────────────────────────────
+        logger.info(f"[Pipeline] Stage 7: Code Generation")
         code_msg = AgentMessage(
             agent_id="orchestrator",
             message_type="request",
@@ -215,9 +246,12 @@ class Orchestrator:
             }
         )
         code_response = self.dispatch("code_architect", code_msg)
-        results["stages"]["code_generation"] = code_response.dict()
+        results["stages"]["code_generation"] = code_response.model_dump()
         
+        # ──────────────────────────────────────────────
         # Stage 8: Knowledge Graph Construction
+        # ──────────────────────────────────────────────
+        logger.info(f"[Pipeline] Stage 8: Knowledge Graph Construction")
         graph_msg = AgentMessage(
             agent_id="orchestrator",
             message_type="request",
@@ -230,10 +264,13 @@ class Orchestrator:
             }
         )
         graph_response = self.dispatch("graph_builder", graph_msg)
-        results["stages"]["knowledge_graph"] = graph_response.dict()
+        results["stages"]["knowledge_graph"] = graph_response.model_dump()
         
+        # ──────────────────────────────────────────────
         # Stage 9: Validation
+        # ──────────────────────────────────────────────
         generated_files = code_response.data.get("files", [])
+        logger.info(f"[Pipeline] Stage 9: Validation ({len(generated_files)} files)")
         if generated_files:
             validation_msg = AgentMessage(
                 agent_id="orchestrator",
@@ -241,8 +278,9 @@ class Orchestrator:
                 payload={"files": generated_files}
             )
             validation_response = self.dispatch("validator", validation_msg)
-            results["stages"]["validation"] = validation_response.dict()
+            results["stages"]["validation"] = validation_response.model_dump()
         
+        logger.info(f"[Pipeline] Complete for '{paper_base}'. Errors: {len(results['errors'])}")
         return results
     
     def get_agent_status(self) -> Dict[str, Any]:
@@ -254,4 +292,3 @@ class Orchestrator:
             }
             for agent_id, agent in self.agents.items()
         }
-

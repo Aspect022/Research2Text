@@ -36,7 +36,7 @@ class IngestAgent(BaseAgent):
                     "metadata": {
                         "paper_base": paper_base or "unknown",
                         "source": "pre-extracted_text"
-                    +},
+                    },
                     "paper_base": paper_base or "unknown"
                 }
             )
