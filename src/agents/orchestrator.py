@@ -154,26 +154,21 @@ class Orchestrator:
             extracted_text = ingest_response.data.get("text", text or "")
         
         images = ingest_response.data.get("images", [])
+        tables_from_ingest = ingest_response.data.get("tables", [])
+        equations_from_ingest = ingest_response.data.get("equations", [])
         metadata = ingest_response.data.get("metadata", {})
         
         # ──────────────────────────────────────────────
-        # Stage 2: Vision Processing (only for images with actual paths)
+        # Stage 2: Vision Processing (batch mode with images + tables)
         # ──────────────────────────────────────────────
-        logger.info(f"[Pipeline] Stage 2: Vision Processing ({len(images)} images found)")
-        vision_results = []
-        for img_info in images:
-            img_path = img_info.get("path")
-            if not img_path:
-                # Skip images without saved paths (not yet extracted to disk)
-                continue
-            vision_msg = AgentMessage(
-                agent_id="orchestrator",
-                message_type="request",
-                payload={"image_path": img_path, "image_type": img_info.get("type", "unknown")}
-            )
-            vision_response = self.dispatch("vision", vision_msg)
-            vision_results.append(vision_response.model_dump())
-        results["stages"]["vision"] = vision_results
+        logger.info(f"[Pipeline] Stage 2: Vision Processing ({len(images)} images, {len(tables_from_ingest)} tables)")
+        vision_msg = AgentMessage(
+            agent_id="orchestrator",
+            message_type="request",
+            payload={"images": images, "tables": tables_from_ingest}
+        )
+        vision_response = self.dispatch("vision", vision_msg)
+        results["stages"]["vision"] = vision_response.model_dump()
         
         # ──────────────────────────────────────────────
         # Stage 3: Chunking
@@ -205,8 +200,9 @@ class Orchestrator:
         
         # ──────────────────────────────────────────────
         # Stage 5: Equation Processing
+        # Merge equations from ingestion (MinerU) + method extraction
         # ──────────────────────────────────────────────
-        equations = method_struct.get("equations", [])
+        equations = list(set(method_struct.get("equations", []) + equations_from_ingest))
         logger.info(f"[Pipeline] Stage 5: Equation Processing ({len(equations)} equations)")
         equation_results = []
         for eq in equations:
