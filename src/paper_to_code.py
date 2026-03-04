@@ -29,7 +29,7 @@ def run_paper_to_code(paper_base: str) -> Path:
     # Save method.json
     (out_dir / "method.json").write_text(method_struct.model_dump_json(indent=2), encoding="utf-8")
 
-    files = generate_code(method_struct)
+    files = generate_code(method_struct, paper_text=method_text)
     result = self_heal_cycle(out_dir, files, method_struct, max_attempts=1)
 
     code_paths = []

@@ -52,7 +52,7 @@ def load_chunks_for_base(base_name: str) -> List[Dict[str, str]]:
     return chunks
 
 
-def index_all() -> None:
+def index_documents(target_base: str = None) -> None:
     CHROMA_DIR.mkdir(parents=True, exist_ok=True)
 
     client = chromadb.PersistentClient(path=str(CHROMA_DIR))
@@ -79,8 +79,11 @@ def index_all() -> None:
             bases.add(base)
     
     bases = sorted(bases)
+    if target_base:
+        bases = [b for b in bases if b == target_base]
+        
     if not bases:
-        print("No chunk files found in", RAW_TEXT_DIR)
+        print(f"No chunk files found in {RAW_TEXT_DIR} to index.")
         return
 
     for base in bases:
@@ -102,4 +105,8 @@ def index_all() -> None:
 
 
 if __name__ == "__main__":
-    index_all()
+    import sys
+    if len(sys.argv) > 1:
+        index_documents(sys.argv[1])
+    else:
+        index_documents()

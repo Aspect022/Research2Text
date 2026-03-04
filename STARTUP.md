@@ -103,8 +103,7 @@ mkdir data\raw_pdfs data\raw_texts outputs
 
 ```bash
 cd src
-streamlit run app_streamlit.py
-```
+!```
 
 Open **http://localhost:8501** in your browser.
 

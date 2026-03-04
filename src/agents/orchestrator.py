@@ -196,8 +196,11 @@ class Orchestrator:
         method_response = self.dispatch("method_extractor", method_msg)
         results["stages"]["method_extraction"] = method_response.model_dump()
         
+        if not method_response.success:
+            results["errors"].append(f"Method extraction failed: {method_response.error}")
+            return results
+            
         method_struct = method_response.data.get("method_struct", {})
-        
         # ──────────────────────────────────────────────
         # Stage 5: Equation Processing
         # Merge equations from ingestion (MinerU) + method extraction
@@ -238,7 +241,8 @@ class Orchestrator:
             payload={
                 "method_struct": method_struct,
                 "equations": [r.get("data", {}) for r in equation_results if r.get("success")],
-                "datasets": dataset_response.data
+                "datasets": dataset_response.data,
+                "paper_text": extracted_text,
             }
         )
         code_response = self.dispatch("code_architect", code_msg)

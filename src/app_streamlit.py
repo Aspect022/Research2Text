@@ -23,10 +23,9 @@ from config import (
     APP_TITLE, APP_ICON, APP_SUBTITLE,
 )
 from utils import extract_text_from_pdf, chunk_text_by_words
-from index_documents import index_all
-from query_rag import retrieve, format_context, answer_with_ollama
 from export_utils import build_artifacts_zip, list_known_bases, build_code_zip
 from paper_to_code import run_paper_to_code
+from index_documents import index_documents
 
 
 # ═══════════════════════════════════════════════════════
@@ -378,11 +377,19 @@ def render_pipeline_tab():
     base_name = None
 
     if up is not None:
-        pdf_path = save_uploaded_pdf(up)
-        with st.spinner(f"Extracting text from {up.name}..."):
-            base_name, n_chunks = ingest_pdf(pdf_path)
-            index_all()
-        st.success(f"✅ {up.name}: {n_chunks} chunks indexed")
+        if "last_uploaded_file" not in st.session_state or st.session_state.last_uploaded_file != up.name:
+            pdf_path = save_uploaded_pdf(up)
+            with st.spinner(f"Extracting text from {up.name}..."):
+                base_name, n_chunks = ingest_pdf(pdf_path)
+                index_documents(base_name)
+            st.session_state.last_uploaded_file = up.name
+            st.session_state.last_base_name = base_name
+            st.session_state.last_n_chunks = n_chunks
+            st.success(f"✅ {up.name}: {n_chunks} chunks indexed")
+        else:
+            base_name = st.session_state.last_base_name
+            n_chunks = st.session_state.last_n_chunks
+            st.success(f"✅ {up.name}: {n_chunks} chunks indexed")
     else:
         bases = list_known_bases()
         if bases:

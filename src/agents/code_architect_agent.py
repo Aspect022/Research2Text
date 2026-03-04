@@ -37,8 +37,9 @@ class CodeArchitectAgent(BaseAgent):
             if isinstance(method_struct, dict):
                 method_struct = MethodStruct(**method_struct)
             
-            # Generate code files
-            generated_files = generate_code(method_struct)
+            # Pass paper text for full context code generation
+            paper_text = payload.get("paper_text", "")
+            generated_files = generate_code(method_struct, paper_text=paper_text)
             
             # Add dataset loader if datasets were found
             if datasets and datasets.get("loaders"):

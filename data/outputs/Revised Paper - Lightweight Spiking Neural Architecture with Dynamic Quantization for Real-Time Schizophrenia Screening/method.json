@@ -1,0 +1,18 @@
+{
+  "algorithm_name": null,
+  "equations": [
+    "Cross-Entropy"
+  ],
+  "datasets": [],
+  "training": {
+    "optimizer": null,
+    "loss": null,
+    "epochs": null,
+    "learning_rate": null,
+    "batch_size": null
+  },
+  "inputs": {},
+  "outputs": {},
+  "references": [],
+  "confidence": {}
+}

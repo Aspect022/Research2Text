@@ -22,21 +22,36 @@ OUTPUTS_DIR = PROJECT_ROOT / "outputs"
 
 
 # ═══════════════════════════════════════════════════
-#  Ollama / LLM Settings
+#  Ollama / LLM Settings — Role-Based Model Routing
 # ═══════════════════════════════════════════════════
 
 # Default model for RAG Q&A, general chat
 DEFAULT_OLLAMA_MODEL = "gpt-oss:120b-cloud"
 
-# Model preference chain for method extraction & code generation
-# The pipeline tries each in order and uses the first one available
-MODEL_CHAIN = [
-    "deepseek-v3.1:671b-cloud ",
-    "qwen3-coder:480b-cloud ",
+# REASONER chain — used for method extraction, analysis, Q&A
+# Prefers general-purpose models with strong reasoning
+REASONER_MODEL_CHAIN = [
+    "deepseek-v3.1:671b-cloud",
+    "gpt-oss:120b-cloud",
+    "glm-4.6:cloud",
     "minimax-m2:cloud",
-    "glm-4.6:cloud ",
-    "gpt-oss:120b-cloud ",
+    "qwen3-coder:480b-cloud",
 ]
+
+# CODER chain — used for code generation, self-healing, code review
+# Prefers coding-specialized models for better code output
+CODER_MODEL_CHAIN = [
+    "qwen3-coder:480b-cloud",
+    "deepseek-v3.1:671b-cloud",
+    "gpt-oss:120b-cloud",
+    "glm-4.6:cloud",
+]
+
+# Backward-compatible alias (used by older imports)
+MODEL_CHAIN = CODER_MODEL_CHAIN
+
+# Reference knowledge file for code generation prompts
+CODEGEN_RULES_PATH = PROJECT_ROOT / "data" / "codegen_rules.md"
 
 # LLM temperature settings
 EXTRACTION_TEMPERATURE = 0.1   # Low = factual/precise (method extraction)

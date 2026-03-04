@@ -1,15 +1,18 @@
 """
-Agent 4: Method Extractor Agent (Upgraded - Phase 3)
-Responsibility: Extract structured method information with confidence scoring.
+Agent 4: Method Extractor Agent (Upgraded - Phase 3 + Dual Model)
+Responsibility: Extract structured method information with confidence scoring
+              and detailed architecture breakdown for code generation.
+
+Uses LLMRouter with role="reasoner" for extraction tasks.
 
 Implements a simplified Conformal Prediction framework:
   - Each extracted field gets a confidence score (0.0–1.0)
   - Fields explicitly stated in the paper get high scores
   - Fields inferred by the LLM (not directly quoted) get lower scores
   - Low-confidence fields are flagged for downstream agents
-  
+
 LLM Strategy:
-  - Primary: Configurable model (DeepSeek-V3 / Qwen2.5-Coder / any Ollama model)
+  - Primary: LLMRouter with role="reasoner" (auto-selects best model)
   - Fallback: Heuristic regex-based extraction
 """
 
@@ -21,15 +24,57 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from config import MODEL_CHAIN, EXTRACTION_TEMPERATURE, MAX_TEXT_LENGTH_FOR_LLM, LOW_CONFIDENCE_THRESHOLD
+from config import EXTRACTION_TEMPERATURE, MAX_TEXT_LENGTH_FOR_LLM, LOW_CONFIDENCE_THRESHOLD
+from llm_router import LLMRouter
 from method_extractor import find_method_sections, extract_method_entities
-from schemas import ConfidenceScore, MethodStruct
+from schemas import ArchitectureDetail, ConfidenceScore, MethodStruct
 from .base import BaseAgent, AgentMessage, AgentResponse
 
 logger = logging.getLogger(__name__)
 
-# Models imported from config.py
-DEFAULT_MODEL_CHAIN = MODEL_CHAIN
+# ── Enriched extraction prompt ────────────────────────
+
+EXTRACTION_PROMPT = """You are a precise scientific paper analyzer specializing in deep learning architectures. Extract ONLY information that is EXPLICITLY stated in the text below. Do NOT guess or infer values that are not mentioned.
+
+TEXT:
+{text}
+
+Extract a JSON object with these fields. For each field, ONLY include values you can directly find in the text. Leave fields as null/empty if not explicitly stated:
+
+{{
+  "algorithm_name": "EXACT name of the primary algorithm/method as stated in the paper (e.g. 'CNN-BiLSTM with Attention Mechanism', NOT just 'Transformer')",
+  "paper_summary": "2-3 sentence summary of what the paper proposes and how it works",
+  "equations": ["List of mathematical equations mentioned, in LaTeX or text form"],
+  "datasets": ["List of dataset names explicitly mentioned (e.g. 'CIFAR-10', 'FER2013', 'ImageNet')"],
+  "training": {{
+    "optimizer": "Optimizer name (e.g. 'Adam', 'SGD') or null",
+    "loss": "Loss function name (e.g. 'CrossEntropyLoss', 'MSE') or null",
+    "epochs": "Number of training epochs (integer) or null",
+    "learning_rate": "Learning rate value (float) or null",
+    "batch_size": "Batch size (integer) or null"
+  }},
+  "architecture": {{
+    "layer_types": ["ORDERED list of all layer types in the model, e.g. ['Conv2D', 'BatchNorm', 'ReLU', 'MaxPool', 'BiLSTM', 'Attention', 'Dense']"],
+    "input_shape": "Input tensor shape if mentioned, e.g. '(batch, 3, 48, 48)' or null",
+    "output_shape": "Output tensor shape if mentioned, e.g. '(batch, 7)' or null",
+    "num_classes": "Number of output classes (integer) or null",
+    "hidden_dims": [128, 256],
+    "attention_type": "Type of attention mechanism ('self', 'cross', 'multi-head', 'additive', 'bahdanau') or null",
+    "preprocessing": ["Data preprocessing steps mentioned, e.g. 'resize to 48x48', 'grayscale conversion', 'normalization'"],
+    "key_components": ["Named architectural components, e.g. 'ResidualBlock', 'SqueezeExcitation', 'DropoutLayer', 'BatchNorm']"]
+  }},
+  "inputs": {{"description": "What the model takes as input (e.g. 'facial expression images 48x48 grayscale')"}},
+  "outputs": {{"description": "What the model produces (e.g. '7-class emotion prediction')"}},
+  "references": ["Citation markers like [1], [2]"]
+}}
+
+CRITICAL RULES:
+1. Return ONLY valid JSON. No markdown, no explanation, no code fences.
+2. If a value is NOT explicitly stated in the text, use null (not a guess).
+3. For algorithm_name: use the FULL name as the paper describes it (e.g. "CNN-BiLSTM with Attention" not just "CNN").
+4. For architecture.layer_types: list EVERY distinct layer type mentioned, in the order they appear in the model.
+5. For equations: include the exact mathematical expression as written.
+6. For numerical values (epochs, learning_rate, batch_size), only include if a specific number is given."""
 
 
 class MethodExtractorAgent(BaseAgent):
@@ -37,8 +82,7 @@ class MethodExtractorAgent(BaseAgent):
 
     def __init__(self, model: Optional[str] = None):
         super().__init__("method_extractor", "Method Extractor Agent")
-        self._model = model  # None = auto-detect from chain
-        self._available_model: Optional[str] = None
+        self._router = LLMRouter()
 
     def process(self, message: AgentMessage) -> AgentResponse:
         """Extract method information with per-field confidence scores."""
@@ -86,140 +130,68 @@ class MethodExtractorAgent(BaseAgent):
 
     def _extract_with_confidence(self, focused_text: str, full_text: str) -> Optional[MethodStruct]:
         """Extract method information using LLM with confidence scoring."""
-        try:
-            import ollama
-        except ImportError:
-            return None
-
-        model = self._resolve_model(ollama)
-        if not model:
-            return None
-
-        logger.info(f"[MethodExtractor] Using model: {model}")
-
-        # Step 1: Extract structured data
-        raw_data = self._llm_extract(ollama, model, focused_text)
+        # Step 1: Extract structured data via LLMRouter
+        raw_data = self._llm_extract(focused_text)
         if not raw_data:
             return None
 
         # Step 2: Compute confidence scores by cross-referencing with source text
         confidence = self._compute_confidence(raw_data, full_text)
 
-        # Step 3: Build MethodStruct with confidence
+        # Step 3: Build architecture detail
+        arch_data = raw_data.pop("architecture", {})
+        if isinstance(arch_data, dict):
+            architecture = ArchitectureDetail(**arch_data)
+        else:
+            architecture = ArchitectureDetail()
+
+        # Step 4: Build MethodStruct with confidence and architecture
         try:
-            method_struct = MethodStruct(**raw_data, confidence=confidence)
+            method_struct = MethodStruct(
+                **raw_data,
+                architecture=architecture,
+                confidence=confidence,
+            )
             return method_struct
         except Exception as e:
             logger.warning(f"[MethodExtractor] Failed to build MethodStruct: {e}")
-            return None
-
-    def _resolve_model(self, ollama_module: Any) -> Optional[str]:
-        """Find the first available model from the preference chain."""
-        if self._available_model:
-            return self._available_model
-
-        if self._model:
-            self._available_model = self._model
-            return self._model
-
-        try:
-            available = ollama_module.list()
-            available_names = set()
-            if isinstance(available, dict):
-                for m in available.get("models", []):
-                    available_names.add(m.get("name", ""))
-                    # Also match without tag
-                    name = m.get("name", "")
-                    if ":" in name:
-                        available_names.add(name.split(":")[0])
-
-            for preferred in DEFAULT_MODEL_CHAIN:
-                if preferred in available_names or preferred.split(":")[0] in available_names:
-                    self._available_model = preferred
-                    logger.info(f"[MethodExtractor] Auto-selected model: {preferred}")
-                    return preferred
-
-            # If none from chain found, use first available
-            if available_names:
-                first = list(available_names)[0]
-                self._available_model = first
-                logger.info(f"[MethodExtractor] Using first available model: {first}")
-                return first
-
-        except Exception as e:
-            logger.warning(f"[MethodExtractor] Failed to list models: {e}")
-
-        return None
-
-    def _llm_extract(self, ollama_module: Any, model: str, text: str) -> Optional[Dict[str, Any]]:
-        """Run the LLM extraction with an optimized prompt."""
-        prompt = f"""You are a precise scientific paper analyzer. Extract ONLY information that is EXPLICITLY stated in the text below. Do NOT guess or infer values that are not mentioned.
-
-TEXT:
-{text[:MAX_TEXT_LENGTH_FOR_LLM]}
-
-Extract a JSON object with these fields. For each field, ONLY include values you can directly quote from the text. Leave fields as null/empty if not explicitly stated:
-
-{{
-  "algorithm_name": "Name of the primary algorithm/method (string or null)",
-  "equations": ["List of mathematical equations mentioned, in LaTeX or text form"],
-  "datasets": ["List of dataset names explicitly mentioned"],
-  "training": {{
-    "optimizer": "Optimizer name or null",
-    "loss": "Loss function name or null",
-    "epochs": null,
-    "learning_rate": null,
-    "batch_size": null
-  }},
-  "inputs": {{"description": "Input specification or empty dict"}},
-  "outputs": {{"description": "Output specification or empty dict"}},
-  "references": ["Citation markers like [1], [2]"]
-}}
-
-CRITICAL RULES:
-1. Return ONLY valid JSON. No markdown, no explanation, no code fences.
-2. If a value is NOT explicitly stated in the text, use null (not a guess).
-3. For numerical values (epochs, learning_rate, batch_size), only include if a specific number is given.
-4. For equations, include the exact mathematical expression as written."""
-
-        try:
-            response = ollama_module.chat(
-                model=model,
-                messages=[{"role": "user", "content": prompt}],
-                options={"temperature": EXTRACTION_TEMPERATURE},
-            )
-
-            content = response.get("message", {}).get("content", "")
-            return self._parse_json_response(content)
-        except Exception as e:
-            logger.warning(f"[MethodExtractor] LLM call failed: {e}")
-            return None
-
-    def _parse_json_response(self, content: str) -> Optional[Dict[str, Any]]:
-        """Robustly parse JSON from LLM response."""
-        content = content.strip()
-
-        # Remove markdown code fences
-        if content.startswith("```"):
-            lines = content.split("\n")
-            content = "\n".join(l for l in lines if not l.strip().startswith("```"))
-            content = content.strip()
-
-        # Try direct parse
-        try:
-            return json.loads(content)
-        except json.JSONDecodeError:
-            pass
-
-        # Try to find JSON object in the response
-        brace_start = content.find("{")
-        brace_end = content.rfind("}")
-        if brace_start != -1 and brace_end != -1 and brace_end > brace_start:
+            # Try building with just the basic fields
             try:
-                return json.loads(content[brace_start:brace_end + 1])
-            except json.JSONDecodeError:
-                pass
+                safe_data = {
+                    "algorithm_name": raw_data.get("algorithm_name"),
+                    "equations": raw_data.get("equations", []),
+                    "datasets": raw_data.get("datasets", []),
+                    "paper_summary": raw_data.get("paper_summary"),
+                    "architecture": architecture,
+                    "confidence": confidence,
+                }
+                training = raw_data.get("training", {})
+                if isinstance(training, dict):
+                    safe_data["training"] = training
+                return MethodStruct(**safe_data)
+            except Exception as e2:
+                logger.warning(f"[MethodExtractor] Fallback build also failed: {e2}")
+                return None
 
+    def _llm_extract(self, text: str) -> Optional[Dict[str, Any]]:
+        """Run the LLM extraction with the enriched prompt via LLMRouter."""
+        prompt = EXTRACTION_PROMPT.format(text=text[:MAX_TEXT_LENGTH_FOR_LLM])
+
+        result = self._router.chat_json(
+            role="reasoner",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=EXTRACTION_TEMPERATURE,
+        )
+
+        if result:
+            logger.info(
+                f"[MethodExtractor] LLM extracted: algorithm={result.get('algorithm_name')}, "
+                f"layers={result.get('architecture', {}).get('layer_types', [])}, "
+                f"datasets={result.get('datasets', [])}"
+            )
+            return result
+
+        logger.warning("[MethodExtractor] LLM returned empty/unparseable result")
         return None
 
     # ─── Conformal Prediction: Confidence Scoring ─────
@@ -236,7 +208,6 @@ CRITICAL RULES:
           0.0  — Field is null/empty (no extraction attempted)
         """
         confidence: Dict[str, ConfidenceScore] = {}
-        text_lower = source_text.lower()
 
         # Score algorithm_name
         algo = data.get("algorithm_name")
@@ -287,6 +258,20 @@ CRITICAL RULES:
                 score=avg,
                 source="explicit" if avg >= 0.85 else "inferred",
                 evidence=f"Found {len([s for s in eq_scores if s >= 0.85])}/{len(equations)} equations in text",
+            )
+
+        # Score architecture details
+        arch = data.get("architecture", {})
+        if isinstance(arch, dict) and arch.get("layer_types"):
+            layer_scores = []
+            for layer in arch["layer_types"]:
+                score, _ = self._score_string_field(layer, source_text)
+                layer_scores.append(score)
+            avg = sum(layer_scores) / len(layer_scores) if layer_scores else 0.0
+            confidence["architecture.layer_types"] = ConfidenceScore(
+                score=avg,
+                source="explicit" if avg >= 0.85 else "inferred",
+                evidence=f"Found {len([s for s in layer_scores if s >= 0.85])}/{len(arch['layer_types'])} layers in text",
             )
 
         return confidence
@@ -379,9 +364,9 @@ CRITICAL RULES:
 
     def get_capabilities(self) -> Dict[str, Any]:
         return {
-            "description": "Extract structured method information with conformal prediction confidence scoring",
-            "extraction_method": "LLM-based (multi-model chain) with heuristic fallback",
+            "description": "Extract structured method information with architecture details and conformal prediction confidence scoring",
+            "extraction_method": "LLMRouter (role=reasoner) with heuristic fallback",
             "confidence_scoring": "Per-field conformal prediction (0.0-1.0)",
-            "model_preference": DEFAULT_MODEL_CHAIN,
-            "output_format": "MethodStruct JSON with confidence scores",
+            "architecture_extraction": "Layer types, dims, attention, preprocessing, key components",
+            "output_format": "MethodStruct JSON with ArchitectureDetail and confidence scores",
         }

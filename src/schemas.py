@@ -5,7 +5,7 @@ Upgraded with confidence scoring for Phase 3 (Conformal Prediction).
 
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class TrainingConfig(BaseModel):
@@ -39,6 +39,57 @@ class ConfidenceScore(BaseModel):
     )
 
 
+class ArchitectureDetail(BaseModel):
+    """Detailed architecture specification for code generation.
+
+    Captures the structural information the code generator needs to
+    produce architecture-specific (not generic) PyTorch code.
+    """
+    layer_types: List[str] = Field(
+        default_factory=list,
+        description="Ordered list of layer types, e.g. ['Conv2D', 'BiLSTM', 'Attention', 'Dense']",
+    )
+    input_shape: Optional[str] = Field(
+        default=None,
+        description="Input tensor shape, e.g. '(batch, 3, 224, 224)'",
+    )
+    output_shape: Optional[str] = Field(
+        default=None,
+        description="Output tensor shape, e.g. '(batch, num_classes)'",
+    )
+    num_classes: Optional[int] = Field(
+        default=None,
+        description="Number of output classes for classification tasks",
+    )
+    hidden_dims: List[int] = Field(
+        default_factory=list,
+        description="Hidden layer dimensions, e.g. [128, 256, 512]",
+    )
+    attention_type: Optional[str] = Field(
+        default=None,
+        description="Type of attention: 'self', 'cross', 'multi-head', 'additive', etc.",
+    )
+    preprocessing: List[str] = Field(
+        default_factory=list,
+        description="Data preprocessing steps, e.g. ['resize to 224x224', 'normalize']",
+    )
+    key_components: List[str] = Field(
+        default_factory=list,
+        description="Named components, e.g. ['ResBlock', 'BatchNorm', 'Dropout', 'SEBlock']",
+    )
+
+    @model_validator(mode="before")
+    @classmethod
+    def coerce_none_to_defaults(cls, data: Any) -> Any:
+        """LLMs often return null for list fields — coerce to empty list."""
+        if isinstance(data, dict):
+            list_fields = ["layer_types", "hidden_dims", "preprocessing", "key_components"]
+            for field in list_fields:
+                if data.get(field) is None:
+                    data[field] = []
+        return data
+
+
 class MethodStruct(BaseModel):
     algorithm_name: Optional[str] = Field(default=None)
     equations: List[str] = Field(default_factory=list)
@@ -47,6 +98,16 @@ class MethodStruct(BaseModel):
     inputs: Dict[str, str] = Field(default_factory=dict)
     outputs: Dict[str, str] = Field(default_factory=dict)
     references: List[str] = Field(default_factory=list)
+
+    # Architecture details for code generation
+    architecture: ArchitectureDetail = Field(
+        default_factory=ArchitectureDetail,
+        description="Detailed architecture breakdown for generating accurate code",
+    )
+    paper_summary: Optional[str] = Field(
+        default=None,
+        description="2-3 sentence summary of the paper's proposed method",
+    )
 
     # Phase 3: Confidence scores for each extracted field
     confidence: Dict[str, ConfidenceScore] = Field(

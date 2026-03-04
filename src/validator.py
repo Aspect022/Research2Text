@@ -2,7 +2,7 @@ import subprocess
 from pathlib import Path
 from typing import List
 
-from config import DEFAULT_OLLAMA_MODEL
+from config import SELF_HEAL_TEMPERATURE
 from schemas import GeneratedFile, RunResult, ValidationResult, MethodStruct
 
 
@@ -20,33 +20,39 @@ def run_and_capture(cmd: List[str], cwd: Path, timeout: int = 60) -> RunResult:
 
 
 def _llm_fix(files: List[GeneratedFile], error_text: str) -> List[GeneratedFile]:
-    try:
-        import ollama
-    except Exception:
-        return files
+    """Use LLMRouter (coder role) to fix broken code."""
+    from llm_router import LLMRouter
+    from config import SELF_HEAL_TEMPERATURE
+    import json
+
+    router = LLMRouter()
     sys_prompt = (
         "You are a senior Python engineer. The following files fail to run. "
-        "Return a fixed set of files as a JSON array with 'path' and 'content'."
+        "Fix the errors and return the corrected files as a JSON array "
+        "with 'path' and 'content' keys. Return ONLY valid JSON."
     )
-    user_prompt = """ERROR:
-{err}
-
-FILES:
-{files}
-
-Fix the code. Output JSON only.
-""".format(
-        err=error_text,
+    user_prompt = "ERROR:\n{err}\n\nFILES:\n{files}\n\nFix the code. Output JSON only.".format(
+        err=error_text[:3000],
         files="\n\n".join(f"[{f.path}]\n{f.content}" for f in files),
     )
-    resp = ollama.chat(model=DEFAULT_OLLAMA_MODEL, messages=[
-        {"role": "system", "content": sys_prompt},
-        {"role": "user", "content": user_prompt},
-    ])
-    import json
-    content = resp.get("message", {}).get("content", "")
     try:
-        arr = json.loads(content)
+        content = router.chat(
+            role="coder",
+            messages=[
+                {"role": "system", "content": sys_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            temperature=SELF_HEAL_TEMPERATURE,
+            inject_codegen_rules=True,
+        )
+        arr = json.loads(content) if content.strip().startswith("[") else []
+        if not arr:
+            # Try JSON extraction
+            start = content.find("[")
+            end = content.rfind("]")
+            if start != -1 and end > start:
+                arr = json.loads(content[start:end + 1])
+
         fixed = []
         for it in arr:
             p = it.get("path")

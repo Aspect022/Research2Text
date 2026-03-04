@@ -395,17 +395,12 @@ CMD ["python", "{entry}"]
     # ─── LLM Self-Heal ────────────────────────────────
 
     def _llm_fix(self, files: List[Dict[str, str]], error_text: str) -> List[Dict[str, str]]:
-        """Use LLM to fix code that failed execution."""
+        """Use LLMRouter (coder role) to fix code that failed execution."""
         try:
-            import ollama
-        except ImportError:
-            return files
+            from llm_router import LLMRouter
+            import json
 
-        try:
-            # Resolve available model
-            model = self._resolve_model(ollama)
-            if not model:
-                return files
+            router = LLMRouter()
 
             files_text = "\n\n".join(
                 f"=== {f['path']} ===\n{f['content']}" for f in files
@@ -421,14 +416,18 @@ FILES:
 
 Return ONLY a JSON array of objects with 'path' and 'content' keys. No markdown, no explanation."""
 
-            resp = ollama.chat(
-                model=model,
+            content = router.chat(
+                role="coder",
                 messages=[{"role": "user", "content": prompt}],
-                options={"temperature": SELF_HEAL_TEMPERATURE},
+                temperature=SELF_HEAL_TEMPERATURE,
+                inject_codegen_rules=True,
             )
 
-            import json
-            content = resp.get("message", {}).get("content", "").strip()
+            if not content:
+                return files
+
+            # Parse response
+            content = content.strip()
             if content.startswith("```"):
                 lines = content.split("\n")
                 content = "\n".join(l for l in lines if not l.strip().startswith("```"))
@@ -444,18 +443,6 @@ Return ONLY a JSON array of objects with 'path' and 'content' keys. No markdown,
         except Exception as e:
             logger.warning(f"[Validator] LLM fix failed: {e}")
             return files
-
-    def _resolve_model(self, ollama_module: Any) -> Optional[str]:
-        """Find an available Ollama model."""
-        try:
-            available = ollama_module.list()
-            if isinstance(available, dict):
-                models = available.get("models", [])
-                if models:
-                    return models[0].get("name")
-        except Exception:
-            pass
-        return None
 
     def get_capabilities(self) -> Dict[str, Any]:
         return {

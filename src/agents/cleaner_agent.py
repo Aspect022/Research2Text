@@ -150,10 +150,10 @@ class CleanerAgent(BaseAgent):
         try:
             # Import index function
             sys.path.insert(0, str(self.project_root / "src"))
-            from index_documents import index_all
+            from index_documents import index_documents
             
             # Re-index everything
-            index_all()
+            index_documents()
             
             # Get current stats
             stats = self._get_index_stats()
