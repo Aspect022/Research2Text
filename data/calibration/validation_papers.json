@@ -1,0 +1,343 @@
+{
+  "description": "Validation papers with ground truth annotations for conformal prediction calibration",
+  "version": "1.0.0",
+  "coverage_target": 0.9,
+  "papers": [
+    {
+      "paper_id": "synthetic_001",
+      "title": "Synthetic Paper 1",
+      "text_file": "synthetic_001.txt",
+      "ground_truth": {
+        "algorithm_name": "Convolutional Neural Network",
+        "datasets": [
+          "CIFAR-10",
+          "MNIST"
+        ],
+        "training": {
+          "optimizer": "Adam",
+          "loss": "CrossEntropyLoss",
+          "epochs": 50,
+          "learning_rate": 0.0005,
+          "batch_size": 32
+        },
+        "architecture": {
+          "layer_types": [
+            "Conv2D",
+            "ReLU",
+            "MaxPool",
+            "Flatten",
+            "Dense"
+          ],
+          "num_classes": 10,
+          "hidden_dims": [
+            128,
+            64
+          ]
+        }
+      }
+    },
+    {
+      "paper_id": "synthetic_002",
+      "title": "Synthetic Paper 2",
+      "text_file": "synthetic_002.txt",
+      "ground_truth": {
+        "algorithm_name": "Recurrent Neural Network",
+        "datasets": [
+          "IMDB",
+          "Penn Treebank"
+        ],
+        "training": {
+          "optimizer": "SGD",
+          "loss": "BinaryCrossEntropy",
+          "epochs": 110,
+          "learning_rate": 0.006,
+          "batch_size": 64
+        },
+        "architecture": {
+          "layer_types": [
+            "Embedding",
+            "LSTM",
+            "Dense",
+            "Sigmoid"
+          ],
+          "num_classes": 2,
+          "hidden_dims": [
+            128
+          ]
+        }
+      }
+    },
+    {
+      "paper_id": "synthetic_003",
+      "title": "Synthetic Paper 3",
+      "text_file": "synthetic_003.txt",
+      "ground_truth": {
+        "algorithm_name": "Transformer Model",
+        "datasets": [
+          "WMT",
+          "COCO"
+        ],
+        "training": {
+          "optimizer": "Adam",
+          "loss": "CrossEntropyLoss",
+          "epochs": 220,
+          "learning_rate": 7e-05,
+          "batch_size": 128
+        },
+        "architecture": {
+          "layer_types": [
+            "Embedding",
+            "MultiHeadAttention",
+            "LayerNorm",
+            "Dense"
+          ],
+          "num_classes": 50000,
+          "hidden_dims": [
+            512,
+            2048
+          ]
+        }
+      }
+    },
+    {
+      "paper_id": "synthetic_004",
+      "title": "Synthetic Paper 4",
+      "text_file": "synthetic_004.txt",
+      "ground_truth": {
+        "algorithm_name": "Convolutional Neural Network",
+        "datasets": [
+          "CIFAR-10",
+          "MNIST"
+        ],
+        "training": {
+          "optimizer": "Adam",
+          "loss": "CrossEntropyLoss",
+          "epochs": 80,
+          "learning_rate": 0.0008,
+          "batch_size": 32
+        },
+        "architecture": {
+          "layer_types": [
+            "Conv2D",
+            "ReLU",
+            "MaxPool",
+            "Flatten",
+            "Dense"
+          ],
+          "num_classes": 10,
+          "hidden_dims": [
+            128,
+            64
+          ]
+        }
+      }
+    },
+    {
+      "paper_id": "synthetic_005",
+      "title": "Synthetic Paper 5",
+      "text_file": "synthetic_005.txt",
+      "ground_truth": {
+        "algorithm_name": "Recurrent Neural Network",
+        "datasets": [
+          "IMDB",
+          "Penn Treebank"
+        ],
+        "training": {
+          "optimizer": "SGD",
+          "loss": "BinaryCrossEntropy",
+          "epochs": 140,
+          "learning_rate": 0.009000000000000001,
+          "batch_size": 64
+        },
+        "architecture": {
+          "layer_types": [
+            "Embedding",
+            "LSTM",
+            "Dense",
+            "Sigmoid"
+          ],
+          "num_classes": 2,
+          "hidden_dims": [
+            128
+          ]
+        }
+      }
+    },
+    {
+      "paper_id": "synthetic_006",
+      "title": "Synthetic Paper 6",
+      "text_file": "synthetic_006.txt",
+      "ground_truth": {
+        "algorithm_name": "Transformer Model",
+        "datasets": [
+          "WMT",
+          "COCO"
+        ],
+        "training": {
+          "optimizer": "Adam",
+          "loss": "CrossEntropyLoss",
+          "epochs": 250,
+          "learning_rate": 0.0001,
+          "batch_size": 128
+        },
+        "architecture": {
+          "layer_types": [
+            "Embedding",
+            "MultiHeadAttention",
+            "LayerNorm",
+            "Dense"
+          ],
+          "num_classes": 50000,
+          "hidden_dims": [
+            512,
+            2048
+          ]
+        }
+      }
+    },
+    {
+      "paper_id": "synthetic_007",
+      "title": "Synthetic Paper 7",
+      "text_file": "synthetic_007.txt",
+      "ground_truth": {
+        "algorithm_name": "Convolutional Neural Network",
+        "datasets": [
+          "CIFAR-10",
+          "MNIST"
+        ],
+        "training": {
+          "optimizer": "Adam",
+          "loss": "CrossEntropyLoss",
+          "epochs": 110,
+          "learning_rate": 0.0011,
+          "batch_size": 32
+        },
+        "architecture": {
+          "layer_types": [
+            "Conv2D",
+            "ReLU",
+            "MaxPool",
+            "Flatten",
+            "Dense"
+          ],
+          "num_classes": 10,
+          "hidden_dims": [
+            128,
+            64
+          ]
+        }
+      }
+    },
+    {
+      "paper_id": "synthetic_008",
+      "title": "Synthetic Paper 8",
+      "text_file": "synthetic_008.txt",
+      "ground_truth": {
+        "algorithm_name": "Recurrent Neural Network",
+        "datasets": [
+          "IMDB",
+          "Penn Treebank"
+        ],
+        "training": {
+          "optimizer": "SGD",
+          "loss": "BinaryCrossEntropy",
+          "epochs": 170,
+          "learning_rate": 0.012000000000000002,
+          "batch_size": 64
+        },
+        "architecture": {
+          "layer_types": [
+            "Embedding",
+            "LSTM",
+            "Dense",
+            "Sigmoid"
+          ],
+          "num_classes": 2,
+          "hidden_dims": [
+            128
+          ]
+        }
+      }
+    },
+    {
+      "paper_id": "synthetic_009",
+      "title": "Synthetic Paper 9",
+      "text_file": "synthetic_009.txt",
+      "ground_truth": {
+        "algorithm_name": "Transformer Model",
+        "datasets": [
+          "WMT",
+          "COCO"
+        ],
+        "training": {
+          "optimizer": "Adam",
+          "loss": "CrossEntropyLoss",
+          "epochs": 280,
+          "learning_rate": 0.00013000000000000002,
+          "batch_size": 128
+        },
+        "architecture": {
+          "layer_types": [
+            "Embedding",
+            "MultiHeadAttention",
+            "LayerNorm",
+            "Dense"
+          ],
+          "num_classes": 50000,
+          "hidden_dims": [
+            512,
+            2048
+          ]
+        }
+      }
+    },
+    {
+      "paper_id": "synthetic_010",
+      "title": "Synthetic Paper 10",
+      "text_file": "synthetic_010.txt",
+      "ground_truth": {
+        "algorithm_name": "Convolutional Neural Network",
+        "datasets": [
+          "CIFAR-10",
+          "MNIST"
+        ],
+        "training": {
+          "optimizer": "Adam",
+          "loss": "CrossEntropyLoss",
+          "epochs": 140,
+          "learning_rate": 0.0014,
+          "batch_size": 32
+        },
+        "architecture": {
+          "layer_types": [
+            "Conv2D",
+            "ReLU",
+            "MaxPool",
+            "Flatten",
+            "Dense"
+          ],
+          "num_classes": 10,
+          "hidden_dims": [
+            128,
+            64
+          ]
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "num_papers": 10,
+    "fields_covered": [
+      "algorithm_name",
+      "datasets",
+      "training.optimizer",
+      "training.loss",
+      "training.epochs",
+      "training.learning_rate",
+      "training.batch_size",
+      "architecture.layer_types",
+      "architecture.num_classes",
+      "architecture.hidden_dims"
+    ]
+  }
+}

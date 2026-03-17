@@ -1,0 +1,29 @@
+
+Title: Recurrent Neural Network
+
+Abstract:
+This paper presents a novel Recurrent Neural Network
+for solving complex machine learning tasks. Our approach achieves state-of-the-art
+results on multiple benchmark datasets.
+
+Methodology:
+We propose Recurrent Neural Network which uses a sophisticated
+neural architecture to learn representations from data.
+
+Architecture:
+The model consists of multiple layers including Embedding, LSTM, Dense, Sigmoid.
+The hidden dimensions are set to [128].
+The output layer produces predictions for 2 classes.
+
+Training:
+We train the model using the SGD optimizer
+with an initial learning rate of 0.012000000000000002.
+The batch size is set to 64.
+We train for 170 epochs.
+The loss function is BinaryCrossEntropy.
+
+Datasets:
+We evaluate our method on IMDB, Penn Treebank.
+
+Results:
+Our method achieves superior performance compared to baseline approaches.

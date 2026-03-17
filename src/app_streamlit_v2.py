@@ -752,7 +752,7 @@ def render_phase3_content(base_name: str) -> str:
     success = validation.get("success", False)
 
     html = f"<div style='margin-top: 12px;'>"
-    html += f"<div style='color: {'#00D4AA' if success else '#FF6B35'}; font-size: 1.2rem; font-weight: 600;'>"
+    html += f"<div style='color: {'#00D4AA' if success else '#FF6B35'}; font-size: 1.2rem; font-weight: 600;">"
     html += f"{'&#9989; Execution Successful' if success else '&#10060; Execution Failed'}"
     html += "</div>"
 

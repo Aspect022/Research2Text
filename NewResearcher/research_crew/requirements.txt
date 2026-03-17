@@ -1,0 +1,37 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Multi-Agent Research Citation Engine — Python Dependencies
+# Install: pip install -r requirements.txt
+# Python:  >= 3.10
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── CrewAI core ──────────────────────────────────────────────────────────────
+crewai>=0.76.0
+crewai-tools>=0.17.0
+
+# ── LLM / OpenAI ─────────────────────────────────────────────────────────────
+openai>=1.30.0
+langchain>=0.2.0
+langchain-openai>=0.1.0
+langchain-core>=0.2.0
+
+# ── Search APIs ──────────────────────────────────────────────────────────────
+exa-py>=1.1.0          # Exa neural search
+tavily-python>=0.3.3   # Tavily search (fallback)
+
+# ── Document parsing ─────────────────────────────────────────────────────────
+PyMuPDF>=1.24.0         # fitz — PDF text extraction
+beautifulsoup4>=4.12.0  # HTML parsing
+lxml>=5.2.0             # Fast BS4 parser backend
+requests>=2.32.0        # HTTP client
+
+# ── Token counting ───────────────────────────────────────────────────────────
+tiktoken>=0.7.0
+
+# ── Reliability ──────────────────────────────────────────────────────────────
+tenacity>=8.3.0         # Retry logic with exponential backoff
+
+# ── Environment / config ─────────────────────────────────────────────────────
+python-dotenv>=1.0.0
+
+# ── Type support (Python < 3.11) ─────────────────────────────────────────────
+pydantic>=2.0.0

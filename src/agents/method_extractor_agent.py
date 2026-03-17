@@ -1,9 +1,10 @@
 """
-Agent 4: Method Extractor Agent (Upgraded - Phase 3 + Dual Model)
+Agent 4: Method Extractor Agent (Upgraded - Phase 3 + Dual Model + Rules)
 Responsibility: Extract structured method information with confidence scoring
               and detailed architecture breakdown for code generation.
 
 Uses LLMRouter with role="reasoner" for extraction tasks.
+Loads comprehensive rules from data/rules/ for high-quality extraction.
 
 Implements a simplified Conformal Prediction framework:
   - Each extracted field gets a confidence score (0.0–1.0)
@@ -13,6 +14,7 @@ Implements a simplified Conformal Prediction framework:
 
 LLM Strategy:
   - Primary: LLMRouter with role="reasoner" (auto-selects best model)
+  - Rules: Comprehensive 10k+ line rule files for pattern matching
   - Fallback: Heuristic regex-based extraction
 """
 
@@ -28,6 +30,7 @@ from config import EXTRACTION_TEMPERATURE, MAX_TEXT_LENGTH_FOR_LLM, LOW_CONFIDEN
 from llm_router import LLMRouter
 from method_extractor import find_method_sections, extract_method_entities
 from schemas import ArchitectureDetail, ConfidenceScore, MethodStruct
+from rules import RuleLoader, load_rules_for_agent
 from .base import BaseAgent, AgentMessage, AgentResponse
 
 logger = logging.getLogger(__name__)
@@ -83,6 +86,20 @@ class MethodExtractorAgent(BaseAgent):
     def __init__(self, model: Optional[str] = None):
         super().__init__("method_extractor", "Method Extractor Agent")
         self._router = LLMRouter()
+        self._rules = self._load_rules()
+
+    def _load_rules(self) -> Optional[Dict[str, Any]]:
+        """Load comprehensive extraction rules."""
+        try:
+            rules = load_rules_for_agent("method_extraction")
+            logger.info(f"[MethodExtractor] Loaded rules version {rules.version}")
+            return rules
+        except FileNotFoundError:
+            logger.warning("[MethodExtractor] Rules not found, using default prompt")
+            return None
+        except Exception as e:
+            logger.error(f"[MethodExtractor] Error loading rules: {e}")
+            return None
 
     def process(self, message: AgentMessage) -> AgentResponse:
         """Extract method information with per-field confidence scores."""
@@ -174,8 +191,41 @@ class MethodExtractorAgent(BaseAgent):
                 return None
 
     def _llm_extract(self, text: str) -> Optional[Dict[str, Any]]:
-        """Run the LLM extraction with the enriched prompt via LLMRouter."""
-        prompt = EXTRACTION_PROMPT.format(text=text[:MAX_TEXT_LENGTH_FOR_LLM])
+        """Run the LLM extraction with rules-enhanced prompt via LLMRouter."""
+        # Build prompt with rules if available
+        if self._rules:
+            rules_context = RuleLoader.format_for_llm(self._rules, max_chars=6000)
+            prompt = f"""{rules_context}
+
+---
+
+Now extract method information from this research paper text:
+
+TEXT:
+{text[:MAX_TEXT_LENGTH_FOR_LLM]}
+
+Extract a JSON object following the patterns and rules above. For each field, indicate your confidence based on evidence strength in the text.
+
+Return ONLY valid JSON with these fields:
+- algorithm_name
+- paper_summary
+- equations
+- datasets
+- training (optimizer, loss, epochs, learning_rate, batch_size)
+- architecture (layer_types, input_shape, output_shape, num_classes, hidden_dims, attention_type, preprocessing, key_components)
+- inputs
+- outputs
+- references
+
+CRITICAL:
+1. Use patterns from the rules above
+2. Only extract explicitly stated information
+3. Use null for values not mentioned
+4. Return ONLY JSON, no markdown or explanation
+"""
+        else:
+            # Fallback to default prompt
+            prompt = EXTRACTION_PROMPT.format(text=text[:MAX_TEXT_LENGTH_FOR_LLM])
 
         result = self._router.chat_json(
             role="reasoner",

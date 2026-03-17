@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find D:/Projects/Research2Text-main/NewResearcher -type f -name *.py -o -name *.md -o -name *.txt -o -name *.json)",
+      "Bash(python:*)"
+    ]
+  }
+}

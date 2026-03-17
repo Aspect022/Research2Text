@@ -6,6 +6,8 @@ from typing import List, Dict
 import chromadb
 from chromadb.utils import embedding_functions
 
+from embeddings import HybridEmbedder, get_embedder
+
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 RAW_TEXT_DIR = PROJECT_ROOT / "data" / "raw_texts"
 CHROMA_DIR = PROJECT_ROOT / "data" / "chroma_db"
@@ -57,9 +59,26 @@ def index_documents(target_base: str = None) -> None:
 
     client = chromadb.PersistentClient(path=str(CHROMA_DIR))
 
-    embed_fn = embedding_functions.SentenceTransformerEmbeddingFunction(
-        model_name="sentence-transformers/all-MiniLM-L6-v2"
-    )
+    # Use hybrid embedder (Gemini if available, else MiniLM)
+    try:
+        embedder = get_embedder(prefer_gemini=True)
+        print(f"Using embedder: {embedder}")
+
+        # Create custom embedding function for ChromaDB
+        class HybridEmbeddingFunction(embedding_functions.EmbeddingFunction):
+            def __call__(self, texts: List[str]) -> List[List[float]]:
+                return embedder.embed(texts)
+
+            def __init__(self):
+                self._embedder = get_embedder(prefer_gemini=True)
+
+        embed_fn = HybridEmbeddingFunction()
+
+    except Exception as e:
+        print(f"Hybrid embedder failed: {e}, falling back to MiniLM")
+        embed_fn = embedding_functions.SentenceTransformerEmbeddingFunction(
+            model_name="sentence-transformers/all-MiniLM-L6-v2"
+        )
 
     collection = client.get_or_create_collection(
         name=COLLECTION_NAME,

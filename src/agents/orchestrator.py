@@ -282,7 +282,259 @@ class Orchestrator:
         
         logger.info(f"[Pipeline] Complete for '{paper_base}'. Errors: {len(results['errors'])}")
         return results
-    
+
+    def process_paper_to_knowledge_graph(
+        self,
+        pdf_path: Optional[Path] = None,
+        paper_base: Optional[str] = None,
+        text: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """
+        Process paper up to knowledge graph construction (no code generation).
+
+        This is Stage 1 of the new workflow:
+        1. Ingestion
+        2. Vision Processing
+        3. Chunking
+        4. Method Extraction
+        5. Equation Processing
+        6. Dataset Processing
+        7. Knowledge Graph Construction
+
+        Returns:
+            Results with method_struct, equations, datasets, knowledge_graph
+        """
+        if pdf_path is None and text is None:
+            return {
+                "paper_base": paper_base or "unknown",
+                "stages": {},
+                "errors": ["Either pdf_path or text must be provided"],
+                "ready_for_code_gen": False
+            }
+
+        if paper_base is None:
+            if pdf_path:
+                paper_base = pdf_path.stem
+            else:
+                paper_base = "unknown"
+
+        results = {
+            "paper_base": paper_base,
+            "pdf_path": str(pdf_path) if pdf_path else None,
+            "stages": {},
+            "errors": [],
+            "ready_for_code_gen": False,
+            "method_struct": None,
+            "equations": [],
+            "datasets": [],
+            "knowledge_graph": None
+        }
+
+        # Stage 1: Document Ingestion
+        logger.info(f"[Pipeline-Stage1] Ingestion for '{paper_base}'")
+        if pdf_path and pdf_path.exists():
+            ingest_msg = AgentMessage(
+                agent_id="orchestrator",
+                message_type="request",
+                payload={"pdf_path": str(pdf_path), "paper_base": paper_base}
+            )
+        elif text:
+            ingest_msg = AgentMessage(
+                agent_id="orchestrator",
+                message_type="request",
+                payload={"text": text, "paper_base": paper_base}
+            )
+        else:
+            results["errors"].append("No PDF path or text provided")
+            return results
+
+        ingest_response = self.dispatch("ingest", ingest_msg)
+        results["stages"]["ingestion"] = ingest_response.model_dump()
+
+        if not ingest_response.success:
+            results["errors"].append(f"Ingestion failed: {ingest_response.error}")
+            if not text:
+                return results
+            extracted_text = text
+        else:
+            extracted_text = ingest_response.data.get("text", text or "")
+
+        images = ingest_response.data.get("images", [])
+        tables_from_ingest = ingest_response.data.get("tables", [])
+        equations_from_ingest = ingest_response.data.get("equations", [])
+
+        # Stage 2: Vision Processing
+        logger.info(f"[Pipeline-Stage1] Vision Processing ({len(images)} images)")
+        vision_msg = AgentMessage(
+            agent_id="orchestrator",
+            message_type="request",
+            payload={"images": images, "tables": tables_from_ingest}
+        )
+        vision_response = self.dispatch("vision", vision_msg)
+        results["stages"]["vision"] = vision_response.model_dump()
+
+        # Stage 3: Chunking
+        logger.info(f"[Pipeline-Stage1] Chunking")
+        chunking_msg = AgentMessage(
+            agent_id="orchestrator",
+            message_type="request",
+            payload={"text": extracted_text, "paper_base": paper_base}
+        )
+        chunking_response = self.dispatch("chunking", chunking_msg)
+        results["stages"]["chunking"] = chunking_response.model_dump()
+        chunks = chunking_response.data.get("chunks", [])
+
+        # Stage 4: Method Extraction
+        logger.info(f"[Pipeline-Stage1] Method Extraction")
+        method_msg = AgentMessage(
+            agent_id="orchestrator",
+            message_type="request",
+            payload={"text": extracted_text, "chunks": chunks}
+        )
+        method_response = self.dispatch("method_extractor", method_msg)
+        results["stages"]["method_extraction"] = method_response.model_dump()
+
+        if not method_response.success:
+            results["errors"].append(f"Method extraction failed: {method_response.error}")
+            return results
+
+        method_struct = method_response.data.get("method_struct", {})
+        results["method_struct"] = method_struct
+
+        # Stage 5: Equation Processing
+        equations = list(set(method_struct.get("equations", []) + equations_from_ingest))
+        logger.info(f"[Pipeline-Stage1] Equation Processing ({len(equations)} equations)")
+        equation_results = []
+        for eq in equations:
+            eq_msg = AgentMessage(
+                agent_id="orchestrator",
+                message_type="request",
+                payload={"equation": eq, "format": "latex"}
+            )
+            eq_response = self.dispatch("equation", eq_msg)
+            equation_results.append(eq_response.model_dump())
+        results["stages"]["equations"] = equation_results
+        results["equations"] = equation_results
+
+        # Stage 6: Dataset Processing
+        datasets = method_struct.get("datasets", [])
+        logger.info(f"[Pipeline-Stage1] Dataset Processing ({len(datasets)} datasets)")
+        dataset_msg = AgentMessage(
+            agent_id="orchestrator",
+            message_type="request",
+            payload={"datasets": datasets}
+        )
+        dataset_response = self.dispatch("dataset_loader", dataset_msg)
+        results["stages"]["datasets"] = dataset_response.model_dump()
+        results["datasets"] = dataset_response.data
+
+        # Stage 7: Knowledge Graph Construction
+        logger.info(f"[Pipeline-Stage1] Knowledge Graph Construction")
+        graph_msg = AgentMessage(
+            agent_id="orchestrator",
+            message_type="request",
+            payload={
+                "paper_base": paper_base,
+                "method_struct": method_struct,
+                "chunks": chunks,
+                "equations": equation_results,
+                "datasets": datasets
+            }
+        )
+        graph_response = self.dispatch("graph_builder", graph_msg)
+        results["stages"]["knowledge_graph"] = graph_response.model_dump()
+        results["knowledge_graph"] = graph_response.data
+
+        # Mark as ready for code generation
+        results["ready_for_code_gen"] = len(results["errors"]) == 0
+        results["extracted_text"] = extracted_text
+
+        logger.info(f"[Pipeline-Stage1] Complete. Ready for code gen: {results['ready_for_code_gen']}")
+        return results
+
+    def generate_code(
+        self,
+        paper_base: str,
+        method_struct: Dict[str, Any],
+        equations: List[Dict],
+        datasets: Dict[str, Any],
+        paper_text: str
+    ) -> Dict[str, Any]:
+        """
+        Generate code from extracted method information.
+
+        This is Stage 2 of the new workflow.
+
+        Returns:
+            Code generation results with files
+        """
+        logger.info(f"[Pipeline-Stage2] Code Generation for '{paper_base}'")
+
+        code_msg = AgentMessage(
+            agent_id="orchestrator",
+            message_type="request",
+            payload={
+                "method_struct": method_struct,
+                "equations": equations,
+                "datasets": datasets,
+                "paper_text": paper_text,
+            }
+        )
+        code_response = self.dispatch("code_architect", code_msg)
+
+        results = {
+            "paper_base": paper_base,
+            "stage": "code_generation",
+            "code_generation": code_response.model_dump(),
+            "files": code_response.data.get("files", []),
+            "success": code_response.success,
+            "error": code_response.error if not code_response.success else None
+        }
+
+        logger.info(f"[Pipeline-Stage2] Complete. Generated {len(results['files'])} files")
+        return results
+
+    def run_sandbox_validation(
+        self,
+        paper_base: str,
+        files: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
+        """
+        Run sandbox validation on generated code.
+
+        This is Stage 3 of the new workflow.
+
+        Returns:
+            Validation results with execution output
+        """
+        logger.info(f"[Pipeline-Stage3] Sandbox Validation for '{paper_base}'")
+
+        if not files:
+            return {
+                "paper_base": paper_base,
+                "stage": "validation",
+                "success": False,
+                "error": "No files to validate"
+            }
+
+        validation_msg = AgentMessage(
+            agent_id="orchestrator",
+            message_type="request",
+            payload={"files": files, "paper_base": paper_base}
+        )
+        validation_response = self.dispatch("validator", validation_msg)
+
+        results = {
+            "paper_base": paper_base,
+            "stage": "validation",
+            "validation": validation_response.model_dump(),
+            "success": validation_response.success,
+            "error": validation_response.error if not validation_response.success else None
+        }
+
+        logger.info(f"[Pipeline-Stage3] Complete. Success: {results['success']}")
+        return results
+
     def get_agent_status(self) -> Dict[str, Any]:
         """Get status and capabilities of all agents."""
         return {

@@ -1,0 +1,20 @@
+{
+  "algorithm_name": {
+    "coverage_rate": 0.3,
+    "target_coverage": 0.9,
+    "coverage_gap": 0.6000000000000001,
+    "num_samples": 10,
+    "avg_set_size": 0.3,
+    "median_set_size": 0.0,
+    "max_set_size": 1
+  },
+  "datasets": {
+    "coverage_rate": 0.4,
+    "target_coverage": 0.9,
+    "coverage_gap": 0.5,
+    "num_samples": 10,
+    "avg_set_size": 1.0,
+    "median_set_size": 1.0,
+    "max_set_size": 1
+  }
+}

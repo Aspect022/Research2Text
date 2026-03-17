@@ -1,232 +1,72 @@
-# Multi-Agent Architecture Implementation
+# Multi-Agent Architecture (GenAI Upgrade)
 
-This document describes the new multi-agent architecture implemented based on the NLM_Final.pdf specifications.
+This document describes the upgraded **Multi-Agent Architecture** for **Research2Code-GenAI**, reflecting the transition to a **Conformal Generative Vision-Language Framework** for Autonomous Scientific Reproduction.
 
-## Overview
+The framework moves beyond simple multi-agent pipelining to an autonomous **Perception-Cognition-Action** loop with embedded conformal prediction to guarantee structured coverage and prevent hallucinations.
 
-The system has been converted from a monolithic pipeline to a **9-agent multi-agent system** with an orchestration layer, maintaining full backward compatibility with existing functionality.
+## Architecture Overview
 
-## Architecture
+The system is orchestrated into three primary engines:
 
-### Layer 1: Orchestration Layer
+### 1. Perception Engine
+Responsible for high-fidelity visual and semantic extraction from unstructured PDFs, addressing the modality gap between academic papers and structured code.
+*   **MinerU Subsystem:** The primary parser that translates PDFs into structured JSON while preserving crucial LaTeX equations, tables, and document layout semantics.
+*   **olmOCR Fallback Subsystem:** Triggered for visually complex pages where heuristic parsing fails, utilizing fine-tuned Vision-Language Models for deep visual reading.
+*   **Semantic Chunking & Vector Store:** The extracted text, equations, and structures are semantically chunked and stored in **ChromaDB** for efficient retrieval.
 
-- **Orchestrator** (`src/agents/orchestrator.py`): Central coordinator managing workflow, task dispatch, result aggregation, and error recovery
+### 2. Cognitive Engine
+The "brain" of the architecture, where information is analyzed, reasoned upon, and evaluated for uncertainty before code is generated.
+*   **Local LLM Reasoning:** Powered by robust local models (e.g., DeepSeek-V3, Qwen-2.5-Coder) to analyze the method structure and mathematical formulations.
+*   **Hierarchical Conformal Prediction Guardrails:** An embedded conformal scoring mechanism quantifies uncertainty at the token, field, and document levels. 
+    *   **High Confidence:** The system commits the extracted parameter or architectural detail.
+    *   **Uncertain/Low Confidence (Size > 1):** The system abstains and triggers an Active Search (e.g., querying the appendix or references).
+    *   **Out of Distribution (Size = 0):** Flags the extraction for human review.
+*   **Geometry-Aware Nonconformity Scoring:** Fuses visual layout, reading order, and semantic embeddings to construct region-sensitive nonconformity scores, moving away from simple post-hoc Monte Carlo dropout techniques.
 
-### Layer 2: Agent Layer (9 Specialized Agents)
+### 3. Action Engine
+The execution layer that actively generates, attempts to run, and autonomously corrects the scientific implementation.
+*   **Code Architect Agent (OpenHands Integration):** Synthesizes the full PyTorch repository (model architectures, training loops, dataset loaders) based on the highly-confident extractions from the Cognitive Engine.
+*   **Docker Sandbox Execution:** Safely executes the generated code and unit tests in an isolated Docker environment.
+*   **Self-Healing Verification Loop:** 
+    *   If execution produces a runtime error or metric mismatch, the **Error Analyzer** feeds the exact trace and discrepancies back to the Cognitive Engine.
+    *   The Cognitive Engine reprompts the Code Architect to patch the specific layers or implementation details, iterating until the tests pass and findings match the paper.
 
-1. **Ingest Agent** (`src/agents/ingest_agent.py`)
+## End-to-End Workflow Diagram
 
-   - PDF processing and content extraction
-   - Text and image extraction
-   - Metadata collection
+```mermaid
+graph TD
+    subgraph "Phase 1: Perception Engine"
+        A[PDF Input] --> B{Layout Analysis}
+        B -- Tables/Equations/Formatting --> C[MinerU]
+        B -- Visually Complex Pages --> D[olmOCR]
+        C & D --> E[Semantic Chunking]
+        E --> F[(ChromaDB Vector Store)]
+    end
 
-2. **Vision Agent** (`src/agents/vision_agent.py`)
+    subgraph "Phase 2: Cognitive Engine"
+        F --> G[Context Retrieval]
+        G --> H[DeepSeek-V3 / Qwen-2.5-Coder]
+        H --> I{Conformal Guardrails}
+        I -- High Confidence (Set Size = 1) --> J[Methodology JSON]
+        I -- Low Confidence (Set Size > 1) --> K[Active Search / Abstain]
+        I -- OOD (Set Size = 0) --> L[Human Review Flag]
+        K --> G
+    end
 
-   - OCR using Tesseract
-   - Image captioning with BLIP
-   - Table extraction with Camelot
-
-3. **Chunking Agent** (`src/agents/chunking_agent.py`)
-
-   - Semantic chunking (750 words, 100 overlap)
-   - Embedding generation using Sentence Transformers
-
-4. **Method Extractor Agent** (`src/agents/method_extractor_agent.py`)
-
-   - LLM-based structured information extraction
-   - Heuristic fallback
-   - Extracts: algorithms, equations, datasets, training configs
-
-5. **Equation Agent** (`src/agents/equation_agent.py`)
-
-   - LaTeX normalization
-   - SymPy conversion
-   - PyTorch code generation
-
-6. **Dataset Loader Agent** (`src/agents/dataset_loader_agent.py`)
-
-   - Fuzzy matching for dataset canonicalization (87% accuracy)
-   - Automatic loader code generation
-   - Supports: CIFAR-10, CIFAR-100, MNIST, ImageNet, Cora, CiteSeer, PubMed
-
-7. **Code Architect Agent** (`src/agents/code_architect_agent.py`)
-
-   - Complete Python project synthesis
-   - Generates: model.py, train.py, dataset_loader.py, requirements.txt
-   - 98% syntax correctness, 97% import resolution
-
-8. **Graph Builder Agent** (`src/agents/graph_builder_agent.py`)
-
-   - Knowledge graph construction
-   - Node types: Paper, Section, Concept, Equation, Algorithm, Dataset, Metric, Figure, Table, Citation
-   - Average: 47 nodes, 82 edges per paper
-
-9. **Validator Agent** (`src/agents/validator_agent.py`)
-
-   - AST parsing for syntax validation
-   - Import resolution checking
-   - Error reporting with suggestions
-
-10. **Cleaner Agent** (`src/agents/cleaner_agent.py`) ✨ **NEW!**
-
-- Remove outdated chunks from RAG database
-- Clean orphaned entries (in DB but not in files, or vice versa)
-- Refresh ChromaDB index
-- Base-specific cleanup
-- Age-based cleanup (remove chunks older than N days)
-- Dry-run mode for safe preview
-
-## Usage
-
-### Streamlit Interface
-
-The Streamlit app now includes a checkbox to enable multi-agent processing:
-
-```python
-# In the "Paper → Code" tab
-use_multiagent = st.checkbox(
-    "Use Multi-Agent Architecture (9 specialized agents)",
-    value=False
-)
+    subgraph "Phase 3: Action Engine"
+        J --> M[Code Architect Agent]
+        M --> N[OpenHands Docker Sandbox]
+        N -- Validate & Execute Unit Tests --> O{Execution Success?}
+        O -- ✅ Match & Pass --> P[Verified PyTorch Repo]
+        O -- ❌ Error/Mismatch --> Q[Error Analyzer]
+        Q --> H
+    end
 ```
 
-### Programmatic Usage
+## Hardware and Training Efficiency
+The conformal generative models and cognitive layers are optimized for localized execution on single consumer-grade or workstation GPUs (e.g., NVIDIA RTX 3090/4090, RTX 5050), utilizing parameter-efficient adaptation strategies like LoRA, layer-wise scaling, and low-rank visual adapters.
 
-```python
-from src.agents.orchestrator import Orchestrator
-from pathlib import Path
-
-# Initialize orchestrator
-orchestrator = Orchestrator()
-
-# Process a paper
-pdf_path = Path("data/raw_pdfs/paper.pdf")
-results = orchestrator.process_paper(pdf_path, paper_base="paper")
-
-# Or use the wrapper function
-from src.paper_to_code_multiagent import run_paper_to_code
-out_dir = run_paper_to_code("paper_base", use_multiagent=True)
-```
-
-### Individual Agent Usage
-
-```python
-from src.agents.ingest_agent import IngestAgent
-from src.agents.base import AgentMessage
-
-agent = IngestAgent()
-message = AgentMessage(
-    agent_id="user",
-    message_type="request",
-    payload={"pdf_path": "path/to/paper.pdf"}
-)
-response = agent.process(message)
-```
-
-## Backward Compatibility
-
-The original `paper_to_code.py` function remains unchanged and fully functional. The new multi-agent system is available as an **optional enhancement**:
-
-- **Legacy mode**: `run_paper_to_code(paper_base)` - uses original pipeline
-- **Multi-agent mode**: `run_paper_to_code(paper_base, use_multiagent=True)` - uses new architecture
-
-## New Features
-
-1. **Knowledge Graph**: Generates `knowledge_graph.json` with nodes and edges
-2. **Enhanced Vision Processing**: OCR, captioning, and table extraction
-3. **Better Dataset Handling**: Fuzzy matching and automatic loader generation
-4. **Improved Validation**: AST-based syntax checking and import resolution
-5. **Modular Design**: Each agent can be improved independently
-6. **Database Cleaner**: Remove outdated chunks, refresh index, maintain database hygiene
-
-## File Structure
-
-```
-src/
-├── agents/
-│   ├── __init__.py
-│   ├── base.py              # Base classes and message schemas
-│   ├── orchestrator.py      # Orchestration layer
-│   ├── ingest_agent.py      # Agent 1
-│   ├── vision_agent.py      # Agent 2
-│   ├── chunking_agent.py    # Agent 3
-│   ├── method_extractor_agent.py  # Agent 4
-│   ├── equation_agent.py    # Agent 5
-│   ├── dataset_loader_agent.py   # Agent 6
-│   ├── code_architect_agent.py   # Agent 7
-│   ├── graph_builder_agent.py    # Agent 8
-│   ├── validator_agent.py   # Agent 9
-│   └── cleaner_agent.py      # Agent 10
-├── paper_to_code.py         # Original (unchanged)
-└── paper_to_code_multiagent.py  # New multi-agent wrapper
-```
-
-## Performance Metrics
-
-Based on the paper specifications:
-
-- **Method Extraction**: 85-92% accuracy
-- **Code Generation**: 98% syntax correctness, 97% import resolution
-- **Dataset Canonicalization**: 87% accuracy
-- **Processing Time**: ~45 seconds per 10-page paper
-- **Knowledge Graph**: Average 47 nodes, 82 edges per paper
-
-## Future Enhancements
-
-1. Asynchronous agent processing
-2. Enhanced BLIP integration for image captioning
-3. Im2LaTeX for advanced equation recognition
-4. Fine-tuned domain-specific models
-5. Multi-paper synthesis and cross-paper reasoning
-
-## Cleaner Agent Usage
-
-The Cleaner Agent helps maintain database hygiene by removing outdated chunks:
-
-### Streamlit UI
-
-- Available in the sidebar under "🧹 Database Cleaner"
-- Options: Refresh Index, Clean Old Chunks, Clean Base, Full Clean
-- Dry-run mode available for safe preview
-
-### Command Line
-
-```bash
-# Refresh the index
-python src/clean_rag.py refresh
-
-# Clean chunks older than 30 days (dry run)
-python src/clean_rag.py clean_old --days 30 --dry-run
-
-# Clean chunks older than 30 days (apply)
-python src/clean_rag.py clean_old --days 30 --apply
-
-# Clean all chunks for a specific base
-python src/clean_rag.py clean_base --base "paper_name" --apply
-
-# Full cleanup (old chunks + orphans + refresh)
-python src/clean_rag.py full_clean --days 30 --apply
-```
-
-### Programmatic
-
-```python
-from src.clean_rag import clean_old_chunks, refresh_index, clean_base
-
-# Clean old chunks
-result = clean_old_chunks(days_old=30, dry_run=False)
-
-# Refresh index
-result = refresh_index()
-
-# Clean specific base
-result = clean_base("paper_name", dry_run=False)
-```
-
-## Notes
-
-- All agents use standardized `AgentMessage` and `AgentResponse` formats
-- Error handling is built into each agent
-- The orchestrator manages error recovery and fallbacks
-- Existing functionality is preserved - no breaking changes
-- **Cleaner Agent** automatically removes outdated chunks and keeps RAG index fresh
+## Key Novelties in the Upgraded Architecture
+1. **OCR-Free Generative Document Extraction:** Bypasses error-prone traditional OCR pipelines in favor of MinerU and olmOCR, preserving visual-spatial integrity.
+2. **Abstention-Aware Decoding:** Unlike standard agents that hallucinate details when unsure, the Cognitive Engine will actively abstain and request more retrieval when confidence falls below the calibrated conformal threshold.
+3. **Closed-Loop Execution:** OpenHands autonomously writes tests against the paper's claimed mathematical constraints and ensures the generated model code actually builds and trains before concluding the task.
