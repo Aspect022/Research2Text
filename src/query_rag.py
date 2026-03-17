@@ -8,6 +8,16 @@ from chromadb.utils import embedding_functions
 from config import CHROMA_DIR, COLLECTION_NAME, EMBEDDING_MODEL, DEFAULT_OLLAMA_MODEL
 
 
+def get_collection_name_for_embedder(embedder) -> str:
+    """Get collection name based on embedder dimension."""
+    try:
+        test_embedding = embedder.embed(["test"])
+        dim = len(test_embedding[0])
+        return f"{COLLECTION_NAME}_{dim}"
+    except Exception:
+        return COLLECTION_NAME
+
+
 def retrieve(query: str, top_k: int = 5, base_name: str = None) -> List[dict]:
     """
     Retrieve relevant chunks for a query.
@@ -30,11 +40,13 @@ def retrieve(query: str, top_k: int = 5, base_name: str = None) -> List[dict]:
             def __init__(self):
                 pass
         embed_fn = HybridEmbeddingFunction()
+        collection_name = get_collection_name_for_embedder(embedder)
     except Exception as e:
         embed_fn = embedding_functions.SentenceTransformerEmbeddingFunction(
             model_name=EMBEDDING_MODEL
         )
-    collection = client.get_collection(name=COLLECTION_NAME, embedding_function=embed_fn)
+        collection_name = COLLECTION_NAME
+    collection = client.get_collection(name=collection_name, embedding_function=embed_fn)
     
     # If base_name is provided, filter by metadata
     # ChromaDB where filter syntax: {"metadata_field": "value"}

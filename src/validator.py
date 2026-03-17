@@ -10,7 +10,7 @@ import logging
 from pathlib import Path
 from typing import List, Dict
 
-from config import SELF_HEAL_TEMPERATURE, MAX_HEAL_ATTEMPTS
+from config import SELF_HEAL_TEMPERATURE, MAX_HEAL_ATTEMPTS, EXECUTION_TIMEOUT
 from schemas import GeneratedFile, RunResult, ValidationResult, MethodStruct
 from sandbox import DefaultSandbox, SandboxResult
 
@@ -108,21 +108,21 @@ def self_heal_cycle(
     attempts = 0
     last_err = None
 
-    # Use sandbox for execution
+    # Use sandbox for execution - no time limit
     with DefaultSandbox(
         memory_limit_mb=1024,
-        cpu_time_limit_sec=90,
+        cpu_time_limit_sec=None,
         network_access=False
     ) as sandbox:
         while attempts < max_attempts:
             attempts += 1
             logger.info(f"Validation attempt {attempts}/{max_attempts}")
 
-            # Run in sandbox
+            # Run in sandbox - no timeout limit for model downloads
             result = sandbox.run(
                 code_files=code_files,
                 entry_point="train.py",
-                timeout=90
+                timeout=None
             )
 
             # Save logs

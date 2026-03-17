@@ -66,8 +66,8 @@ Extract a JSON object with these fields. For each field, ONLY include values you
     "preprocessing": ["Data preprocessing steps mentioned, e.g. 'resize to 48x48', 'grayscale conversion', 'normalization'"],
     "key_components": ["Named architectural components, e.g. 'ResidualBlock', 'SqueezeExcitation', 'DropoutLayer', 'BatchNorm']"]
   }},
-  "inputs": {{"description": "What the model takes as input (e.g. 'facial expression images 48x48 grayscale')"}},
-  "outputs": {{"description": "What the model produces (e.g. '7-class emotion prediction')"}},
+  "inputs_description": "What the model takes as input (e.g. 'facial expression images 48x48 grayscale')",
+  "outputs_description": "What the model produces (e.g. '7-class emotion prediction')",
   "references": ["Citation markers like [1], [2]"]
 }}
 

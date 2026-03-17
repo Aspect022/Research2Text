@@ -66,7 +66,7 @@ class WindowsSandbox(BaseSandbox):
     def __init__(
         self,
         memory_limit_mb: int = 1024,
-        cpu_time_limit_sec: int = 90,
+        cpu_time_limit_sec: Optional[int] = None,
         network_access: bool = False
     ):
         super().__init__(memory_limit_mb, cpu_time_limit_sec, network_access)
@@ -184,9 +184,12 @@ class WindowsSandbox(BaseSandbox):
         import time
         start_time = time.time()
 
-        # Use default timeout if not specified
+        # Use default timeout if not specified (None = no timeout)
         if timeout is None:
-            timeout = self.cpu_time_limit_sec
+            timeout = self.cpu_time_limit_sec if self.cpu_time_limit_sec is not None else 3600 if self.cpu_time_limit_sec is not None else 0
+            # If still None/0, use a very large timeout (effectively no limit)
+            if timeout is None or timeout == 0:
+                timeout = 3600  # 1 hour max
 
         # Create temporary directory for isolation
         with tempfile.TemporaryDirectory() as sandbox_dir:
@@ -326,7 +329,7 @@ if __name__ == "__main__":
         self,
         runner_path: Path,
         sandbox_path: Path,
-        timeout: int
+        timeout: Optional[int] = 3600
     ) -> subprocess.CompletedProcess:
         """
         Execute Python with restrictions.
@@ -415,7 +418,7 @@ class LinuxSandbox(BaseSandbox):
     def __init__(
         self,
         memory_limit_mb: int = 1024,
-        cpu_time_limit_sec: int = 90,
+        cpu_time_limit_sec: Optional[int] = None,
         network_access: bool = False
     ):
         super().__init__(memory_limit_mb, cpu_time_limit_sec, network_access)
@@ -437,7 +440,7 @@ class LinuxSandbox(BaseSandbox):
         start_time = time.time()
 
         if timeout is None:
-            timeout = self.cpu_time_limit_sec
+            timeout = self.cpu_time_limit_sec if self.cpu_time_limit_sec is not None else 3600
 
         with tempfile.TemporaryDirectory() as sandbox_dir:
             sandbox_path = Path(sandbox_dir)
@@ -478,7 +481,7 @@ class LinuxSandbox(BaseSandbox):
         self,
         sandbox_path: Path,
         entry_point: str,
-        timeout: int
+        timeout: Optional[int] = 3600
     ) -> subprocess.CompletedProcess:
         """Run with Firejail."""
         cmd = [
@@ -486,7 +489,7 @@ class LinuxSandbox(BaseSandbox):
             "--noprofile",
             f"--private={sandbox_path}",
             "--net=none" if not self.network_access else "",
-            f"--rlimit-cpu={timeout}",
+            f"--rlimit-cpu={timeout}" if timeout else "",
             f"--rlimit-as={self.memory_limit_mb * 1024 * 1024}",
             sys.executable,
             "-I", "-S",
@@ -496,19 +499,20 @@ class LinuxSandbox(BaseSandbox):
         # Remove empty strings
         cmd = [c for c in cmd if c]
 
+        firejail_timeout = timeout + 10 if timeout else 3610
         return subprocess.run(
             cmd,
             cwd=str(sandbox_path),
             capture_output=True,
             text=True,
-            timeout=timeout + 10  # Extra time for firejail setup
+            timeout=firejail_timeout
         )
 
     def _run_restricted(
         self,
         sandbox_path: Path,
         entry_point: str,
-        timeout: int
+        timeout: Optional[int] = 3600
     ) -> subprocess.CompletedProcess:
         """Run with restricted Python (no Firejail)."""
         # Similar to Windows restricted runner

@@ -14,13 +14,25 @@ from .base import BaseAgent, AgentMessage, AgentResponse
 
 class CleanerAgent(BaseAgent):
     """Agent for cleaning outdated chunks and maintaining RAG database."""
-    
+
     def __init__(self):
         super().__init__("cleaner", "Cleaner Agent")
         self.project_root = Path(__file__).resolve().parents[2]
         self.raw_text_dir = self.project_root / "data" / "raw_texts"
         self.chroma_dir = self.project_root / "data" / "chroma_db"
         self.collection_name = "research_papers"
+
+    def _get_collection_name(self) -> str:
+        """Get collection name based on current embedder dimension."""
+        try:
+            sys.path.insert(0, str(self.project_root / "src"))
+            from embeddings import get_embedder
+            embedder = get_embedder(prefer_gemini=True)
+            test_embedding = embedder.embed(["test"])
+            dim = len(test_embedding[0])
+            return f"{self.collection_name}_{dim}"
+        except Exception:
+            return self.collection_name
     
     def process(self, message: AgentMessage) -> AgentResponse:
         """Clean outdated chunks and refresh the index."""

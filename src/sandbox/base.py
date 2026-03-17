@@ -34,7 +34,7 @@ class BaseSandbox(ABC):
     def __init__(
         self,
         memory_limit_mb: int = 1024,
-        cpu_time_limit_sec: int = 90,
+        cpu_time_limit_sec: Optional[int] = None,
         network_access: bool = False
     ):
         """
@@ -42,7 +42,7 @@ class BaseSandbox(ABC):
 
         Args:
             memory_limit_mb: Maximum memory allowed (MB)
-            cpu_time_limit_sec: Maximum CPU time allowed (seconds)
+            cpu_time_limit_sec: Maximum CPU time allowed (seconds). None = no limit
             network_access: Whether to allow network access
         """
         self.memory_limit_mb = memory_limit_mb

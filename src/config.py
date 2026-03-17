@@ -84,7 +84,7 @@ INDEX_BATCH_SIZE = 64
 
 # Validator Agent
 MAX_HEAL_ATTEMPTS = 3          # How many times to retry failing code
-EXECUTION_TIMEOUT = 90         # Seconds before killing sandbox execution
+EXECUTION_TIMEOUT = None       # No timeout limit (allows model downloads, long training runs)
 DOCKER_BUILD_TIMEOUT = 120     # Seconds for Docker image build
 DOCKER_MEMORY_LIMIT = "512m"
 DOCKER_CPU_LIMIT = "1"

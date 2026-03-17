@@ -15,6 +15,16 @@ CHROMA_DIR = PROJECT_ROOT / "data" / "chroma_db"
 COLLECTION_NAME = "research_papers"
 
 
+def get_collection_name(embedder) -> str:
+    """Get collection name based on embedder dimension."""
+    try:
+        test_embedding = embedder.embed(["test"])
+        dim = len(test_embedding[0])
+        return f"{COLLECTION_NAME}_{dim}"
+    except Exception:
+        return COLLECTION_NAME
+
+
 def load_chunks_for_base(base_name: str) -> List[Dict[str, str]]:
     """Load chunks for a specific base name, handling special characters in filenames."""
     chunks: List[Dict[str, str]] = []
@@ -64,6 +74,10 @@ def index_documents(target_base: str = None) -> None:
         embedder = get_embedder(prefer_gemini=True)
         print(f"Using embedder: {embedder}")
 
+        # Get collection name based on dimension
+        collection_name = get_collection_name(embedder)
+        print(f"Using collection: {collection_name}")
+
         # Create custom embedding function for ChromaDB
         class HybridEmbeddingFunction(embedding_functions.EmbeddingFunction):
             def __call__(self, texts: List[str]) -> List[List[float]]:
@@ -79,24 +93,17 @@ def index_documents(target_base: str = None) -> None:
         embed_fn = embedding_functions.SentenceTransformerEmbeddingFunction(
             model_name="sentence-transformers/all-MiniLM-L6-v2"
         )
+        collection_name = COLLECTION_NAME
 
     try:
         collection = client.get_or_create_collection(
-            name=COLLECTION_NAME,
+            name=collection_name,
             embedding_function=embed_fn,
             metadata={"hnsw:space": "cosine"},
         )
-    except ValueError as e:
-        if "Embedding function conflict" in str(e):
-            print("Embedding function conflict detected. Recreating the collection...")
-            client.delete_collection(name=COLLECTION_NAME)
-            collection = client.get_or_create_collection(
-                name=COLLECTION_NAME,
-                embedding_function=embed_fn,
-                metadata={"hnsw:space": "cosine"},
-            )
-        else:
-            raise
+    except Exception as e:
+        print(f"Error creating collection: {e}")
+        raise
 
     # Find all chunk files - need to escape special characters in glob
     # Get all files ending with _chunk_*.txt and extract base names

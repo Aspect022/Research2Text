@@ -18,7 +18,7 @@
       },
       "error": null,
       "metadata": {},
-      "processing_time": 6.198883056640625e-05
+      "processing_time": 2.5510787963867188e-05
     },
     "vision": {
       "success": true,
@@ -29,7 +29,7 @@
       },
       "error": null,
       "metadata": {},
-      "processing_time": 1.8596649169921875e-05
+      "processing_time": 1.4543533325195312e-05
     },
     "chunking": {
       "success": true,
@@ -7783,20 +7783,17 @@
       },
       "error": null,
       "metadata": {},
-      "processing_time": 5.436575412750244
+      "processing_time": 5.745788097381592
     },
     "method_extraction": {
       "success": true,
       "data": {
         "method_struct": {
-          "algorithm_name": "Transformer",
-          "equations": [
-            "Softmax",
-            "softmax",
-            "softmax",
-            "Softmax"
+          "algorithm_name": "SwinTConvNeXt-LDGF",
+          "equations": [],
+          "datasets": [
+            "BreakHis"
           ],
-          "datasets": [],
           "training": {
             "optimizer": null,
             "loss": null,
@@ -7806,76 +7803,94 @@
           },
           "inputs": {},
           "outputs": {},
-          "references": [],
+          "inputs_description": "breast cancer histopathology images",
+          "outputs_description": "classification into eight categories",
+          "references": [
+            "[1]",
+            "[2]",
+            "[3]",
+            "[4]",
+            "[5]",
+            "[6]",
+            "[7]",
+            "[8]",
+            "[9]",
+            "[10]",
+            "[11]",
+            "[12]",
+            "[13]",
+            "[14]",
+            "[15]",
+            "[16]",
+            "[17]",
+            "[18]",
+            "[19]",
+            "[20]",
+            "[21]",
+            "[22]"
+          ],
           "architecture": {
-            "layer_types": [],
+            "layer_types": [
+              "Swin Transformer",
+              "ConvNeXt",
+              "learnable dynamic gating network"
+            ],
             "input_shape": null,
             "output_shape": null,
-            "num_classes": null,
+            "num_classes": 8,
             "hidden_dims": [],
-            "attention_type": null,
+            "attention_type": "self-attention",
             "preprocessing": [],
-            "key_components": []
+            "key_components": [
+              "Swin Transformer backbone",
+              "ConvNeXt backbone",
+              "learnable dynamic gating fusion"
+            ]
           },
-          "paper_summary": null,
+          "paper_summary": "A hybrid multi-class classification framework using the Swin Transformer and ConvNeXt model. The proposed SwinTConvNeXt-LDGF model dynamically fuses local-global features within a learnable dynamic gating network and classifies pathological images into different categories.",
           "confidence": {
             "algorithm_name": {
               "score": 1.0,
-              "source": "heuristic",
-              "evidence": "...y |\nSwinTConvNeXt-LDGF | Swin Transformer\nABSTRACT\nBreast cancer remain..."
+              "source": "explicit",
+              "evidence": "...ing fusion | histopathology |\nSwinTConvNeXt-LDGF | Swin Transformer\nABSTRACT\nB..."
             },
-            "equations": {
-              "score": 0.7,
-              "source": "heuristic",
-              "evidence": "Found via regex (may be incomplete)"
+            "datasets": {
+              "score": 1.0,
+              "source": "explicit",
+              "evidence": "Found 1/1 datasets in text"
+            },
+            "architecture.layer_types": {
+              "score": 1.0,
+              "source": "explicit",
+              "evidence": "Found 3/3 layers in text"
             }
           }
         },
         "method_sections": [],
-        "overall_confidence": 0.85,
+        "overall_confidence": 1.0,
         "low_confidence_fields": []
       },
       "error": null,
       "metadata": {},
-      "processing_time": 7.732131481170654
+      "processing_time": 12.400017976760864
     },
-    "equations": [
-      {
-        "success": true,
-        "data": {
-          "original": "Softmax",
-          "normalized": "Softmax",
-          "sympy": "Softmax",
-          "pytorch": "import torch\nresult = Softmax",
-          "format": "latex"
-        },
-        "error": null,
-        "metadata": {},
-        "processing_time": 0.0047304630279541016
-      },
-      {
-        "success": true,
-        "data": {
-          "original": "softmax",
-          "normalized": "softmax",
-          "sympy": "softmax",
-          "pytorch": "import torch\nresult = softmax",
-          "format": "latex"
-        },
-        "error": null,
-        "metadata": {},
-        "processing_time": 0.0015325546264648438
-      }
-    ],
+    "equations": [],
     "datasets": {
       "success": true,
       "data": {
+        "canonicalized": [
+          {
+            "mention": "BreakHis",
+            "canonical": null,
+            "confidence": 0.0
+          }
+        ],
         "loaders": [],
-        "canonicalized": []
+        "accuracy": 0.0
       },
       "error": null,
       "metadata": {},
-      "processing_time": 1.0728836059570312e-05
+      "processing_time": 0.00038552284240722656
     },
     "knowledge_graph": {
       "success": true,
@@ -7890,26 +7905,146 @@
           {
             "id": "algorithm_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
             "type": "Algorithm",
-            "label": "Transformer",
+            "label": "SwinTConvNeXt-LDGF",
             "properties": {}
           },
           {
-            "id": "equation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_0",
-            "type": "Equation",
-            "label": "Softmax",
-            "properties": {
-              "sympy": "Softmax",
-              "pytorch": "import torch\nresult = Softmax"
-            }
+            "id": "dataset_BreakHis",
+            "type": "Dataset",
+            "label": "BreakHis",
+            "properties": {}
           },
           {
-            "id": "equation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_1",
-            "type": "Equation",
-            "label": "softmax",
-            "properties": {
-              "sympy": "softmax",
-              "pytorch": "import torch\nresult = softmax"
-            }
+            "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[1]",
+            "type": "Citation",
+            "label": "[1]",
+            "properties": {}
+          },
+          {
+            "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[2]",
+            "type": "Citation",
+            "label": "[2]",
+            "properties": {}
+          },
+          {
+            "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[3]",
+            "type": "Citation",
+            "label": "[3]",
+            "properties": {}
+          },
+          {
+            "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[4]",
+            "type": "Citation",
+            "label": "[4]",
+            "properties": {}
+          },
+          {
+            "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[5]",
+            "type": "Citation",
+            "label": "[5]",
+            "properties": {}
+          },
+          {
+            "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[6]",
+            "type": "Citation",
+            "label": "[6]",
+            "properties": {}
+          },
+          {
+            "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[7]",
+            "type": "Citation",
+            "label": "[7]",
+            "properties": {}
+          },
+          {
+            "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[8]",
+            "type": "Citation",
+            "label": "[8]",
+            "properties": {}
+          },
+          {
+            "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[9]",
+            "type": "Citation",
+            "label": "[9]",
+            "properties": {}
+          },
+          {
+            "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[10]",
+            "type": "Citation",
+            "label": "[10]",
+            "properties": {}
+          },
+          {
+            "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[11]",
+            "type": "Citation",
+            "label": "[11]",
+            "properties": {}
+          },
+          {
+            "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[12]",
+            "type": "Citation",
+            "label": "[12]",
+            "properties": {}
+          },
+          {
+            "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[13]",
+            "type": "Citation",
+            "label": "[13]",
+            "properties": {}
+          },
+          {
+            "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[14]",
+            "type": "Citation",
+            "label": "[14]",
+            "properties": {}
+          },
+          {
+            "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[15]",
+            "type": "Citation",
+            "label": "[15]",
+            "properties": {}
+          },
+          {
+            "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[16]",
+            "type": "Citation",
+            "label": "[16]",
+            "properties": {}
+          },
+          {
+            "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[17]",
+            "type": "Citation",
+            "label": "[17]",
+            "properties": {}
+          },
+          {
+            "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[18]",
+            "type": "Citation",
+            "label": "[18]",
+            "properties": {}
+          },
+          {
+            "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[19]",
+            "type": "Citation",
+            "label": "[19]",
+            "properties": {}
+          },
+          {
+            "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[20]",
+            "type": "Citation",
+            "label": "[20]",
+            "properties": {}
+          },
+          {
+            "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[21]",
+            "type": "Citation",
+            "label": "[21]",
+            "properties": {}
+          },
+          {
+            "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[22]",
+            "type": "Citation",
+            "label": "[22]",
+            "properties": {}
           }
         ],
         "edges": [
@@ -7920,35 +8055,137 @@
           },
           {
             "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
-            "target": "equation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_0",
-            "type": "contains"
+            "target": "dataset_BreakHis",
+            "type": "uses"
           },
           {
             "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
-            "target": "equation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_1",
-            "type": "contains"
+            "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[1]",
+            "type": "cites"
+          },
+          {
+            "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+            "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[2]",
+            "type": "cites"
+          },
+          {
+            "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+            "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[3]",
+            "type": "cites"
+          },
+          {
+            "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+            "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[4]",
+            "type": "cites"
+          },
+          {
+            "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+            "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[5]",
+            "type": "cites"
+          },
+          {
+            "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+            "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[6]",
+            "type": "cites"
+          },
+          {
+            "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+            "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[7]",
+            "type": "cites"
+          },
+          {
+            "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+            "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[8]",
+            "type": "cites"
+          },
+          {
+            "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+            "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[9]",
+            "type": "cites"
+          },
+          {
+            "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+            "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[10]",
+            "type": "cites"
+          },
+          {
+            "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+            "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[11]",
+            "type": "cites"
+          },
+          {
+            "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+            "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[12]",
+            "type": "cites"
+          },
+          {
+            "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+            "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[13]",
+            "type": "cites"
+          },
+          {
+            "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+            "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[14]",
+            "type": "cites"
+          },
+          {
+            "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+            "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[15]",
+            "type": "cites"
+          },
+          {
+            "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+            "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[16]",
+            "type": "cites"
+          },
+          {
+            "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+            "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[17]",
+            "type": "cites"
+          },
+          {
+            "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+            "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[18]",
+            "type": "cites"
+          },
+          {
+            "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+            "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[19]",
+            "type": "cites"
+          },
+          {
+            "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+            "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[20]",
+            "type": "cites"
+          },
+          {
+            "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+            "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[21]",
+            "type": "cites"
+          },
+          {
+            "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+            "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[22]",
+            "type": "cites"
           }
         ],
-        "node_count": 4,
-        "edge_count": 3,
+        "node_count": 25,
+        "edge_count": 24,
         "graph_format": "json"
       },
       "error": null,
       "metadata": {},
-      "processing_time": 3.409385681152344e-05
+      "processing_time": 4.792213439941406e-05
     }
   },
   "errors": [],
   "ready_for_code_gen": true,
   "method_struct": {
-    "algorithm_name": "Transformer",
-    "equations": [
-      "Softmax",
-      "softmax",
-      "softmax",
-      "Softmax"
+    "algorithm_name": "SwinTConvNeXt-LDGF",
+    "equations": [],
+    "datasets": [
+      "BreakHis"
     ],
-    "datasets": [],
     "training": {
       "optimizer": null,
       "loss": null,
@@ -7958,62 +8195,80 @@
     },
     "inputs": {},
     "outputs": {},
-    "references": [],
+    "inputs_description": "breast cancer histopathology images",
+    "outputs_description": "classification into eight categories",
+    "references": [
+      "[1]",
+      "[2]",
+      "[3]",
+      "[4]",
+      "[5]",
+      "[6]",
+      "[7]",
+      "[8]",
+      "[9]",
+      "[10]",
+      "[11]",
+      "[12]",
+      "[13]",
+      "[14]",
+      "[15]",
+      "[16]",
+      "[17]",
+      "[18]",
+      "[19]",
+      "[20]",
+      "[21]",
+      "[22]"
+    ],
     "architecture": {
-      "layer_types": [],
+      "layer_types": [
+        "Swin Transformer",
+        "ConvNeXt",
+        "learnable dynamic gating network"
+      ],
       "input_shape": null,
       "output_shape": null,
-      "num_classes": null,
+      "num_classes": 8,
       "hidden_dims": [],
-      "attention_type": null,
+      "attention_type": "self-attention",
       "preprocessing": [],
-      "key_components": []
+      "key_components": [
+        "Swin Transformer backbone",
+        "ConvNeXt backbone",
+        "learnable dynamic gating fusion"
+      ]
     },
-    "paper_summary": null,
+    "paper_summary": "A hybrid multi-class classification framework using the Swin Transformer and ConvNeXt model. The proposed SwinTConvNeXt-LDGF model dynamically fuses local-global features within a learnable dynamic gating network and classifies pathological images into different categories.",
     "confidence": {
       "algorithm_name": {
         "score": 1.0,
-        "source": "heuristic",
-        "evidence": "...y |\nSwinTConvNeXt-LDGF | Swin Transformer\nABSTRACT\nBreast cancer remain..."
+        "source": "explicit",
+        "evidence": "...ing fusion | histopathology |\nSwinTConvNeXt-LDGF | Swin Transformer\nABSTRACT\nB..."
       },
-      "equations": {
-        "score": 0.7,
-        "source": "heuristic",
-        "evidence": "Found via regex (may be incomplete)"
+      "datasets": {
+        "score": 1.0,
+        "source": "explicit",
+        "evidence": "Found 1/1 datasets in text"
+      },
+      "architecture.layer_types": {
+        "score": 1.0,
+        "source": "explicit",
+        "evidence": "Found 3/3 layers in text"
       }
     }
   },
-  "equations": [
-    {
-      "success": true,
-      "data": {
-        "original": "Softmax",
-        "normalized": "Softmax",
-        "sympy": "Softmax",
-        "pytorch": "import torch\nresult = Softmax",
-        "format": "latex"
-      },
-      "error": null,
-      "metadata": {},
-      "processing_time": 0.0047304630279541016
-    },
-    {
-      "success": true,
-      "data": {
-        "original": "softmax",
-        "normalized": "softmax",
-        "sympy": "softmax",
-        "pytorch": "import torch\nresult = softmax",
-        "format": "latex"
-      },
-      "error": null,
-      "metadata": {},
-      "processing_time": 0.0015325546264648438
-    }
-  ],
+  "equations": [],
   "datasets": {
+    "canonicalized": [
+      {
+        "mention": "BreakHis",
+        "canonical": null,
+        "confidence": 0.0
+      }
+    ],
     "loaders": [],
-    "canonicalized": []
+    "accuracy": 0.0
   },
   "knowledge_graph": {
     "nodes": [
@@ -8026,26 +8281,146 @@
       {
         "id": "algorithm_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
         "type": "Algorithm",
-        "label": "Transformer",
+        "label": "SwinTConvNeXt-LDGF",
         "properties": {}
       },
       {
-        "id": "equation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_0",
-        "type": "Equation",
-        "label": "Softmax",
-        "properties": {
-          "sympy": "Softmax",
-          "pytorch": "import torch\nresult = Softmax"
-        }
+        "id": "dataset_BreakHis",
+        "type": "Dataset",
+        "label": "BreakHis",
+        "properties": {}
       },
       {
-        "id": "equation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_1",
-        "type": "Equation",
-        "label": "softmax",
-        "properties": {
-          "sympy": "softmax",
-          "pytorch": "import torch\nresult = softmax"
-        }
+        "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[1]",
+        "type": "Citation",
+        "label": "[1]",
+        "properties": {}
+      },
+      {
+        "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[2]",
+        "type": "Citation",
+        "label": "[2]",
+        "properties": {}
+      },
+      {
+        "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[3]",
+        "type": "Citation",
+        "label": "[3]",
+        "properties": {}
+      },
+      {
+        "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[4]",
+        "type": "Citation",
+        "label": "[4]",
+        "properties": {}
+      },
+      {
+        "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[5]",
+        "type": "Citation",
+        "label": "[5]",
+        "properties": {}
+      },
+      {
+        "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[6]",
+        "type": "Citation",
+        "label": "[6]",
+        "properties": {}
+      },
+      {
+        "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[7]",
+        "type": "Citation",
+        "label": "[7]",
+        "properties": {}
+      },
+      {
+        "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[8]",
+        "type": "Citation",
+        "label": "[8]",
+        "properties": {}
+      },
+      {
+        "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[9]",
+        "type": "Citation",
+        "label": "[9]",
+        "properties": {}
+      },
+      {
+        "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[10]",
+        "type": "Citation",
+        "label": "[10]",
+        "properties": {}
+      },
+      {
+        "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[11]",
+        "type": "Citation",
+        "label": "[11]",
+        "properties": {}
+      },
+      {
+        "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[12]",
+        "type": "Citation",
+        "label": "[12]",
+        "properties": {}
+      },
+      {
+        "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[13]",
+        "type": "Citation",
+        "label": "[13]",
+        "properties": {}
+      },
+      {
+        "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[14]",
+        "type": "Citation",
+        "label": "[14]",
+        "properties": {}
+      },
+      {
+        "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[15]",
+        "type": "Citation",
+        "label": "[15]",
+        "properties": {}
+      },
+      {
+        "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[16]",
+        "type": "Citation",
+        "label": "[16]",
+        "properties": {}
+      },
+      {
+        "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[17]",
+        "type": "Citation",
+        "label": "[17]",
+        "properties": {}
+      },
+      {
+        "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[18]",
+        "type": "Citation",
+        "label": "[18]",
+        "properties": {}
+      },
+      {
+        "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[19]",
+        "type": "Citation",
+        "label": "[19]",
+        "properties": {}
+      },
+      {
+        "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[20]",
+        "type": "Citation",
+        "label": "[20]",
+        "properties": {}
+      },
+      {
+        "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[21]",
+        "type": "Citation",
+        "label": "[21]",
+        "properties": {}
+      },
+      {
+        "id": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[22]",
+        "type": "Citation",
+        "label": "[22]",
+        "properties": {}
       }
     ],
     "edges": [
@@ -8056,17 +8431,122 @@
       },
       {
         "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
-        "target": "equation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_0",
-        "type": "contains"
+        "target": "dataset_BreakHis",
+        "type": "uses"
       },
       {
         "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
-        "target": "equation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_1",
-        "type": "contains"
+        "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[1]",
+        "type": "cites"
+      },
+      {
+        "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+        "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[2]",
+        "type": "cites"
+      },
+      {
+        "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+        "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[3]",
+        "type": "cites"
+      },
+      {
+        "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+        "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[4]",
+        "type": "cites"
+      },
+      {
+        "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+        "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[5]",
+        "type": "cites"
+      },
+      {
+        "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+        "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[6]",
+        "type": "cites"
+      },
+      {
+        "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+        "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[7]",
+        "type": "cites"
+      },
+      {
+        "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+        "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[8]",
+        "type": "cites"
+      },
+      {
+        "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+        "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[9]",
+        "type": "cites"
+      },
+      {
+        "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+        "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[10]",
+        "type": "cites"
+      },
+      {
+        "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+        "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[11]",
+        "type": "cites"
+      },
+      {
+        "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+        "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[12]",
+        "type": "cites"
+      },
+      {
+        "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+        "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[13]",
+        "type": "cites"
+      },
+      {
+        "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+        "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[14]",
+        "type": "cites"
+      },
+      {
+        "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+        "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[15]",
+        "type": "cites"
+      },
+      {
+        "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+        "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[16]",
+        "type": "cites"
+      },
+      {
+        "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+        "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[17]",
+        "type": "cites"
+      },
+      {
+        "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+        "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[18]",
+        "type": "cites"
+      },
+      {
+        "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+        "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[19]",
+        "type": "cites"
+      },
+      {
+        "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+        "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[20]",
+        "type": "cites"
+      },
+      {
+        "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+        "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[21]",
+        "type": "cites"
+      },
+      {
+        "source": "paper_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+        "target": "citation_Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer_[22]",
+        "type": "cites"
       }
     ],
-    "node_count": 4,
-    "edge_count": 3,
+    "node_count": 25,
+    "edge_count": 24,
     "graph_format": "json"
   },
   "extracted_text": "Engineering Reports\nRESEARCH ARTICLE\nOPEN ACCESS\nA Hybrid SwinTConvNeXt With Learnable Dynamic Gating\nFusion for Breast Cancer Histopathology\nImage Classification\nMulimbika Makina1\n| Winnie Mbusiro Chacha2 | Ronald Waweru Mwangi3\n1Mathematics Department, Institute for Basic Sciences, Technology, and Innovation, Pan African University, Nairobi, Kenya | 2Department of Statistics and\nActuarial Sciences, Jomo Kenyatta University of Agriculture and Technology, Nairobi, Kenya | 3Department of Computing, Jomo Kenyatta University of\nAgriculture and Technology, Nairobi, Kenya\nCorrespondence: Mulimbika Makina (makinamulimbika0928@gmail.com)\nReceived: 26 September 2025 | Revised: 22 January 2026 | Accepted: 4 February 2026\nKeywords: attention mechanism | breast cancer | ConvNeXt | deep learning | feature extraction | gating fusion | histopathology |\nSwinTConvNeXt-LDGF | Swin Transformer\nABSTRACT\nBreast cancer remains a leading cause of cancer-related deaths among women worldwide, with early and accurate diagnosis being\ncritical to improving survival rates. While deep learning has revolutionized medical image classification, current models often face\nsignificant challenges in balancing intricate local features with global features. This study presents a hybrid multi-class classifi-\ncation framework using the Swin Transformer and ConvNeXt model. The proposed SwinTConvNeXt-LDGF model dynamically\nfuses local-global features within a learnable dynamic gating network and classifies pathological images into different categories.\nThe model was evaluated on an eight-class histopathology BreakHis dataset, achieving a test accuracy of 95.53%, a precision of\n94.74%, a recall of 96.32%, and an F1 score of 95.47%. These results demonstrate the effectiveness of combining the Swin Trans-\nformer and ConvNeXt backbones within a unified, learnable dynamic training framework. The proposed approach emphasizes\nthe strong potential of SwinTConvNeXt-LDGF to support pathologists in the real-world classification of breast cancer subtypes.\n1\n|\nIntroduction\nThe number of cancer-related deaths is disturbingly increasing\nevery year, ranking them as one of the main causes of death\nworldwide. Although a significant number of cancers do not\nalways have to result in death, they significantly reduce qual-\nity of life and generally require higher costs [1]. Breast cancer\ncontinues to be a prominent public health issue worldwide, it\noccurs in every country of the world in women at any age after\npuberty but with increasing rates in later life [2]. Breast cancer\nwas the second most frequently diagnosed cancer in 2022 (11.6%),\nwith annual rates increasing by 1%\u20135% in half of the countries\nexamined [2\u20134].\n----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\nThis is an open access article under the terms of the Creative Commons Attribution License, which permits use, distribution and reproduction in any medium, provided the\noriginal work is properly cited.\n\u00a9 2026 The Author(s). Engineering Reports published by John Wiley & Sons Ltd.\nThe late-stage presentation is a major factor that contributes to\nelevated mortality rates of breast cancer cases. Quite a number of\nwomen receive diagnoses in the advanced stages due to limited\naccess to diagnostic and screening services [5, 6]. Therefore, early\ndiagnosis of breast cancer has become the key link in the whole\nmanagement of breast cancer that helps to significantly reduce\nthe mortality rate.\nInvasive ductal carcinoma (IDC) is the most prevalent histologi-\ncal type of breast cancer, accounting for approximately 75%\u201381%\nof cases, invasive lobular carcinoma (ILC) is considered diagnos-\ntically challenging and is ranked as the second most common\ntype, representing about 5%\u201315% of breast cancer cases [7\u20139].\nEngineering Reports, 2026; 8:e70655\n1 of 19\nhttps://doi.org/10.1002/eng2.70655\n\nRare malignant subtypes such as mucinous carcinoma have a\nmixture of mucinous and non-mucinous (like ductal), while rare\nbenign histopathology subtypes such as tubular adenomas are\noften misdiagnosed as fibroadenomas due to their similar clinical\npresentation [10, 11].\nTraditional diagnostic methods, such as mammography, are\nexpensive and usually increase labor costs because they rely\non radiologists for large-scale screening [12]. The rise of artifi-\ncial intelligence (AI) and deep learning provides a powerful and\ncost efficient alternative to automating and improving diagnostic\naccuracy [13, 14]. Moreover, AI has shown a significant potential\nto improve diagnostic accuracy and speed [14].\nConvolutional\nnetworks\n(ConvNets)\nsuch\nas\nResNet\nand\nDenseNet have become a cornerstone in the field of image\nclassification due to their ability to learn local patterns and\nextract hierarchical features from raw pixel images. This capa-\nbility allows them to effectively handle complex visual tasks,\nmaking them a preferred choice for image classification in vari-\nous domains [15, 16]. Although ConvNets have proven effective\nin image-based classification tasks, they often lack global context\nmodeling capabilities to capture long-range dependencies, which\nare crucial for discerning subtle clinical indicators in broader\nregions. On the other hand, Transformers have demonstrated\nstrong capabilities in modeling global context via self-attention,\nmaking them strong candidate models in general vision tasks and\npotential in medical image recognition [17\u201319]. Despite their\nstrengths, transformers often lack the built-in local inductive\nbiases that are crucial to capture intricate medical details, such\nas lesions and small-scale anomalies [20].\nHybrid architectures combining convolutional neural networks\n(CNNs) and vision transformers (ViTs) have emerged as a promis-\ning approach in image classification, leveraging the strengths of\nboth models [21, 22]. However, these hybrid models also face\nseveral challenges that include computational complexity, data\nrequirements, and discrepancies in the integration of distinct\narchitectural features [23]. These issues highlight the need for\nefficient fusion strategies that can bridge the gap between varied\nfeature distributions and model performance. Some networks use\nConvNets to encode spatial inductive biases and local connectiv-\nity blocks in transformers [24, 25]. On the other hand, the Swin\nTransformer has proven effective in reducing computational\ncost and capturing global relationships through window-based\nor shifted-window attention with hierarchical partitioning of\nmedical scans [26, 27]. Newer CNN variants with large kernel\nsizes and inverted bottleneck blocks, such as ConvNeXt, adopt\ntransformer-inspired design elements from transformers to mod-\nernize classic convolutional architectures [28].\nWithin the healthcare domain, the simultaneous extraction of\nlocal morphological features such as tumor boundaries, lesion\ntextures and broader contextual information like anatomical rela-\ntionships, multi-lesion distribution is indispensable for achieving\ndiagnostic accuracy. Hybrid architectures that rely on parallel\nbranching or sequential layer integration sometimes struggle to\nbalance local and global information. Their shortcomings include\nthe integration of attention mechanisms that increase computa-\ntional burden, the stacking of modules without dynamic learning,\nand the failure to mimic the diagnostic reasoning of pathologists,\nwho typically analyze global context before refining their focus to\nlocal features. These limitations often lead to compromised per-\nformance in medical image analysis.\nTo address these challenges, we propose a novel hybrid\nSwinTConvNeXt-LDGF, equipped with a learnable dynamic\ngating fusion mechanism. Our method dynamically balances\nlocal morphological features such tumor boundaries, lesion tex-\ntures with global contextual cues like anatomical relationships,\nmultilesion distribution in a computationally efficient manner,\nunlike prior hybrid approaches that statically stack modules or\nintroduce heavy attention layers. The gating module adaptively\nregulates the information flow between feature streams, thereby\nbetter mimicking the diagnostic reasoning of pathologists, who\ntypically analyze global context before refining their focus on\nlocal details.\nOur key contributions to this study are as follows.\n\u2022 The proposed hybrid SwinTConvNeXt-LDGF enables the\nadaptive integration of local and global features for improved\nunderstanding of medical images.\n\u2022 Introduced a dynamic gating mechanism that balances fea-\nture contributions across scales, thereby reducing redun-\ndancy from fused modules.\n\u2022 Enhanced interpretability by aligning the model focus\nwith pathologists\u2019 workflow, first extracting broad con-\ntextual information, then refining toward critical local\nmorphological details.\n\u2022 Our study enhanced interpretability using Local Inter-\npretable Model-agnostic Explanations (LIME), which high-\nlighted morphological and contextual regions underpinning\npredictions. Furthermore, shapley additive explanations\n(SHAP) quantified the contribution of each histopatholog-\nical subtype to the overall decision making of the model.\n\u2022 Achieved state-of-the-art diagnostic accuracy in multiple\nhistopathological subtypes of breast cancer.\n2\n|\nReview of Literature\n2.1\n|\nDeep Learning in Histopathology Image\nAnalysis\nDeep learning (DL) has become an indispensable tool for\nhistopathological image analysis by improving the accuracy, effi-\nciency, and scalability of diagnostic processes. Unlike traditional\nmachine learning methods, DL leverages advanced neural net-\nworks to automate the diagnosis and classification of features in\nhistopathological images, which are substantial for diagnosing\ndiseases like cancer. In addition to improving diagnostic preci-\nsion, the integration of DL also addresses the challenges of com-\nplexity and size of histopathology images.\nNeural networks are the foundation of most deep neural net-\nwork (DNN) algorithms, consisting of interconnected neurons\norganized into layers such as input, hidden, and output lay-\ners [29]. CNNs, in particular, have substantially transformed\n2 of 19\nEngineering Reports, 2026\n 25778196, 2026, 2, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/eng2.70655, Wiley Online Library on [11/03/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License\n\nhistopathology image analysis due to their ability to learn hier-\narchical features from images. These models excel in image clas-\nsification, object detection, and segmentation tasks, making them\nversatile tools for histopathological analysis.\nStudies have shown that models such as ResNet50, VGG16,\nand DenseNet achieve high accuracy in cancer diagnosis tasks\n[30, 31]. DL models have also shown the potential to improve\nclinical decision-making by providing risk stratification in breast\ncancer patients, offering a cost-effective alternative to molecular\nprofiling techniques [32]. Despite this potential, the application\nof DL models in medical imaging faces substantial challenges\nsuch as the need for large labeled datasets and extensive com-\nputational resources.\nTransfer learning (TL) has emerged as a solution to these\nissues, allowing models to utilize pre-existing knowledge from\na source task with abundant data. TL involves fine-tuning a\npre-trained model on the target task using the limited available\ndata, which helps to avoid overfitting and improving performance\n[33]. TL has been used effectively in histopathological images,\nparticularly in challenging conditions with limited data [34].\n2.2\n|\nCNNs in Medical Image Classification\nVarious custom CNN-based frameworks have been utilized for\ndiagnosing breast cancer, focusing on high-dimensional medi-\ncal image analysis. These frameworks often incorporate several\nlayers such as Conv2d, Maxpooling2d, Dropout, Flatten, and\nDense, achieving substantial sensitivity, specificity, and accu-\nracy in results. In diagnosing breast cancer, [35] achieved an\naccuracy of 86%, highlighting the effectiveness of CNN-based\nmodels in medical imaging. Although CNNs have substantially\nimproved breast cancer diagnosis, challenges such as the need\nfor large labeled datasets, long training time, and the potential\nfor overfitting remain.\nCNNs were implemented through TL, demonstrating signifi-\ncant improvements in accuracy and objectivity while reducing\ndiagnosis time and variability [36]. Fine-tuning EfficientNetB0\npre-trained on ImageNet for breast cancer classification achieved\na test accuracy of 94.46%, demonstrating the model\u2019s ability\nto distinguish between malignant and non-malignant classes\n[37, 38] also demonstrated substantial accuracy and reliabil-\nity of the Pre-trained DenseNet121 model compared to cus-\ntom CNNs, achieving superior performance in classifying breast\ncancer.\nAs highlighted by [39], ResNet50 consistently outperforms other\nmodels in terms of accuracy and F-score, demonstrating excep-\ntional precision and sensitivity. A modernized ResNet-50 (Con-\nvNeXt), which is an architecture that integrates Swin Trans-\nformer training techniques and the ResNeXT model, achieved\nsuperior results compared to other models, with an accu-\nracy of 88.90%, AUC of 93.91% and F1 score of 91.21% [40].\nSuch improvements make ConvNeXt a promising candidate for\nhistopathology tasks that require efficient local feature extrac-\ntion and deeper semantic representations. Despite the improve-\nments, the complexity and Variability of Histopathology images\ncharacterized by complex morphology make it difficult for Con-\nvNeXt models to capture global features effectively [41].\n2.3\n|\nViTs in Image Classification\nTransformer models have significantly revolutionized natural\nlanguage processing (NLP) mechanisms by transitioning from\ntraditional sequential models to advanced architectures based on\nattention mechanisms. This shift has significantly improved the\nhandling of long text sequences and complex dependencies, as\nseen in models like BERT and GPT, which employ bidirectional\nmodeling to improve performance in text classification, machine\ntranslation, and question and answer tasks [42]. In text summa-\nrization, transformer models have demonstrated their robustness\nto understand global context and dynamically allocate weights,\nleading to improvements in both abstraction and extraction based\nsummarization methods. For example, Models such as PEGA-\nSUS and BERT have become prominent in generating concise and\ncoherent summaries, showcasing the effectiveness of transformer\nmodels [43].\nThe success of transformer models in NLP has given a basis\nto their application to computer vision tasks. By redesigning\ntheir network and training methods to accommodate the unique\nstructure of visual data, transformers have been successfully\nadapted for image recognition, object detection, segmentation,\nand classification tasks [44]. ViTs introduced a paradigm shift\nin computer vision by treating images as sequences of tokenized\npatches and applying multi-head self-attention (MSA) to model\nglobal relationships within the image [45].\nViTs have emerged as an innovative approach in healthcare\nimage classification, offering substantial advantages over tradi-\ntional CNNs. They have shown potential in multi-label classifi-\ncation tasks, such as the identification of multiple pathologies\nin chest radiographs [46]. ViTs outperformed CNN in classifying\nlow-quality histopathological images, achieving an accuracy of\n92.8%, which was superior to the best-performing CNN model,\nInceptionV3 [47, 48].\nAlthough\nViTs\nhave\nachieved\nstate-of-the-art\nresults\nin\nhistopathological image classification, their application to\nclassification tasks faces challenges such as model complexity,\nwhich usually prolongs training time. The need for extensive\ntraining data and high computational resources also limit\ntheir applicability in real-world medical diagnostic devices\n[22, 49]. The Swin Transformer introduces windowed atten-\ntion mechanism by dividing the image into non-overlapping\nwindows which localizes attention computation, thereby lim-\niting computational complexity compared to the ViTs [50, 51].\nThe Swin Transformer model demonstrated superior perfor-\nmance over CNNs such as ResNet50 and VGG16 in classifying\nbreast cancer mammographic images, achieving an accuracy\nof 99.8% [52].\nDespite remarkable performance, the absence of built-in mech-\nanisms to capture local spatial hierarchies makes Swin Trans-\nformers inefficient and data-intensive [22]. To mitigate these lim-\nitations, hybrid models that combine CNNs and Transformers\nEngineering Reports, 2026\n3 of 19\n 25778196, 2026, 2, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/eng2.70655, Wiley Online Library on [11/03/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License\n\nhave been developed to enhance both local and global feature\nextraction capabilities.\n2.4\n|\nHybrid CNN-Swin Transformer\nArchitectures for Classification\nHybrid models that combine convolution neural networks with\nSwin Transformers have shown considerable promise in enhanc-\ning classification tasks across various domains. These architec-\ntures leverage the strengths of both CNNs and Swin Transformers\nto enhance both local and global feature extraction by the convo-\nlution neural network and Swin Transformer, respectively. Var-\nious studies have been conducted on different integration tech-\nniques which are tailored to the specific requirements based on\nthe application domain.\n[53] implemented graph convolutional neural networks (GCNN)\nwith the SWIN Transformer model (GSwTr) to improve hyper-\nspectral image (HSI) classification. The study achieved an out-\nstanding Overall Accuracy of 99.7%, 99.9%, and 99.5%. An average\naccuracy of 99.5%, 99.6%, and 98.2% for all three HSI datasets\n(Pavia-University, Indian-Pines and Salinas). Hybrid-MT-ESTAN\nalso demonstrated remarkable performance in the classification\nof breast ultrasound BUS images, achieving high accuracy, sensi-\ntivity, and F1 scores of 82.7%, 86.4% and 86.0%, respectively [54].\nIn histopathology image classification tasks, the combination of\nlocal and global features through separable ConvNets and patch\nmerging from a transformer model achieved remarkable perfor-\nmance on datasets such as BACH, BreakHis, and IDC, with accu-\nracies of 97.8%, 98.13% and 98.32%, respectively [55].\nDespite these advances, existing hybrid models often lack effec-\ntive mechanisms for multi-scale feature fusion and dynamic\nadjustment of shallow versus deep feature contributions. There-\nfore, new architectures are needed that incorporate learnable\ndynamic gating fusion to balance efficiency, interpretability, and\naccuracy in medical image classification tasks.\n2.5\n|\nGating Fusion Mechanisms in Medical\nImage Classification\nGated fusion mechanisms have emerged as a critical compo-\nnent in the classification of medical images, particularly in sce-\nnarios involving multimodal data. These mechanisms improve\nthe accuracy and robustness of medical image analysis by selec-\ntively combining features from different sources, such as multiple\nimaging modalities or scales. In addition, gated mechanisms pro-\nvide robust performance in classification and segmentation tasks,\nespecially when dealing with limited labeled data or noisy inputs.\nArchitectures such as DPL-GFT-EFA implemented gated fusion\nmechanisms to enhance the representation of medical images by\nselectively highlighting important features. The model achieved\naccuracies of 97.05%, 97.70%, 97.71%, 97.16%, and 97.26% on five\npublic datasets [56].\nA gating mechanism in a new hybrid architecture that combines\nCNNs with ViTs to improve the classification of lung diseases.\nThe study achieved a very high average classification accuracy\nof 99% in multiple pulmonary conditions, including COVID-19,\nPneumonia, TB, and normal cases [57] highlighted Multi-gate\nweighted fusion networks (MWFNets) for neuronal morphology\nclassification achieved accuracies of 91.73% and 98.18% in classi-\nfying 10 and five types of neurons, respectively.\n[58] proposed a gated deep reinforcement learning (GRL) model,\nwhich achieved a substantial accuracy of 98.8% in a brain tumor\nMRI dataset. In addition to the achievements in brain tumor clas-\nsification, [59] employed hierarchical attentive multilevel fusion\nwith uncertainty quantification, which achieved classification\naccuracies of 94.21%, 99.59% and 96.50% on retinal OCT, lung CT,\nand chest X-ray datasets, respectively.\nIn medical image segmentation tasks, [60] indicated that\ngate-regularized network training (GrNT) improves the perfor-\nmance of widely adopted models such as U-Net and Attention\nU-Net in various medical image segmentation datasets. Gated\nrecurrent units (GRUs) in skip connections have been shown to\nimprove the accuracy of multi-organ segmentation tasks, achiev-\ning a Dice coefficient of 80.66% in the Synapse dataset [61].\nTransformer-based architectures such as gated axial-attention\nmodels have been shown to outperform convolutional and other\ntransformer-based architectures on medical image segmenta-\ntion tasks, improving over fully attention baselines by 0.92%,\n4.76% and 2.72% for Brain US, GlaS and MoNuSeg datasets,\nrespectively [62].\nThis study introduces a novel and efficient hybrid architecture\nfor breast cancer histopathology image classification by inte-\ngrating the global feature extraction capabilities of the Swin\nTransformer, the localized refinement power of ConvNeXt. To\nfurther enhance the robustness and interpretability of feature\nintegration, the proposed hybrid model employs a learnable\ndynamic gating fusion module to dynamically regulate the con-\ntribution of extracted features from each branch, allowing the\nmodel to emphasize clinically relevant patterns with trans-\nparency. Our fusion mechanism not only strengthens multi-scale\nrepresentation, but also improves discriminative capability and\ndiagnostic accuracy across complex histopathological image\nvariations.\n2.6\n|\nMotivation and Research Gaps\nCNNs like ConvNeXt are highly effective in capturing local pat-\nterns but often struggle to capture long-range contextual depen-\ndencies which are crucial for understanding complex tissue struc-\ntures. On the other hand, ViTs variants, such as Swin Trans-\nformer, have shown strong capabilities in modeling global depen-\ndencies but lack the built-in local inductive biases that are cru-\ncial for capturing intricate medical details such as lesions and\nsmall-scale anomalies.\nSeveral hybrid CNN Transformer models have been proposed to\nbridge this performance gap. However, many still rely on static\nor shallow fusion techniques that do not adequately adapt to the\ncomplex nature of medical images. In addition, most of these\nmodels offer limited interpretability support, making them less\nsuitable for real-world clinical integration, where transparency\nand trust in AI decisions are paramount.\n4 of 19\nEngineering Reports, 2026\n 25778196, 2026, 2, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/eng2.70655, Wiley Online Library on [11/03/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License\n\nThis study addresses these limitations by proposing a hybrid\nSwinTConvNeXt-LDGF model through a learnable dynamic gat-\ning fusion that dynamically integrates local and global features\nwhile incorporating lightweight regularization strategies such as\ndropout to ensure computational efficiency. The novelty of the\nproposed model lies in its ability to dynamically fuse global and\nlocal features from candidate models in a more efficient and\ntransparent manner, thus enhancing discriminative capacity and\ninterpretability. Unlike existing work, this approach emphasizes\nboth performance and deployment practicality by advancing a\nmodel that is robust and interpretable. This study fills a critical\ngap in the current research and moves one step closer to mak-\ning multimodal AI-assisted breast cancer diagnostics scalable for\ncomplex medical imaging.\n3\n|\nMaterials and Methods\nThe classification of breast cancer in histopathology images poses\nsignificant obstacles due to the intricate tissue structures, varia-\ntions in cell appearance, and the presence of overlapping char-\nacteristics between non-cancerous and cancerous samples. Over-\ncoming these challenges requires a DL framework that is both\ntransparent and robust to effectively identify and categorize\ncancer-related patterns.\nThis section presents the methodology used in the development\nof the hybrid SwinTConvNeXt-LDGF model for histopathologi-\ncal classification of breast cancer. The proposed framework inte-\ngrates the strengths of the Swin Transformer to capture global\nfeatures and the ConvNeXt model for local feature extraction. To\nachieve robust and generalizable performance across domains,\nthe hybrid model is enhanced by a novel learnable dynamic gat-\ning fusion strategy. The process includes multiple stages such as\ndata preprocessing, dual-branch feature learning, gated fusion,\nand classification, as illustrated in Figure 1.\n3.1\n|\nGlobal Feature Extraction via Swin\nTransformer\nThe preprocessed images are fed into a Swin Transformer,\nan advanced DL model that captures comprehensive and\nhierarchical contextual representations through window-based\nself-attention and shifted windows [26]. The Swin Transformer\nmodel employs a shifted window multi-head self-attention\n(SW-MSA) mechanism which distinguishes it from vanilla trans-\nformers that rely on standard MSA. The model improves compu-\ntational efficiency while preserving contextual modeling through\nthe computation of self-attention within local non-overlapping\nwindows, while enabling cross-window interactions through the\nshifted-window strategy. The input image is partitioned into\nnon-overlapping fixed size patches, with each patch represented\nas a token in a transformer block. The self-attention component\nof the Swin Transformer calculates the correlation of each token\nwith all other tokens. This enables the model to effectively cap-\nture global contextual information.\nIn this study, an input image is represented with original\ndimensions and three color channels (RGB), then partitioned\ninto non-overlapping square patches. To transform vision into\nsequence processing, each patch \ud835\udc3c\ud835\udc56is transformed into a sequence\ntoken by flattening it into a 1-dimensional vector \ud835\udc65(0)\n\ud835\udc56\nas shown in\nEquations (1\u20133).\n\ud835\udc3c\u2208\u211d\ud835\udc3b\u00d7\ud835\udc4a\u00d7\ud835\udc36\n(1)\n\ud835\udc41= \ud835\udc3b\u22c5\ud835\udc4a\n\ud835\udc402\n(2)\n\ud835\udc65(0)\n\ud835\udc56\n= Flatten(\ud835\udc3c\ud835\udc56) \u2208\u211d\ud835\udc36\ud835\udc402,\n\ud835\udc56= 1, . . . , \ud835\udc41\n(3)\nwhere \ud835\udc3cis the input image, \ud835\udc36is the height, \ud835\udc3bis the width \ud835\udc4a, \ud835\udc41\nis the number of patches and \ud835\udc402 represents square patches.\nTo form the input token sequence for the Swin Transformer\nblock, a projection matrix is applied to map each flattened patch\nvector into the D-dimensional embedding. These embeddings are\nthen stacked to form the Swin Transformer\u2019s input as shown in\nEquation (4).\n\ud835\udc67(0)\n\ud835\udc56\n= \ud835\udc4a\ud835\udc38\ud835\udc65(0)\n\ud835\udc56,\n\ud835\udc4a\ud835\udc38\u2208\u211d\ud835\udc37\u00d7(\ud835\udc36\ud835\udc402),\n\ud835\udc67(0)\n\ud835\udc56\n\u2208\u211d\ud835\udc37\n(4)\nwhere \ud835\udc4d(0) is the transformer\u2019s input, \ud835\udc4a\ud835\udc38is a projection matrix\nand \u211d\ud835\udc37is the embedding space.\nAs shown in Equations (5\u20138), this study employs Swin Tiny with\n\ud835\udc36= 3 (RGB), \ud835\udc3b= \ud835\udc4a= 224, \ud835\udc40= 4 (patch size), \ud835\udc3c\ud835\udc56\u2208\u211d4\u00d74\u00d73\nand \ud835\udc65(0)\n\ud835\udc56\n\u2208\u211d\ud835\udc36\ud835\udc402 = \u211d48 [26]. The learnable projection matrix \ud835\udc4a\ud835\udc38\nmaps each flattened image patch to a 96-dimensional embedding,\nresulting in a sequence of 3136 patch tokens that serve as input\nto the windowed multi-head self-attention (W-MSA) blocks of the\nSwin Transformer [26].\n\ud835\udc41= \ud835\udc3b\u22c5\ud835\udc4a\n\ud835\udc402\n= 224 \u22c5224\n16\n= 3136.\n(5)\n\ud835\udc4a\ud835\udc38=\n\u23a1\n\u23a2\n\u23a2\n\u23a2\n\u23a2\n\u23a2\u23a3\n\ud835\udc641,1\n\ud835\udc641,2 \u00b7 \u00b7 \u00b7 \ud835\udc641,48\n\ud835\udc642,1\n\ud835\udc642,2 \u00b7 \u00b7 \u00b7 \ud835\udc642,48\n\u22ee\n\u22ee\n\u22f1\n\u22ee\n\ud835\udc6496,1 \ud835\udc6496,2 \u00b7 \u00b7 \u00b7 \ud835\udc6496,48\n\u23a4\n\u23a5\n\u23a5\n\u23a5\n\u23a5\n\u23a5\u23a6\n,\n\ud835\udc65(0)\n\ud835\udc56\n=\n\u23a1\n\u23a2\n\u23a2\n\u23a2\n\u23a2\n\u23a2\u23a3\n\ud835\udc65\ud835\udc56,1\n\ud835\udc65\ud835\udc56,2\n\u22ee\n\ud835\udc65\ud835\udc56,48\n\u23a4\n\u23a5\n\u23a5\n\u23a5\n\u23a5\n\u23a5\u23a6\n,\n(6)\n\ud835\udc67(0)\n\ud835\udc56\n=\n\u23a1\n\u23a2\n\u23a2\n\u23a2\n\u23a2\n\u23a2\u23a3\n\u221148\n\ud835\udc57=1\ud835\udc641,\ud835\udc57\ud835\udc65\ud835\udc56,\ud835\udc57\n\u221148\n\ud835\udc57=1\ud835\udc642,\ud835\udc57\ud835\udc65\ud835\udc56,\ud835\udc57\n\u22ee\n\u221148\n\ud835\udc57=1\ud835\udc6496,\ud835\udc57\ud835\udc65\ud835\udc56,\ud835\udc57\n\u23a4\n\u23a5\n\u23a5\n\u23a5\n\u23a5\n\u23a5\u23a6\n\u2208\u211d96.\n(7)\nwhere\n\ud835\udc67(0)\n\ud835\udc56\n\u2208\u211d\ud835\udc37,\n\ud835\udc56= 1, . . . , 3136,\n(8)\nStacking these vectors yields the initial input matrix in\nEquation (9).\n\ud835\udc4d(0) =\n\u23a1\n\u23a2\n\u23a2\n\u23a2\n\u23a2\n\u23a2\u23a3\n(\ud835\udc67(0)\n1 )\u22a4\n(\ud835\udc67(0)\n2 )\u22a4\n\u22ee\n(\ud835\udc67(0)\n\ud835\udc41)\u22a4\n\u23a4\n\u23a5\n\u23a5\n\u23a5\n\u23a5\n\u23a5\u23a6\n\u2208\u211d\ud835\udc41\u00d7\ud835\udc37.\n(9)\nAs highlighted by [26], \ud835\udc4d(0) is the starting point for the hierarchi-\ncal transformer blocks. In each block \ud835\udc59, the representations are\nEngineering Reports, 2026\n5 of 19\n 25778196, 2026, 2, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/eng2.70655, Wiley Online Library on [11/03/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License\n\nFIGURE 1\n|\nArchitecture of the proposed SwinTConvNeXt-LDGF Model.\nupdated by alternating window-based multi-head self-attention\n(W-MSA), SW-MSA, and feed-forward layers with residual con-\nnections. In the first layer of the block, W-MSA is applied to\nthe normalized input, followed by a residual connection and a\nmultilayer perceptron (MLP), respectively. In the second layer,\nSW-MSA is applied to the output of the first layer, followed by\nnormalization, residual connection, and MLP. This alternating\nstructure between W-MSA and SW-MSA allows the model to\nmaintain linear computational complexity relative to image size,\nwhile improving contextual representation. Equations (10\u201313)\nshows the attention mechanisms in each Swin Transformer\nblock.\n\u0302\ud835\udc4d\n(\ud835\udc59) = W-MSA(\ud835\udc3f\ud835\udc41(\ud835\udc4d(\ud835\udc59\u22121))) + \ud835\udc4d(\ud835\udc59\u22121),\n(10)\n\ud835\udc4d(\ud835\udc59) = MLP(\ud835\udc3f\ud835\udc41( \u0302\ud835\udc4d\n(\ud835\udc59))) + \u0302\ud835\udc4d\n(\ud835\udc59),\n(11)\n\u0302\ud835\udc4d\n(\ud835\udc59+1) = SW-MSA(\ud835\udc3f\ud835\udc41(\ud835\udc4d(\ud835\udc59))) + \ud835\udc4d(\ud835\udc59),\n(12)\n\ud835\udc4d(\ud835\udc59+1) = MLP(\ud835\udc3f\ud835\udc41( \u0302\ud835\udc4d\n(\ud835\udc59+1))) + \u0302\ud835\udc4d\n(\ud835\udc59+1).\n(13)\nThe attention mechanisms (W-MSA and SW-MSA) in the Swin\nTransformer apply scaled dot-product attention between the\nquery \ud835\udc44and the key \ud835\udc3e, followed by a learnable relative position\nbias \ud835\udc35as formalized in Equations (14\u201318)\n\ud835\udc44=\n\u23a1\n\u23a2\n\u23a2\n\u23a2\n\u23a2\n\u23a2\u23a3\n\ud835\udc5e1,1\n\ud835\udc5e1,2 \u00b7 \u00b7 \u00b7 \ud835\udc5e1,\ud835\udc51\n\ud835\udc5e2,1\n\ud835\udc5e2,2 \u00b7 \u00b7 \u00b7 \ud835\udc5e2,\ud835\udc51\n\u22ee\n\u22ee\n\u22f1\n\u22ee\n\ud835\udc5e\ud835\udc41,1 \ud835\udc5e\ud835\udc41,2 \u00b7 \u00b7 \u00b7 \ud835\udc5e\ud835\udc41,\ud835\udc51\n\u23a4\n\u23a5\n\u23a5\n\u23a5\n\u23a5\n\u23a5\u23a6\n,\n\ud835\udc3e=\n\u23a1\n\u23a2\n\u23a2\n\u23a2\n\u23a2\n\u23a2\u23a3\n\ud835\udc581,1\n\ud835\udc581,2 \u00b7 \u00b7 \u00b7 \ud835\udc581,\ud835\udc51\n\ud835\udc582,1\n\ud835\udc582,2 \u00b7 \u00b7 \u00b7 \ud835\udc582,\ud835\udc51\n\u22ee\n\u22ee\n\u22f1\n\u22ee\n\ud835\udc58\ud835\udc41,1 \ud835\udc58\ud835\udc41,2 \u00b7 \u00b7 \u00b7 \ud835\udc58\ud835\udc41,\ud835\udc51\n\u23a4\n\u23a5\n\u23a5\n\u23a5\n\u23a5\n\u23a5\u23a6\n(14)\n\ud835\udc44\ud835\udc3e\u22a4=\n\u23a1\n\u23a2\n\u23a2\n\u23a2\n\u23a2\n\u23a2\u23a3\n\u27e8\ud835\udc5e1, \ud835\udc581\u27e9\u27e8\ud835\udc5e1, \ud835\udc582\u27e9\u00b7 \u00b7 \u00b7 \u27e8\ud835\udc5e1, \ud835\udc58\ud835\udc41\u27e9\n\u27e8\ud835\udc5e2, \ud835\udc581\u27e9\u27e8\ud835\udc5e2, \ud835\udc582\u27e9\u00b7 \u00b7 \u00b7 \u27e8\ud835\udc5e2, \ud835\udc58\ud835\udc41\u27e9\n\u22ee\n\u22ee\n\u22f1\n\u22ee\n\u27e8\ud835\udc5e\ud835\udc41, \ud835\udc581\u27e9\u27e8\ud835\udc5e\ud835\udc41, \ud835\udc582\u27e9\u00b7 \u00b7 \u00b7 \u27e8\ud835\udc5e\ud835\udc41, \ud835\udc58\ud835\udc41\u27e9\n\u23a4\n\u23a5\n\u23a5\n\u23a5\n\u23a5\n\u23a5\u23a6\n(15)\n\ud835\udc34= Softmax\n(\n1\n\u221a\n\ud835\udc51\n\ud835\udc44\ud835\udc3e\u22a4+ \ud835\udc35\n)\n\u2208\u211d\ud835\udc41\u00d7\ud835\udc41.\n(16)\n\ud835\udc49=\n\u23a1\n\u23a2\n\u23a2\n\u23a2\n\u23a2\n\u23a2\u23a3\n\ud835\udc631,1\n\ud835\udc631,2 \u00b7 \u00b7 \u00b7 \ud835\udc631,\ud835\udc51\n\ud835\udc632,1\n\ud835\udc632,2 \u00b7 \u00b7 \u00b7 \ud835\udc632,\ud835\udc51\n\u22ee\n\u22ee\n\u22f1\n\u22ee\n\ud835\udc63\ud835\udc41,1 \ud835\udc63\ud835\udc41,2 \u00b7 \u00b7 \u00b7 \ud835\udc63\ud835\udc41,\ud835\udc51\n\u23a4\n\u23a5\n\u23a5\n\u23a5\n\u23a5\n\u23a5\u23a6\n(17)\nAttention(\ud835\udc44, \ud835\udc3e, \ud835\udc49) = \ud835\udc34\ud835\udc49\u2208\u211d\ud835\udc41\u00d7\ud835\udc51.\n(18)\n6 of 19\nEngineering Reports, 2026\n 25778196, 2026, 2, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/eng2.70655, Wiley Online Library on [11/03/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License\n\nwhere \ud835\udc44and \ud835\udc3edenote the query and key matrices, and \ud835\udc44\ud835\udc3e\u22a4\u2208\n\u211d\ud835\udc41\u00d7\ud835\udc41represents pairwise dot-product similarities between\ntokens. Each entry \u27e8\ud835\udc5e\ud835\udc56, \ud835\udc58\ud835\udc57\u27e9quantifies the relevance of token \ud835\udc57to\ntoken \ud835\udc56, and softmax normalization converts these scores into\nattention weights. The resulting attention matrix is then multi-\nplied by the value matrix \ud835\udc49to produce a weighted combination\nof token representations.\nThe complexity of global MSA scales quadratically with the total\nnumber of patches, whereas the complexity of W-MSA scales\nlinearly. The computational complexities of MSA and W-MSA\napplied to local windows are given in Equations (19) and (20),\nrespectively.\n\u03a9(MSA) = 4\u210e\ud835\udc64\ud835\udc362 + 2(\u210e\ud835\udc64)2\ud835\udc36\n(19)\n\u03a9(W-MSA) = 4\u210e\ud835\udc64\ud835\udc362 + 2\ud835\udc402\u210e\ud835\udc64\ud835\udc36\n(20)\nwhere \u210eand \ud835\udc64denote the height and width of the feature map\nin terms of patch tokens, \ud835\udc36represents the channel (embed-\nding) dimension, and \ud835\udc40denotes the window size used in\nwindow-based self-attention (set to \ud835\udc40= 7 by default [26]). The\nterm 4\u210e\ud835\udc64\ud835\udc362 corresponds to the linear projections for query,\nkey, value, and output transformations, while the quadratic term\n2(\u210e\ud835\udc64)2\ud835\udc36reflects the global attention cost in MSA. In contrast, the\nterm 2\ud835\udc402\u210e\ud835\udc64\ud835\udc36in W-MSA limits attention computation to local\nwindows, yielding linear complexity with respect to the number\nof patches.\n3.2\n|\nLocal Feature Extraction via ConvNeXt\nThe same input image in Equation (1) is also processed by\nConvNeXt blocks for the extraction of local features. These\nblocks are specifically designed to capture fine-grained spa-\ntial patterns and structural textures that may not be effectively\nmodeled by the global self-attention mechanisms of the Swin\nTransformer. The ConvNeXt architecture consists of a sequence\nof ConvNeXt blocks, each incorporating a depthwise convo-\nlution with a large kernel size (7 \u00d7 7) to capture long-range\nspatial dependencies. The convolutional output is subsequently\nnormalized, and the use of depthwise convolution signifi-\ncantly reduces the number of parameters and computational\ncomplexity [63].\nThe preprocessed input image is first passed through a convo-\nlutional stem layer, which reduces the spatial resolution and\nprojects the input \ud835\udc3c\u2208\u211d\ud835\udc3b\u00d7\ud835\udc4a\u00d7\ud835\udc36into a lower-dimensional fea-\nture representation (Equation (21)). Each stage of the ConvNeXt\narchitecture comprises multiple ConvNeXt blocks, where each\nblock consists of a depthwise convolution, layer normalization,\npointwise convolutions with Gaussian error linear unit (GELU)\nactivation, and a residual connection (Equations (22\u201326)). In the\nConvNeXt branch of this study, the resulting feature tensor prop-\nagates through three such stages, with each stage operating at\nprogressively lower spatial resolution and higher channel dimen-\nsionality, as formally defined by the recursive transformation in\nEquation (28).\nMathematically, let \ud835\udc3c\u2208\u211d\ud835\udc3b\u00d7\ud835\udc4a\u00d7\ud835\udc36represent the input image, then\na convolutional stem for patch embedding is given by:\n\ud835\udc4b0 = Convstem(\ud835\udc3c),\n\ud835\udc4b0 \u2208\u211d\n\ud835\udc3b\n4 \u00d7 \ud835\udc4a\n4 \u00d7\ud835\udc360\n(21)\nEach ConvNeXt Block consists of the following operations:\n\ud835\udc4b1 = DWConv(\ud835\udc4b)\n(22)\n\ud835\udc4b2 = LayerNorm(\ud835\udc4b1)\n(23)\n\ud835\udc4b3 = GELU(PWConv1(\ud835\udc4b2))\n(24)\n\ud835\udc4b4 = PWConv2(\ud835\udc4b3)\n(25)\n\ud835\udc4c= \ud835\udc4b+ DropPath(\ud835\udc4b4)\n(26)\nwhere \ud835\udc4bdenotes the input feature tensor to a ConvNeXt\nblock, DWConv(\u22c5) represents a depthwise convolution operation,\nand PWConv1(\u22c5) and PWConv2(\u22c5) denote the first and second\npointwise (1 \u00d7 1) convolution layers, respectively. LayerNorm(\u22c5)\napplies layer normalization to stabilize training, while GELU(\u22c5)\nintroduces non-linearity through the GELU activation. The\nDropPath(\u22c5) operation performs stochastic depth regularization,\nand the final residual connection adds the transformed features\nback to the input to facilitate effective gradient propagation.\nThus, the full ConvNeXt Block transformation is given by:\n\ud835\udc4c= \ud835\udc4b+ DropPath(PWConv2(GELU(PWConv1\n(LayerNorm(DWConv(\ud835\udc4b))))))\n(27)\nFor the stage-wise feature transformation, we let the ConvNeXt\nbranch have \ud835\udc41stages, with each stage \ud835\udc60\u2208{1, 2, . . . , \ud835\udc41} contain-\ning \ud835\udc35\ud835\udc60blocks. The transformation across stages is defined recur-\nsively as:\n\ud835\udc4b\ud835\udc60= \ue232\ud835\udc60(\ud835\udc4b\ud835\udc60\u22121)\nfor\n\ud835\udc60= 1, 2, . . . , \ud835\udc41\n(28)\nwhere \ue232\ud835\udc60(\u22c5) represents the composition of \ud835\udc35\ud835\udc60ConvNeXt Blocks.\nThe output of the final stage in Equation (29) represents the com-\nplete representation of the features extracted by the ConvNeXt\nBranch and served as input to dynamic gating fusion.\n\ud835\udc4bConvNeXt = \ud835\udc4b\u2208\u211d\ud835\udc3b\u00d7\ud835\udc4a\u00d7\ud835\udc36\n(29)\n3.3\n|\nLearnable Dynamic Gating Fusion (LDGF)\nThe proposed hybrid architecture employs a learnable dynamic\nfusion mechanism designed to refine and control the flow of\nfeatures processed through dual convolutional and hierarchi-\ncal learning. The proposed fusion mechanism plays a critical\nrole in integrating complementary strengths of the global fea-\nture representations of the Swin Transformer and the local fea-\ntures of the ConvNeXt model. As shown in Equations (30)\nand (31), feature maps are extracted in parallel by the Con-\nvNeXt and Swin Transformer branches, producing intermediate\nrepresentations with different spatial resolutions and channel\ndimensions.\n\ud835\udc39cn = \ud835\udc53cn(\ud835\udc4b; \ud835\udf03cn) \u2208\u211d\ud835\udc35\u00d7\ud835\udc36\u00d7\ud835\udc3bcn\u00d7\ud835\udc4acn\n(30)\n\u0303\ud835\udc39\nsw = \ud835\udc53sw(\ud835\udc4b; \ud835\udf03sw) \u2208\u211d\ud835\udc35\u00d7\ud835\udc3bsw\u00d7\ud835\udc4asw\u00d7\ud835\udc36\n(31)\nEngineering Reports, 2026\n7 of 19\n 25778196, 2026, 2, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/eng2.70655, Wiley Online Library on [11/03/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License\n\nwhere \ud835\udc4b\u2208\u211d\ud835\udc35\u00d73\u00d7\ud835\udc3b\u00d7\ud835\udc4adenotes a mini-batch of RGB images, with\n\ud835\udc35representing the batch size and \ud835\udc3band \ud835\udc4athe spatial height and\nwidth of the input. The functions \ud835\udc53cn(\u22c5; \ud835\udf03cn) and \ud835\udc53sw(\u22c5; \ud835\udf03sw) denote\nthe ConvNeXt and Swin Transformer backbones parameterized\nby \ud835\udf03cn and \ud835\udf03sw, respectively.\nTo enable pointwise fusion (Figure 1), the output from the Swin\nTransformer branch is permuted into a tensor representation\nwith channels as the leading dimension, while the ConvNeXt fea-\nture map is bilinearly resized to match the Swin Transformer\u2019s\nspatial resolution, as shown in Equation (33).\n\ud835\udc39sw = permute( \u0303\ud835\udc39\nsw) \u2208\u211d\ud835\udc35\u00d7\ud835\udc36\u00d7\ud835\udc3bsw\u00d7\ud835\udc4asw\n(32)\n\ud835\udc39cn = \ue235bilinear\n(\ud835\udc39cn, \ud835\udc3bsw, \ud835\udc4asw\n) \u2208\u211d\ud835\udc35\u00d7\ud835\udc36\u00d7\ud835\udc3b\u2032\u00d7\ud835\udc4a\u2032,\n\ud835\udc39sw \u2208\u211d\ud835\udc35\u00d7\ud835\udc36\u00d7\ud835\udc3b\u2032\u00d7\ud835\udc4a\u2032\n(33)\nwith \ud835\udc3b\u2032 = \ud835\udc3bsw and \ud835\udc4a\u2032 = \ud835\udc4asw,\nwhere\n\ud835\udc53cn, \ud835\udc53sw \u2236ConvNeXt and Swin Transformer feature extractors\nwith parameters \ud835\udf03cn, \ud835\udf03sw,\n\ud835\udc39cn, \ud835\udc39sw \u2236feature maps represented as tensors with channels\nas the leading dimension,\n\u0303\ud835\udc39\nsw \u2236Swin output in a channel-last representation,\n\ud835\udc36\u2236number of channels,\n\ue235bilinear(\u22c5) \u2236bilinear interpolation operator applied to\nfeature maps.\nTo mitigate bias toward streams with higher variance, batch nor-\nmalization (BN) is applied to each feature channel prior to fusion,\nas described in Equation (34).\n\u0302\ud835\udc39\ud835\udc46\n\ud835\udc4f,\ud835\udc58,\u210e,\ud835\udc64= \ud835\udefe\ud835\udc46\n\ud835\udc58\n\ud835\udc39\ud835\udc46\n\ud835\udc4f,\ud835\udc58,\u210e,\ud835\udc64\u2212\ud835\udf07\ud835\udc46\n\ud835\udc58\n\u221a\n(\ud835\udf0e\ud835\udc46\n\ud835\udc58)2 + \ud835\udf00\n+ \ud835\udefd\ud835\udc46\n\ud835\udc58,\n(34)\nwhere \u0302\ud835\udc39\ud835\udc46\n\ud835\udc4f,\ud835\udc58,\u210e,\ud835\udc64is the corresponding normalized output; \ud835\udc39\ud835\udc46\n\ud835\udc4f,\ud835\udc58,\u210e,\ud835\udc64\ndenotes the input feature value at batch index \ud835\udc4f, channel \ud835\udc58, and\nthe spatial dimensions of the feature map (\u210e, \ud835\udc64) for stream \ud835\udc46; \ud835\udefe\ud835\udc46\n\ud835\udc58\nand \ud835\udefd\ud835\udc46\n\ud835\udc58are learnable scale and shift parameters; \ud835\udf00is a small con-\nstant added for numerical stability.\nThe mean \ud835\udf07\ud835\udc46\n\ud835\udc58and variance (\ud835\udf0e\ud835\udc46\n\ud835\udc58)2 over the mini-batch (\ud835\udc4f= 1,\n. . . , \ud835\udc35) and the spatial dimensions (\u210e= 1, . . . , \ud835\udc3b\ud835\udc46, \ud835\udc64= 1, . . . ,\n\ud835\udc4a\ud835\udc46) of stream \ud835\udc46for channel \ud835\udc58are computed as follows:\n\ud835\udf07\ud835\udc46\n\ud835\udc58=\n1\n\ud835\udc35\ud835\udc3b\ud835\udc60\ud835\udc4a\ud835\udc60\n\ud835\udc35\n\u2211\n\ud835\udc4f=1\n\ud835\udc3b\ud835\udc60\n\u2211\n\u210e=1\n\ud835\udc4a\ud835\udc60\n\u2211\n\ud835\udc64=1\n\ud835\udc39\ud835\udc46\n\ud835\udc4f,\ud835\udc58,\u210e,\ud835\udc64,\n(35)\n(\ud835\udf0e\ud835\udc46\n\ud835\udc58)2 =\n1\n\ud835\udc35\ud835\udc3b\ud835\udc60\ud835\udc4a\ud835\udc60\n\ud835\udc35\n\u2211\n\ud835\udc4f=1\n\ud835\udc3b\ud835\udc60\n\u2211\n\u210e=1\n\ud835\udc4a\ud835\udc60\n\u2211\n\ud835\udc64=1\n(\n\ud835\udc39\ud835\udc46\n\ud835\udc4f,\ud835\udc58,\u210e,\ud835\udc64\u2212\ud835\udf07\ud835\udc46\n\ud835\udc58\n)2\n.\n(36)\nwhere \ud835\udc35denotes the batch size, \ud835\udc3b\ud835\udc60and \ud835\udc4a\ud835\udc60are the spatial height\nand width of the feature map for stream \ud835\udc46at the fusion resolution.\nIn our implementation, BN uses \ud835\udf00= 10\u22125 for numerical stability,\nwith the learnable scale and shift parameters \ud835\udefe\ud835\udc46\n\ud835\udc58and \ud835\udefd\ud835\udc46\n\ud835\udc58initial-\nized to one and zero, respectively. The batch size was set to \ud835\udc35= 8,\nwhile the spatial dimensions \ud835\udc3b\ud835\udc60and \ud835\udc4a\ud835\udc60correspond to the res-\nolution of the feature maps of the backbone at the fusion stage\n(7 \u00d7 7 for a 224 \u00d7 224 input). The fusion gate is computed from\nthe normalized feature representations by first concatenating the\noutputs of the ConvNeXt and Swin Transformer streams. Specif-\nically, the normalized feature tensors \u0302\ud835\udc39cn and \u0302\ud835\udc39sw are concate-\nnated along the channel dimension to form Equation (37), which\nserves as the input to the fusion gating network.\n\ud835\udc39cat = Concat\n[\n\u0302\ud835\udc39cn, \u0302\ud835\udc39sw]\n\u2208\u211d\ud835\udc35\u00d72\ud835\udc36\u00d7\ud835\udc3b\ud835\udc60\u00d7\ud835\udc4a\ud835\udc60\n(37)\nThe proposed learnable gating mechanism is implemented as a\ncompact CNN, as defined in Equations (38\u201340).\n\u210einner = Conv3\u00d73(\ud835\udc39cat),\n(38)\n\u210emid = ReLU(BN(\u210einner)),\n(39)\n\ud835\udc54\ud835\udf03(\ud835\udc39cat) = \ud835\udf0e(Conv1\u00d71(\u210emid)),\n(40)\nwhere \ud835\udf0edenotes the sigmoid activation function.\nUsing the gating coefficient \ud835\udefcin Equation (41), the fused feature\nmap is computed as an element-wise convex combination of the\ntwo streams, as shown in Equation (42).\n\ud835\udefc= \ud835\udc54\ud835\udf03(\ud835\udc39cat) \u2208[0, 1]\ud835\udc35\u00d7\ud835\udc36\u00d7\ud835\udc3b\ud835\udc60\u00d7\ud835\udc4a\ud835\udc60\n(41)\n\ud835\udc39\u2217= \ud835\udefc\u2299\u0302\ud835\udc39cn + (1 \u2212\ud835\udefc) \u2299\u0302\ud835\udc39sw\n(42)\nwhere \u2299denotes element-wise multiplication.\nTo enhance gate-specific feature learning, the fused feature map\n\ud835\udc39\u2217is further refined by a 3 \u00d7 3 convolutional block followed\nby BN, rectified linear unit (ReLU) activation, and dropout, as\nshown in Equation (43).\n\ud835\udc39\u2217\u2217= Dropout (ReLU (BN(Conv3\u00d73(\ud835\udc39\u2217))))\n(43)\nThe refined feature representation is globally pooled and then\npassed through a multi-layer perceptron (MLP) with nonlinear\nactivations and dropout regularization, followed by a softmax\nclassifier. Formally, the process is defined in Equations (44\u201347):\n\ud835\udc67= GlobalAvgPool(\ud835\udc39\u2217\u2217),\n\ud835\udc67\u2208\u211d\ud835\udc36,\n(44)\n\u210e1 = \ud835\udf19(\ud835\udc4a1\ud835\udc67+ \ud835\udc4f1),\n\ud835\udc4a1 \u2208\u211d512\u00d7\ud835\udc36, \ud835\udc4f1 \u2208\u211d512,\n(45)\n\u210e2 = \ud835\udf19(\ud835\udc4a2\u210e1 + \ud835\udc4f2),\n\ud835\udc4a2 \u2208\u211d256\u00d7512, \ud835\udc4f2 \u2208\u211d256,\n(46)\n\u0302\ud835\udc66= Softmax(\ud835\udc4a\ud835\udc50\u210e2 + \ud835\udc4f\ud835\udc50),\n\ud835\udc4a\ud835\udc50\u2208\u211d\ud835\udc3e\u00d7256, \ud835\udc4f\ud835\udc50\u2208\u211d\ud835\udc3e.\n(47)\nwhere \ud835\udf19(\u22c5) denotes the composite operation of ReLU activa-\ntion followed by dropout, \ud835\udc36is the channel dimension of the\npooled feature map and \ud835\udc3eis the number of output classes. The\noutput \u0302\ud835\udc66\u2208\u211d\ud835\udc3ecorresponds to the predicted class probability\ndistribution.\nThe overall workflow of the proposed framework is summa-\nrized in Algorithm 1, where each step has been designed to\nensure efficient representation learning while minimizing redun-\ndancy between the backbones. Furthermore, the time complex-\nity of each major stage in the hybrid SwinTConvNeXt-LDGF\nmodel is presented in Table 1. As shown, the additional overhead\n8 of 19\nEngineering Reports, 2026\n 25778196, 2026, 2, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/eng2.70655, Wiley Online Library on [11/03/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License\n\nintroduced by the LDGF module is modest compared to individ-\nual backbone complexities, making the approach computation-\nally feasible for large-scale histopathology image classification\ntasks.\n3.4\n|\nModel Algorithm and Complexity\nALGORITHM 1\n|\nAlgorithm\nof\nthe\nproposed\nHybrid\nSwinTConvNeXt-LDGF model.\nInput: Raw image data\nStep 1: Feature Extraction\n- Extract feature map from ConvNeXt Tiny\nbackbone\n- Extract feature map from Swin Tiny\nbackbone\n- Align spatial dimensions\nStep 2: Balanced Fusion Gate\n- Normalize features using batch\nnormalization\n- Concatenate features:\n- Compute local gating map (both per\npixel and per channel)\n- Compute global gating vector (per\nchannel only)\n- Broadcast\n- Combine gates\n- Fuse features\nStep 3: Post-Fusion Refinement\n- Apply convolution, batch normalization,\nReLU, and dropout\n- Obtain refined feature map\nStep 4: Global Pooling and Normalization\n- Apply global average pooling\n- Normalize pooled features\nStep 5: Classification\n- Pass features through fully connected\nlayers with ReLU and dropout\n- Predict logits\n- Compute class probabilities\nOutput: Classification result\nTABLE 1\n|\nTime complexity of major stages in the proposed hybrid\nSwinTConvNeXt-LDGF Model.\nStage\nTime complexity\nFeature extraction\n(ConvNeXt-Tiny)\n\ud835\udc42(\u2211\n\ud835\udc60\ud835\udc41\u22c5\ud835\udc3b\ud835\udc60\ud835\udc4a\ud835\udc60\u22c5\ud835\udc362\n\ud835\udc60\n)\nFeature extraction (Swin-Tiny)\n\ud835\udc42(\ud835\udc41\u22c5\ud835\udc3b\ud835\udc60\ud835\udc4a\ud835\udc60\u22c5\ud835\udc372 +\n\ud835\udc41\u22c5\ud835\udc3b\ud835\udc60\ud835\udc4a\ud835\udc60\u22c5\ud835\udc402\ud835\udc37)\nFeature alignment\n\ud835\udc42(\ud835\udc41\u22c5\ud835\udc3b\u22c5\ud835\udc4a\u22c5\ud835\udc36)\nLearnable dynamic gating\nfusion (LDGF)\n\ud835\udc42(\ud835\udc41\u22c5\ud835\udc3b\u22c5\ud835\udc4a\u22c5\ud835\udc362)\nPost-fusion refinement\n\ud835\udc42(\ud835\udc41\u22c5\ud835\udc3b\u22c5\ud835\udc4a\u22c5\ud835\udc362)\nGlobal pooling + normalization\n\ud835\udc42(\ud835\udc41\u22c5\ud835\udc3b\u22c5\ud835\udc4a\u22c5\ud835\udc36)\nClassification head\n\ud835\udc42(\ud835\udc41\u22c5\ud835\udc362 + \ud835\udc41\u22c5\ud835\udc36\u22c5\ud835\udc3e)\nOverall complexity\n\ud835\udc42(\ud835\udc39ConvNeXt) + \ud835\udc42(\ud835\udc39Swin) +\n\ud835\udc42(\ud835\udc41\u22c5\ud835\udc3b\u22c5\ud835\udc4a\u22c5\ud835\udc362)\n3.5\n|\nData Preprocessing and Training Strategy\nThis section outlines the experimental setup adopted for the clas-\nsification of breast cancer histopathology using the BreakHis\ndataset [64]. It consists of the dataset characteristics, the adopted\ntraining strategy, and the model configurations with their corre-\nsponding hyperparameters. The experiments were conducted on\nthe publicly available BreakHis dataset, which consists of micro-\nscopic biopsy images of breast tissue collected from eight tumor\nsubtypes such as Adenosis, Ductal Carcinoma, Fibroadenoma,\nLobular Carcinoma, Mucinous Carcinoma, Papillary Carcinoma,\nPhyllodes Tumor and Tubular Adenoma (Figure 2). The images\nwere provided with multiple magnification factors, for consis-\ntency, we focused on a fixed resolution of 224 \u00d7 224 pixels after\nresizing. The dataset splits followed a stratified strategy with 70%\nfor training, 15% for validation, and 15% for testing, ensuring bal-\nanced representation between classes (Table 2).\nDuring training, all images were resized to 224 \u00d7 224 pixels, con-\nverted to tensors, and normalized using standard ImageNet mean\nand standard deviation values (mean = [0.485, 0.456, 0.406],\nstd = [0.229, 0.224, 0.225]). To improve training variability, this\nstudy employed augmentation techniques such as random hori-\nzontal and vertical flips (p = 0.5 each), random rotations within\n\u00b115\u2218, and color jittering with controlled changes in brightness\n(0.1), contrast (0.1), saturation (0.1) and hue (0.03). To mitigate\nclass imbalance, this work employed a weighted random sam-\npling strategy, in which class-specific weights increase the contri-\nbution of minority classes during optimization, thereby improv-\ning performance under class-imbalanced conditions [65].\nThe optimization of the SwinTConvNeXt-LDGF model was per-\nformed using the AdamW optimizer, chosen for its ability to\ndecouple weight decay from learning rate. The initial learning\nrate was set to 2 \u00d7 10\u22125. A cosine annealing schedule with warm\nrestarts was employed, with an initial cycle duration of 10 epochs,\na restart cycle multiplier of two, and a minimum learning rate of\n1 \u00d7 10\u22126, to encourage periodic exploration of new minima and\nreduce the risk of premature convergence [66] (Figure 3). Finally,\nto improve robustness and reduce overconfident predictions, the\nentropy was regularized with strength \ud835\udf06= 0.01. This encouraged\nthe model to maintain uncertainty where appropriate, limiting\noverfitting to noisy histopathology patterns.\nThe proposed model was implemented in python (v3.10) using\nPyTorch (v2.2), with supporting libraries including TorchMetrics\nfor evaluation, LIME and SHAP for explainability. Training was\nperformed on an NVIDIA L4 GPU (24 GB VRAM) with mixed\nprecision enabled.\n4\n|\nResults and discussion\nThis section presents a detailed evaluation of the proposed\nhybrid SwinTrasDConvNeXt model on the multi-classification of\nhistopathology breast cancer images using the BreakHis dataset.\nThe primary objective of this study was to assess the effec-\ntiveness of the hybrid model in the multi-class classification of\neight breast cancer subtypes from histopathology images under\nchallenging conditions of data imbalance and morphological\nvariability.\nEngineering Reports, 2026\n9 of 19\n 25778196, 2026, 2, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/eng2.70655, Wiley Online Library on [11/03/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License\n\nFIGURE 2\n|\nTraining samples of the hybrid SwinTConvNeXt-LDGF Model.\nTABLE 2\n|\nBreakHis dataset distribution across training, validation, and testing splits.\nCategory\nClass\nOriginal\nTraining\nValidation\nTesting\nBenign\nAdenosis\n444\n311\n67\n66\nFibroadenoma\n1014\n710\n152\n152\nTubular Adenoma\n569\n398\n85\n86\nPhyllodes Tumor\n453\n317\n68\n68\nMalignant\nDuctal Carcinoma\n3391\n2374\n508\n509\nLobular Carcinoma\n626\n438\n94\n94\nMucinous Carcinoma\n792\n554\n119\n119\nPapillary Carcinoma\n560\n392\n84\n84\nBenign\nTotal\n2480\n1736\n372\n372\nMalignant\nTotal\n5369\n3758\n805\n806\nFIGURE 3\n|\nHybrid accuracy and loss over 50 epochs. (a) Hybrid accuracy over 50 epochs. (b) Hybrid loss over 50 epochs.\n10 of 19\nEngineering Reports, 2026\n 25778196, 2026, 2, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/eng2.70655, Wiley Online Library on [11/03/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License\n\n4.1\n|\nModel Training Dynamics\nand Convergence\nThe proposed hybrid SwinTConvNeXt-LDGF model utilized in\nthis study achieved superior performance in 50 epochs. The\nmodel suggested a stable generalization to unseen data, as\nthe validation accuracy improved from 69.22% to a peak of\n92.33% at epoch 10, after which it oscillated within the range of\n93%\u201395%. Similarly, its training accuracy improved from an ini-\ntial 46.93%\u201398.09% by the final epoch. In contrast, the model\u2019s\nvalidation loss steadily declined from 0.5144 to 0.1458, while the\ntraining loss dropped from 0.7823 to 0.0291 by the final epoch.\nIn general, the model effectively learned to discriminate fea-\ntures from training data while avoiding overfitting, as shown in\nFigure 3.\nFigure 4 presents the dynamics of the gating mechanism and\nbackbone preference between training epochs. The alpha mean\nevolution in Figure 4a shows a consistence increases from\napproximately 0.27 to around 0.43 over 50 epochs, indicating\na progressive strengthening of the gating mechanism towards\nbalanced feature integration. Similarly, Figure 4b illustrates the\nbackbone preference distribution between the ConvNeXt and\nSwin Transformer models. To encourage balanced contributions\nfrom Swin Tansformer and ConvNeXt, the mean activation of\nthe fusion gate (\ud835\udefc) was regularized using a L2 penalty towards\n0.5. This prevented the gate from collapsing entirely in one back-\nbone, ensuring that both models had a fair opportunity to con-\ntribute during training. Although both Swin Transformer and\nConvNeXt parameters were trained with the same learning rate\n(2 \u00d7 105), fusion gate statistics showed an early dominance of\nSwin Transformer features (99.8%) and then gradually incor-\nporated ConvNeXt. This preference indicates that Transformer\nfeatures (global) are more stable at the beginning, while Con-\nvNeXt\u2019s CNN filters (local) need more fine-tuning to specialize,\nmimicking how medical experts reason visually by starting with\nglobal context (gist of abnormality) and then zooming in to local\ndetails [67].\n4.2\n|\nResults\nThis section summarize the quantitative results obtained on the\ntraining, validation, and testing sets. Our proposed hybrid model\ndistinguishes itself on all sets by dynamically fusing local fea-\ntures from ConvNeXt with broad contextual cues derived from\nthe Swin Transformer\u2019s self-attention mechanism via a learnable\nparameter. To contextualize the results, we report the overall pro-\nportion of correct predictions (accuracy), the quantity of how\nmany positively predicted cases are truly positive (Precision), the\nfraction of actual positives that are detected (Recall), the frac-\ntion of actual negatives correctly identified (Specificity), a bal-\nance between precision and recall (F1 Score), and the area under\nthe receiver operating characteristic curve (AUC). All results\nreported on the BreakHis dataset for the proposed method cor-\nrespond to a multiclass classification setting that aggregates all\nmagnification levels (40\u00d7, 100\u00d7, 200\u00d7, and 400\u00d7) within each\ntumor subclass.\nTable 3 presents the overall performance of the proposed\nSwinTConvNeXt-LDGF hybrid model on the training, validation,\nand test sets. The model demonstrated consistently strong perfor-\nmance across all evaluation metrics, suggesting robustness and\neffective generalization. Most importantly, on the test set, the\nproposed SwinTConvNeXt-LDGF model achieved 95.53% accu-\nracy, 94.74% precision, 96.32% recall, and 95.47% F1 score, con-\nfirming its robustness. The slightly higher recall relative to pre-\ncision on the test set indicates that the model favored sensitivity,\ndemonstrating robustness in capturing a large proportion of true\npositives while still maintaining strong precision. Furthermore,\nthe model was evaluated using five folds, in which four folds\nwere used for training and validation and the remaining fold for\ntesting.\nAcross the four folds in Table 4, accuracy ranged from 86.9%\nto 91.9%, while the area under the AUC remained consis-\ntently high (0.990\u20130.995), reflecting the strong discrimina-\ntive ability across class boundaries. The precision-recall AUC\nFIGURE 4\n|\nDynamic gating fusion performance over 50 epochs. (a) Alpha mean distribution over 50 epochs. (b) Hybrid backbone preference over\n50 epochs.\nEngineering Reports, 2026\n11 of 19\n 25778196, 2026, 2, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/eng2.70655, Wiley Online Library on [11/03/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License\n\nTABLE 3\n|\nOverall performance of the proposed SwinTConvNeXt-LDGF model (Train, Validation, Test).\nSwin Transformer\nConvNeXt\nSwinTConvNeXt-LDGF\nMetric\nTrain\nValidation\nTest\nTrain\nValidation\nTest\nTrain\nValidation\nTest\nPrecision\n95.42%\n92.24%\n92.49%\n94.57%\n91.13%\n91.12%\n97.66%\n94.74%\n94.74%\nRecall\n98.20%\n94.98%\n93.53%\n98.48%\n92.35%\n94.23%\n99.35%\n96.81%\n96.32%\nF1-score\n96.61%\n93.30%\n92.80%\n96.27%\n91.40%\n92.47%\n98.39%\n95.59%\n95.47%\nAccuracy\n96.32%\n93.18%\n93.33%\n95.68%\n91.47%\n92.49%\n98.12%\n95.40%\n95.53%\nNote: The bold values indicate the best performing results among the compared models.\nTABLE 4\n|\nCross-validation results with per-fold performance, aggregate summary (95% CI), and final test set evaluation.\nFold (K-1)\nAcc\nAUC\nPR_AUC\nBalancedAcc\nMCC\nKappa\n1\n0.9197\n0.9950\n0.9655\n0.9304\n0.8965\n0.8960\n2\n0.9051\n0.9943\n0.9620\n0.9142\n0.8776\n0.8771\n3\n0.8694\n0.9903\n0.9365\n0.8947\n0.8367\n0.8338\n4\n0.9140\n0.9937\n0.9544\n0.8938\n0.8868\n0.8865\nMean (95% CI)\n0.902\n0.993\n0.955\n0.908\n0.874\n0.873\n(0.866\u20130.938)\n(0.990\u20130.997)\n(0.934\u20130.975)\n(0.880\u20130.936)\n(0.833\u20130.916)\n(0.830\u20130.917)\nFinal test (K = 1)\n0.9153\n0.9938\n0.9599\n\u2014\n\u2014\n\u2014\nNote: The bold values highlight the mean cross-validation performance and the final test set results.\n(PR_AUC) also showed high reliability (0.936\u20130.966), confirm-\ning effective performance in unbalanced settings. Balanced\naccuracy values were stable (0.894\u20130.930), indicating that the\nmodel generalized well across classes without bias toward\nmajority groups. Both Matthews correlation coefficient (MCC:\n0.837\u20130.897) and Cohen\u2019s Kappa (0.834\u20130.896) remained strong,\nfurther supporting the reliability of the model in agreement\nwith ground truth labels. Aggregated mean results further\nreinforced these findings, with accuracy of 90.2% (95% CI:\n86.6%\u201393.8%), AUC of 0.993 (95% CI: 0.990\u20130.997), PR_AUC\nof 0.955 (95% CI: 0.934\u20130.975), balanced accuracy of 90.8%\n(95% CI: 88.0%\u201393.6%). High agreement metrics were also\nobserved, with an MCC of 0.874 and a Cohen\u2019s kappa of 0.873.\nFinally, when evaluated on an independent test fold, the model\nachieved an accuracy of 91.5%, AUC of 0.9938, and PR_AUC\nof 0.9599, closely aligning with the cross-validation averages.\nThese results confirms that the hybrid model not only generalized\nacross validation folds but also translated effectively to unseen\ntest data, demonstrating robustness suitable for real-world\ndeployment.\n4.2.1\n|\nConfusion Matrix and Receiver Operating\nCharacteristic (ROC) Analysis\nFigure 5 presents the confusion matrices of the proposed hybrid\nmodel on the training, validation, and test sets for the eight\nbreast cancer subtypes. The confusion matrices demonstrate that\nthe model achieved high accuracy per class, with most predic-\ntions concentrated along the diagonal, reflecting correct clas-\nsifications. On the training set shown in Figure 5a, almost all\nclasses were classified with minimal misclassification, indicat-\ning strong discriminative learning by the model. The validation\nand test set results desmontrated a small number of off-diagonal\nmisclassifications, particularly among histologically similar sub-\ntypes such as fibroadenoma and phyllodes tumor as shown in\nFigure 5b and c, respectively.\nThe ROC curves for each dataset in Figure 6 further confirm\nthe discriminative power of the model, with all classes achiev-\ning AUC close to 1.0, indicating favorable sensitivity\u2013specificity\ntrade-offs for both majority and minority classes. Notably, the test\nset ROC curves maintained consistently high AUC values across\nall subtypes, demonstrating the stability of the proposed model\non unseen data.\n4.2.2\n|\nClass-Wise Performance Metrics\nFigure 7 illustrates the classification performance of the hybrid\nSwinTConvNeXt-LDGF model, evaluated on BreakHis dataset\nacross eight breast tumor subclasses using precision, recall, and\nF1-score as primary metrics. Overall, the model demonstrated\nconsistently high predictive accuracy, with most subclasses\nachieving above 94% across all metrics. For benign subclasses,\nadenosis and tubular adenomas exhibited a nearly-perfect clas-\nsification, with scores exceeding 97% for precision, recall, and F1\nscore. Fibroadenoma and phyllodes tumor also achieved strong\nperformance (precision 91%\u201396%; recall 94%\u201395%; F1 Score\n93%\u201395%), indicating robust separability of these histopatholog-\nical patterns. Among malignant subclasses, ductal carcinoma,\nthe most prevalent clinical subtype, achieved a high precision\nof 97.14%, a recall of 100.00%, and an F1-score of 98.55%. Papil-\nlary carcinoma also demonstrated strong performance, achieving\n97.62% across all evaluation metrics, while mucinous carcinomas\nwere classified with metrics performance ranging from 94% to\n95%, reflecting the model\u2019s ability to capture their distinctive mor-\nphological features.\n12 of 19\nEngineering Reports, 2026\n 25778196, 2026, 2, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/eng2.70655, Wiley Online Library on [11/03/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License\n\nFIGURE 5\n|\nConfusion matrices of the hybrid model on the training, validation and test sets, showing classification performance across eight breast\ntumor subtypes. Each matrix illustrates correct predictions on the diagonal and misclassifications on the off-diagonal. (a) Train Set, (b) validation set,\n(c) test set.\nFIGURE 6\n|\nROC Curves for the training, validation, and test sets, showing the trade-off between sensitivity and specificity across thresholds.\nFIGURE 7\n|\nPer-class classification performance (Precision, Recall, F1 Score).\nEngineering Reports, 2026\n13 of 19\n 25778196, 2026, 2, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/eng2.70655, Wiley Online Library on [11/03/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License\n\nTABLE 5\n|\nComparison of classification performance on the BreakHis dataset.\nSource\nMethod description\nModel\nPerformance metrics\n[70]\nAttention-based deep learning\nECSAnet\nAccuracy: 91.30%\n[71]\nDeep residual learning\nResNet-50\nAccuracy: 92.42%\n[72]\nMulti-scale feature fusion network\nBCMNet\nAvg. accuracy: 87.56%\u201392.65%\n[73]\nEnsemble deep learning\nVision transformer\nAccuracy: 98.21%, Precision:\n89.84%, Recall: 89.97%, F1\nScore: 88.75\nThis work (baseline)\nTransformer-based baseline\nSwin Transformer\nAccuracy: 93.33%, Precision:\n92.49%, Recall: 93.53%, F1 Score:\n92.80%, AUC: 1.00\nThis work (baseline)\nConvolutional baseline\nConvNeXt\nAccuracy: 92.49%, Precision:\n91.12%, Recall: 94.23%, F1 Score:\n91.40%, AUC: 1.00\nThis work (Hybrid)\nHybrid model without learnable\ndynamic gating fusion\n(concatenation).\nSwinTConvNeXt\nAccuracy: 94.94%, Precision:\n94.70%, Recall: 95.23%, F1 Score:\n94.75%, AUC: 1.00.\nThis work (Proposed)\nHybrid model with learnable\ndynamic gating fusion\nSwinTConvNeXt-LDGF\nAccuracy: 95.53%, Precision:\n94.74%, Recall: 96.32%,\nF1 Score: 95.47%, AUC: 1.00.\nNote: The bold values emphasize the best performance of the proposed model across all evaluation metrics.\nIn contrast, lobular carcinoma posed the greatest classification\nchallenge. Although recall remained relatively high (93.68%),\nprecision was comparatively lower (81.65%), resulting in the\nlowest F1-score of 87.25% among all subclasses. The confu-\nsion matrix in Figure 5c indicates that lobular carcinoma cases\nwere frequently misclassified as ductal carcinoma, highlight-\ning substantial morphological overlap between these two enti-\nties. Furthermore, the confusion matrix also indicates that\nmucinous carcinomas were occasionally misclassified as duc-\ntal carcinoma, reflecting the histopathological similarity of these\nsubtypes in certain regions of the tissue (mixed mucinous\ncarcinoma).\nThis imbalance indicates that, although the model was able to\ncorrectly identify most of the cases of lobular and mucinous\ncarcinomas, it also produced a notable number of false-positive\nclassifications, thereby reducing precision. Such challenges are\nconsistent with clinical observations, since ILC often exhibits\nsubtle, diffuse growth patterns that overlap with IDC and other\nsubtypes, while mucinous carcinoma can share morphological\nsimilarities with ductal carcinoma, further complicating reliable\ndiscrimination [68, 69].\nOverall, consistently strong per-class performance metrics rein-\nforce the ability of the proposed SwinTConvNeXt-LDGF model\nto generalize across various subtypes of breast tumors, while\nalso highlighting specific challenges in subclasses such as lobular\ncarcinomas.\nTo\ncontextualize\nthe\neffectiveness\nof\nthe\nproposed\nSwinTConvNeXt-LDGF model, its classification performance\non the BreakHis dataset is compared with several recent\nstate-of-the-art methods reported in the literature. Table 5\npresents a comparative evaluation of multiclass classification\nperformance on the BreakHis dataset, considering all breast\nTABLE 6\n|\nPerformance\nevaluation\nof\nthe\nproposed\nSwinTConvNeXt-LDGF on the Bach dataset.\nMetric\nTrain (%)\nValidation (%)\nTest (%)\nAccuracy\n99.64\n96.25\n92.50\nPrecision\n99.65\n96.37\n94.23\nRecall\n99.64\n96.25\n92.50\nF1-score\n99.64\n96.21\n92.65\ntumor subclasses across all magnification levels per class, rather\nthan binary or magnification-specific classification. In addition\nto prior studies, the table includes baseline and hybrid variants\nevaluated in this work, highlighting the incremental perfor-\nmance gains achieved through the proposed learnable dynamic\ngating fusion.\nTo\nfurther\nevaluate\nthe\nperformance\nof\nthe\nproposed\nSwinTConvNeXt-LDGF hybrid model, additional experiments\nwere conducted on the BACH dataset to classify four breast tissue\nsubtypes, namely normal tissue, benign lesions, in situ carci-\nnoma, and invasive carcinoma [74]. In this setting, the model was\ntrained and evaluated using the same architectural configuration\nand training protocol as those employed for the BreakHis dataset.\nThis additional evaluation demonstrates the adaptability of the\nproposed approach across different histopathological datasets, as\nshown in Table 6.\n4.2.3\n|\nHybrid SwinTConvNeXt-LDGF Model\nPrediction Explainability\nFigures 8 and 9 present visual explanations based on LIME of the\nhybrid SwinTConvNeXt-LDGF model for benign and malignant\n14 of 19\nEngineering Reports, 2026\n 25778196, 2026, 2, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/eng2.70655, Wiley Online Library on [11/03/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License\n\nFIGURE 8\n|\nHybrid Benign explainability using LIME.\nFIGURE 9\n|\nHybrid Malignant explainability using LIME.\nhistopathology samples. For the benign case shown in Figure 8,\nthe model accurately localized the lesion boundaries within the\ntissue, with the highlighted lesion region accounting for 22.1%\nof the image. The remaining non-lesion area (77.9%) was cor-\nrectly disregarded, indicating that the model avoids overfitting to\nirrelevant background structures. In the malignant case shown in\nFigure 9, the model highlighted clusters of densely packed nuclei\nand irregular tissue morphology, corresponding to pathologically\nrelevant malignant regions. In this instance, 21.8% of the image\nwas identified as lesion area, while the remaining 78.2% was clas-\nsified as non-lesion area.\nThese results demonstrate that the predictions of the pro-\nposed hybrid model are not only accurate, but also inter-\npretable. The highlighted regions of the lesion correspond to\nclinically meaningful structures, supporting the diagnostic rea-\nsoning of the model and enhancing its transparency for medical\ndecision-making.\nFigure 10 illustrates the class-level SHAP analysis which reveals\nthat the model\u2019s predictions were mainly driven by duc-\ntal carcinoma (40.7%) and adenosis (40.0%), which together\nrepresented more than 80% of the overall contribution to\ndecision-making. This strong weighting suggests that the hybrid\nSwinTConvNeXt-LDGF effectively captured the distinctive mor-\nphological patterns of these subtypes, making them dominant\ndrivers of classification.\nIn contrast, subtypes such as lobular carcinoma contributed\n11.2% to the reasoning of the model. Fibroadenoma, papillary\ncarcinoma, phyllodes tumor, tubular adenoma, and mucinous\ncarcinoma played a relatively minor role by contributing only\n1.64% on average. These lower contributions may reflect subtle\nhistopathological variations or a limited representation of these\nclasses within the dataset, making their discriminatory features\nless influential during training.\nOverall, the SHAP findings indicate that the hybrid model priori-\ntized the most morphologically distinct subtypes while still lever-\naging auxiliary contributions from rarer and visually overlapping\nclasses, thereby improving robustness in multi-class histopathol-\nogy classification.\n4.3\n|\nDiscussion\nThis work demonstrates the effectiveness of the proposed\nhybrid SwinTConvNeXt-LDGF architecture in addressing the\nEngineering Reports, 2026\n15 of 19\n 25778196, 2026, 2, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/eng2.70655, Wiley Online Library on [11/03/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License\n\nFIGURE 10\n|\nShapley additive explanations per-class.\nchallenging task of global\u2013local feature extraction and fusion\nfor classification of breast cancer subtypes using histopatholog-\nical images. By integrating the global modeling capabilities of\nthe Swin Transformer with the strong local feature extraction of\nConvNeXt, the hybrid model achieved robust performance on\ntraining, validation, and test sets. As shown in Tables 3 and 4,\nthe model consistently achieved high accuracy, AUC, precision,\nrecall, and F1-scores, with cross-validation confirming its sta-\nbility and generalization. The proposed hybrid approach proved\nparticularly effective in distinguishing common breast cancer\nsubtypes on the BreakHis dataset, including ductal carcinoma,\nadenosis, fibroadenoma, and phyllodes tumor, where precision\nand recall exceeded 95% when evaluated in a multiclass set-\nting that aggregates all magnification levels. This strong perfor-\nmance can be attributed to the synergy of global context mod-\neling and fine-grained local pattern recognition, which mirrors\nthe diagnostic reasoning process of pathologists, first surveying\nthe global tissue architecture before focusing on localized cellu-\nlar details. Additional evaluation on the BACH dataset further\ndemonstrated the adaptability of the proposed architecture to a\nrelated histopathology classification task, supporting its robust-\nness across different datasets.\nExplainability analysis using LIME and SHAP further validates\nmodel predictions, showing that the hybrid network consis-\ntently focused on clinically substantial histopathological features.\nSHAP analysis highlighted that adenosis and ductal carcinoma\nwere the most influential subtypes driving predictions, while\nrarer or morphologically overlapping classes such as fibroade-\nnoma and tubular adenoma contributed less prominently. This\nalignment between model reasoning and known pathological\ndistinctions reinforces confidence in the ability of the proposed\nhybrid SwinTConvNeXt-LDGF model to prioritize biologically\nrelevant patterns during classification.\nBeyond predictive performance, computational efficiency is an\nimportant consideration for practical deployment. As summa-\nrized in Table 1, the computational cost of the proposed hybrid\nmodel is primarily dominated by the feature extraction stages\nof the ConvNeXt-Tiny and Swin-Tiny backbones. Although\nSwin-Tiny introduces a quadratic attention term within local win-\ndows, its window-based design effectively constrains this cost\nand preserves scalability. In contrast, the learnable dynamic gat-\ning fusion and post-fusion refinement modules incur only linear\ncomputational overhead, ensuring that the proposed fusion strat-\negy remains efficient while enabling effective global\u2013local fea-\nture integration.\nThese findings underscore the potential of hybrid architectures\nfor clinically aligned classification of breast cancer subtypes.\nHowever, performance gaps in rare and subtle morphologi-\ncal subtypes suggest directions for future work. These include\n(i) subtype-specific feature learning and uncertainty model-\ning, and (ii) integration of larger, multi-institutional datasets to\nfurther enhance robustness and clinical applicability. Beyond\nhistopathology, the proposed hybrid framework has the potential\nfor adaptation to other imaging modalities such as mammogra-\nphy, ultrasound, and MRI, with modality-specific retraining.\n5\n|\nConclusions\nIn this study, we developed and rigorously evaluated a hybrid\nSwinTConvNeXt-LDGF framework for the classification of eight\nbreast cancer subtypes using the BreaKHis histopathology\ndataset. By leveraging the strengths of global context mod-\neling from Swin Transformer and fine-grained local feature\nextraction from ConvNeXt, the hybrid model achieved strong\nand consistent performance across training, validation, and test\n16 of 19\nEngineering Reports, 2026\n 25778196, 2026, 2, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/eng2.70655, Wiley Online Library on [11/03/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License\n\nsets. Cross-validation further confirmed the robustness of the\nmodel, with mean test accuracy exceeding 91% and threshold-free\nmetrics such as AUC and PR-AUC consistently above 99%.\nConfusion-matrix analysis showed highly accurate recognition of\nsubtypes such as adenosis, fibroadenoma, ductal carcinoma, and\nphyllodes tumor, while the most frequent confusions occurred\nbetween lobular and mucinous carcinoma. Importantly, explain-\nability analysis using LIME and lesion area quantification con-\nfirmed that the model was attentive to histologically significant\ntumor regions, aligning its decision-making with clinical reason-\ning. This not only increases confidence in the results of the model,\nbut also demonstrates its potential as a clinically interpretable\ndecision-support tool for pathologists.\nWhile the proposed hybrid SwinTConvNeXt-LDGF framework\ndemonstrats strong and consistent performance across multi-\nple evaluation settings, several limitations remain. In particu-\nlar, reduced performance was observed for rare and morpho-\nlogically subtle breast cancer subtypes, highlighting challenges\nassociated with class imbalance and histopathological overlap.\nAddressing these limitations will require future work focused on\nsubtype-specific feature learning, uncertainty-aware modeling.\nIn addition, incorporation of larger, multi-institutional datasets\nwill further enhance robustness and clinical applicability. More-\nover, this study focused on histopathology, the proposed hybrid\narchitecture has the potential to be adapted to other breast imag-\ning modalities, such as mammography, ultrasound, and MRI,\nwith appropriate modality-specific retraining.\nAuthor Contributions\nMulimbika Makina: conceptualization, methodology, formal analysis,\ndata curation, writing original draft, visualization, review and editing.\nWinnie Mbusiro Chacha: supervision, validation and writing review.\nRonald Waweru Mwangi: supervision, validation, writing review.\nAcknowledgments\nWe sincerely thank Pan African University, Institute for Basic Sciences,\nTechnology and Innovation (PAUSTI), Nairobi, Kenya, and the African\nUnion for their continued support and the provision of resources that\nmade this research possible.\nFunding\nThe authors have nothing to report.\nConflicts of Interest\nThe authors declare no conflicts of interest.\nData Availability Statement\nThe data that support the findings of this study are available from the\ncorresponding author upon reasonable request.\nReferences\n1. S. \u0141ukasiewicz, M. Czeczelewski, A. Forma, J. Baj, R. Sitarz, and\nA. Stanis\u0142awek, \u201cBreast Cancer\u2014Epidemiology, Risk Factors, Classi-\nfication, Prognostic Markers, and Current Treatment Strategies\u2014An\nUpdated Review,\u201d Cancers 13, no. 17 (2021): 4287.\n2. World\nHealth\nOrganization,\n\u201cBreast\nCancer,\n2023\u201d,\naccessed:\n2025-03-27.\n3. J. Kim, A. Harper, V. McCormack, et al., \u201cGlobal Patterns and Trends\nin Breast Cancer Incidence and Mortality Across 185 Countries,\u201d Nature\nMedicine 31 (2025): 1\u20139.\n4. F. Bray, M. Laversanne, H. Sung, et al., \u201cGlobal Cancer Statistics 2022:\nGLOBOCAN Estimates of Incidence and Mortality Worldwide for 36 Can-\ncers in 185 Countries,\u201d CA: A Cancer Journal for Clinicians 74, no. 3\n(2024): 229\u2013263.\n5. R. Sharma, \u201cBreast Cancer Burden in Africa: Evidence From GLOBO-\nCAN 2018,\u201d Journal of Public Health 43 (2020): 763\u2013771, https://doi.org/\n10.1093/PUBMED/FDAA099.\n6. M. Gedfew, A. Getie, T. Y. Akalu, and T. Ayenew, \u201cRecurrence and\nAssociated Factors of Breast Cancer Among Women in Sub Saharan\nAfrica, Systematic Review and Meta-Analysis,\u201d European Journal of Sur-\ngical Oncology 50 (2024): 108528.\n7. L. B. Parra, C. H. Burgos, d. l J I. Fuente, et al., \u201cComparison of the Clin-\nicopathological Features Between Invasive Lobular and Invasive Ductal\nCarcinoma of the Breast,\u201d European Journal of Cancer 200 (2024): 113771.\n8. K. Lghamour, Y. Elalami, and H. Hachi, \u201cInvasive Carcinoma of the\nBreast of the Nonspecific Type About 3 Cases,\u201d Scholars Journal of\nApplied Medical Sciences 11 (2024): 1509\u20131517.\n9. N. Koufopoulos, I. S. Pateras, A. R. Gouloumis, et al., \u201cDiagnostically\nChallenging Subtypes of Invasive Lobular Carcinomas: How to Avoid\nPotential Diagnostic Pitfalls,\u201d Diagnostics 12, no. 11 (2022): 2658.\n10. J. J. Li, J. K. Ng, B. S. Lai, et al., \u201cTubular Adenomas of the Breast Are\nCytologically Distinct From Fibroadenomas,\u201d Acta Cytologica 67, no. 3\n(2023): 219\u2013229.\n11. M. P. Budzik, M. M. Fudalej, and A. M. Badowska-Kozakiewicz,\n\u201cHistopathological Analysis of Mucinous Breast Cancer Subtypes and\nComparison With Invasive Carcinoma of no Special Type,\u201d Scientific\nReports 11, no. 1 (2021): 5770.\n12. S. Shafi and A. V. Parwani, \u201cArtificial Intelligence in Diagnostic\nPathology,\u201d Diagnostic Pathology 18, no. 1 (2023): 109.\n13. D. Zheng, X. He, and J. Jing, \u201cOverview of Artificial Intelligence in\nBreast Cancer Medical Imaging,\u201d Journal of Clinical Medicine 12, no. 2\n(2023): 419.\n14. v P J. Diest, R. N. Flach, v C. Dooijeweert, et al., \u201cPros and Cons of Arti-\nficial Intelligence Implementation in Diagnostic Pathology,\u201d Histopathol-\nogy 84, no. 6 (2024): 924\u2013934.\n15. T. K. Hanchinal, \u201cAn Analysis of Convolutional Neutral Network for\nImage Classification,\u201d International Journal for Research in Applied Sci-\nence and Engineering Technology 12 (2024): 4177\u20134184, https://doi.org/\n10.22214/ijraset.2024.60719.\n16. R. P. Sharma, S. Bashir, V. N. Tiwary, and S. R. Kumar, \u201cExploring\nthe Potential of Convolution Neural Network Based Image Classification,\n2023\u201c, https://doi.org/10.1109/idicaiei58380.2023.10406528.\n17. Y. Wang, Y. Deng, Y. Zheng, P. Chattopadhyay, and L. Wang, \u201cVision\nTransformers for Image Classification: A Comparative Survey,\u201d Technolo-\ngies 13, no. 1 (2025): 32.\n18. Y. Liu, Y. Zhang, Y. Wang, et al., \u201cA Survey of Visual Transformers,\u201d\nIEEE Transactions on Neural Networks and Learning Systems 35, no. 6\n(2023): 7478\u20137498.\n19. K. Al-Hammuri, F. Gebali, A. Kanan, and I. T. Chelvan, \u201cVision Trans-\nformer Architecture and Applications in Digital Health: A Tutorial and\nSurvey,\u201d Visual Computing for Industry, Biomedicine, and Art 6, no. 1\n(2023): 14.\n20. I. B. Akkaya, S. S. Kathiresan, E. Arani, and B. Zonooz, \u201cEnhancing\nPerformance of Vision Transformers on Small Datasets Through Local\nInductive Bias Incorporation,\u201d Pattern Recognition 153 (2024): 110510.\n21. B. Shareef, M. Xian, A. Vakanski, and H. Wang, Breast Ultrasound\nTumor Classification Using a Hybrid Multitask CNN-Transformer Network\nEngineering Reports, 2026\n17 of 19\n 25778196, 2026, 2, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/eng2.70655, Wiley Online Library on [11/03/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License\n\n(Springer Nature, 2023), 344\u2013353, https://doi.org/10.48550/arxiv.2308.\n02101.\n22. S. Boudissa, S. S. Debsarkar, H. Kawanaka, B. J. Aronow, and V. B. S.\nPrasath, \u201cVision Transformers and CNN-Based Knowledge-Distillation\nfor Histopathological Image Classification,\u201d Frontiers in Artificial Intel-\nligence and Applications 398 (2024): 231\u2013239, https://doi.org/10.3233/\nfaia241423.\n23. O. Chibuike and X. Yang, \u201cConvolutional Neural Network\u2013Vision\nTransformer\nArchitecture\nWith\nGated\nControl\nMechanism\nand\nMulti-Scale Fusion for Enhanced Pulmonary Disease Classification,\u201d\nDiagnostics (Basel) 14, no. 24 (2024): 2790.\n24. L.\nXiao,\nX.\nLiao,\nand\nC.\nRen,\n\u201cLightweight\nSingle\nImage\nSuper-Resolution via Efficient Mixture of Transformers and Convo-\nlutional Networks,\u201d Sensors (Basel) 24, no. 16 (2024): 5098.\n25. X. Zhao and J. Lu, ShuffleVITNet: Mobile-Friendly Vision Transformer\nWith Less-Memory (IEEE, 2024), 1\u20137.\n26. Z. Liu, Y. Lin, and Y. Cao, Swin Transformer: Hierarchical Vision\nTransformer Using Shifted Windows (IEEE, 2021), 10012\u201310022.\n27. Z. Zhang, \u201cFlash Window Attention: speedup the attention computa-\ntion for Swin Transformer, 2025\u201d. arXiv preprint arXiv:2501.06480.\n28. T. Gulsoy and E. B. Kablan, \u201cFocalNeXt: A ConvNeXt Augmented\nFocalNet Architecture for Lung Cancer Classification From CT-Scan\nImages,\u201d Expert Systems with Applications 261 (2025): 125553.\n29. D. Petr\u00edkov\u00e1 and I. Cimr\u00e1k, \u201cSurvey of Recent Deep Neural Networks\nWith Strong Annotated Supervision in Histopathology,\u201d Computation\n(Basel) 11, no. 4 (2023): 81.\n30. J. Xie, R. Liu, J. Luttrell, and C. Zhang, \u201cDeep Learning Based Analysis\nof Histopathological Images of Breast Cancer,\u201d Frontiers in Genetics 10\n(2019): 426920.\n31. A. Haldar, J. Singh, D. Dua, and R. V. Prabakaran, \u201cHistopathologic\nCancer Detection: A Comparative Analysis of Deep Learning Models,\n2024\u201d.\n32. A.\nSharma,\n\u201cDevelopment\nand\nValidation\nof\nNovel\nDeep\nLearning-Based Models for Cancer Histopathology Image Analysis,\n2025\u201c, https://doi.org/10.69622/27291567.v2.\n33. A. H. Ali, M. G. Yaseen, M. Aljanabi, and S. A. Abed, \u201cTransfer Learn-\ning: A New Promising Techniques,\u201d Mesopotamian Journal of Big Data\n2023 (2023): 29\u201330.\n34. A. Obeid, S. Boumaraf, A. Sohail, et al., \u201cAdvancing Histopathology\nwith Deep Learning Under Data Scarcity: A Decade in Review, 2024\u201d.\narXiv preprint arXiv:2410.19820.\n35. T. Thiyagaraj, K. Prasanna, and S. A. Hariprasad, \u201cCustom Convolu-\ntion Neural Network for Breast Cancer Detection,\u201d International Journal\nof Engineering and Advanced Technology 13 (2023): 22\u201329, https://doi.\norg/10.35940/ijeat.b4334.1213223.\n36. S. S. Saniganti, S. R. Gaddam, S. R. Eppa, S. K. Rout, B. K. Sethi,\nand B. Kethireddy, \u201cBreast Cancer Detection Using Convolutional Neural\nNetwork,\u201d in 2024 2nd International Conference on Disruptive Technolo-\ngies (ICDT) (IEEE, 2024), 1409\u20131414.\n37. C. V. L. Priya, B. Vg, V. Br, and S. Ramachandran, \u201cDeep Learning\nApproaches for Breast Cancer Detection in Histopathology Images: A\nReview,\u201d Cancer Biomarkers 40, no. 1 (2024): 1\u201325.\n38. R. R. Mannem and S. Bhyri, \u201cBreast Cancer Detection Based on\nConvolutional Neural Networks,\u201d International Journal for Research\nin Applied Science and Engineering Technology 11 (2023): 837\u2013841,\nhttps://doi.org/10.22214/ijraset.2023.55262.\n39. A. Al Tawil, A. Shaban, and L. Almazaydeh, \u201cA Comparative Analysis\nof Convolutional Neural Networks for Breast Cancer Prediction,\u201d Inter-\nnational Journal of Electrical and Computer Engineering (IJECE) 14, no. 3\n(2024): 3406\u20133414.\n40. M. Nergiz, \u201cClassification of Precancerous Colorectal Lesions via Con-\nvNeXt on Histopathological Images,\u201d Balkan Journal of Electrical and\nComputer Engineering 11, no. 2 (2023): 129\u2013137.\n41. S. Vishnoi, Convolutional Neural Networks-Based Histopathological\nImage Classification (Springer International Publishing, 2024), 385\u2013396.\n42. Y. Sun, \u201cThe Evolution of Transformer Models From Unidirectional\nto Bidirectional in Natural Language Processing,\u201d Applied and Computa-\ntional Engineering 42 (2024): 281\u2013289.\n43. X. Fu, \u201cTransformer Models in Text Summarization,\u201d Applied and\nComputational Engineering 101 (2024): 35\u201341.\n44. S. Khan, F. S. Khan, A. Vaswani, N. Parmar, M. H. Yang, and M. Shah,\n\u201cGuest Editorial Introduction to the Special Section on Transformer Mod-\nels in Vision,\u201d IEEE Transactions on Pattern Analysis and Machine Intel-\nligence 45, no. 11 (2023): 12721\u201312725.\n45. Y. Wang, R. Huang, S. Song, Z. Huang, and G. Huang, \u201cNot All\nImages are Worth 16\u00d716 Words: Dynamic Transformers for Efficient\nImage Recognition,\u201d Advances in Neural Information Processing Systems\n34 (2021): 11960\u201311973.\n46. G. I. Cayce, B. Hand, A. G. Kurz, and C. P. Bailey, \u201cTowards\nEfficient\nDiagnostics:\nRefining\nVision\nTransformers\nfor\nMedical\nImage Multi-Label Classification, 2024\u201d, https://doi.org/10.1117/12.\n3013977.\n47. M. Sabry, H. M. Balaha, K. M. Ali, et al., A Vision Transformer\nApproach for Breast Cancer Classification in Histopathology (IEEE, 2024),\n1\u20134, https://doi.org/10.1109/isbi56570.2024.10635515.\n48. S. Park, G. Ayana, B. D. Wako, K. C. Jeong, S. D. Yoon, and S. Choe,\n\u201cVision Transformers for Low-Quality Histopathological Images: A Case\nStudy on Squamous Cell Carcinoma Margin Classification,\u201d Diagnostics\n15, no. 3 (2025): 260.\n49. M. L. Abimouloud, K. Bensid, M. Elleuch, M. B. Ammar, and\nM. Kherallah, \u201cAdvancing Breast Cancer Diagnosis: Token Vision\nTransformers for Faster and Accurate Classification of Histopathology\nImages,\u201d Visual Computing for Industry, Biomedicine, and Art 8, no. 1\n(2025): 1.\n50. F. Jannat and A. Willis, Improving Classification of Remotely Sensed\nImages with the Swin Transformer (IEEE, 2022), 611\u2013618, https://doi.org/\n10.1109/SoutheastCon48659.2022.9764016.\n51. L. T. Alkahla, J. Saeed, and M. K. Hussein, \u201cEmpowering Ovar-\nian Cancer Subtype Classification With Parallel Swin Transformers and\nWSI Imaging,\u201d International Arab Journal of Information Technology 21\n(2024): 1006\u20131014, https://doi.org/10.34028/iajit/21/6/5.\n52. O. Shobayo, \u201cBreast Cancer Classification Using Fine-Tuned SWIN\nTransformer Model on Mammographic Images, 2024\u201c, https://doi.org/\n10.20944/preprints202409.0982.v1.\n53. R. Ghotekar, K. Shaw, and M. Rout, \u201cEnd-To-End Hyperspectral\nImage Classification Using Hybrid GCNN With SWIN Transformer,\u201d in\n2023 International Conference on Ambient Intelligence, Knowledge Infor-\nmatics and Industrial Electronics (AIKIIE) (IEEE, 2023), 1\u20138.\n54. B. Shareef, M. Xian, A. Vakanski, and H. Wang, \u201cBreast Ultrasound\nTumor Classification Using a Hybrid Multitask CNN-Transformer Net-\nwork,\u201d in International Conference on Medical Image Computing and\nComputer-Assisted Intervention, ed. Springer (Springer Nature, 2023),\n344\u2013353.\n55. V. Sreelekshmi, K. Pavithran, and J. J. Nair, \u201cSwinCNN: An Integrated\nSwin Transformer and CNN for Improved Breast Cancer Grade Classi-\nfication,\u201d IEEE Access 12 (2024): 68697\u201368710, https://doi.org/10.1109/\nACCESS.2024.3397667.\n56. Y. Li, L. Xu, Y. Jin, et al., \u201cDiffusion Probabilistic Learning With\nGate-Fusion Transformer and Edge-Frequency Attention for Retinal Ves-\nsel Segmentation,\u201d IEEE Transactions on Instrumentation and Measure-\nment 73 (2024): 1\u201313.\n18 of 19\nEngineering Reports, 2026\n 25778196, 2026, 2, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/eng2.70655, Wiley Online Library on [11/03/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License\n\n57. C. Sun and F. Zhao, \u201cMulti-Gate Weighted Fusion Network for Neu-\nronal Morphology Classification,\u201d Frontiers in Neuroscience 18 (2024):\n1322623.\n58. N. Ganesh, S. Jayalakshmi, R. C. Narayanan, M. Mahdal, H. M.\nZawbaa, and A. W. Mohamed, \u201cGated Deep Reinforcement Learning\nWith Red Deer Optimization for Medical Image Classification,\u201d IEEE\nAccess 11 (2023): 58982\u201358993.\n59. M. Abdar, M. A. Fahami, L. Rundo, et al., \u201cHercules: Deep Hierarchi-\ncal Attentive Multilevel Fusion Model With Uncertainty Quantification\nfor Medical Image Classification,\u201d IEEE Transactions on Industrial Infor-\nmatics 19, no. 1 (2022): 274\u2013285.\n60. Y. Zhang, P. Gu, Y. Zhang, C. Wang, and D. Z. Chen, \u201cGrNT:\nGate-Regularized Network Training for Improving Multi-Scale Fusion in\nMedical Image Segmentation,\u201d in 2023 IEEE 20th International Sympo-\nsium on Biomedical Imaging (ISBI) (IEEE, 2023), 1\u20135.\n61. F. Yuan, Z. Tang, C. Wang, Q. Huang, and J. Shi, \u201cA Multiple Gated\nBoosting Network for Multi-Organ Medical Image Segmentation,\u201d IET\nImage Processing 17, no. 10 (2023): 3028\u20133039.\n62. J. M. J. Valanarasu, P. Oza, I. Hacihaliloglu, and V. M. Patel, \u201cMedical\nTransformer: Gated Axial-Attention for Medical Image Segmentation,\u201d in\nMedical Image Computing and Computer Assisted Intervention-MICCAI\n2021: 24th International Conference, Strasbourg, France, September\n27-October 1, 2021, Proceedings, Part I 24 (Springer, 2021), 36\u201346.\n63. Z. Liu, H. Mao, C. Y. Wu, C. Feichtenhofer, T. Darrell, and S. Xie, \u201cA\nConvnet for the 2020s,\u201d in Proceedings of the IEEE/CVF Conference on\nComputer Vision and Pattern Recognition (IEEE, 2022), 11976\u201311986.\n64. H. Seo, L. Brand, L. S. Barco, and H. Wang, \u201cScaling Multi-Instance\nSupport Vector Machine to Breast Cancer Detection on the BreaKHis\nDataset,\u201d Bioinformatics 38, no. Supplement_1 (2022): i92\u2013i100.\n65. C. Li, K. Liu, and S. Liu, \u201cA Survey of Loss Functions in Deep\nLearning,\u201d Mathematics 13, no. 15 (2025): 2417, https://doi.org/10.3390/\nmath13152417.\n66. K. Liu, L. Li, and X. Zhang, \u201cFast and Accurate Identification of\nKiwifruit Diseases Using a Lightweight Convolutional Neural Network\nArchitecture. IEEE,\u201d Access 13 (2025): 84826\u201384843.\n67. H. B. Park, L. Azer, S. Ahn, et al., \u201cContributions of Global and Local\nProcessing on Medical Image Perception,\u201d Journal of Medical Imaging 10,\nno. S1 (2023): S11911.\n68. M. Christgen, G. Cserni, G. Floris, et al., \u201cLobular Breast Cancer: His-\ntomorphology and Different Concepts of a Special Spectrum of Tumors,\u201d\nCancers 13, no. 15 (2021): 3695.\n69. A. A. Hashmi, S. Zia, S. R. Yaqeen, et al., \u201cMucinous Breast Car-\ncinoma: Clinicopathological Comparison With Invasive Ductal Carci-\nnoma,\u201d Cureus 13, no. 3 (2021): e13650.\n70. L. A. Aldakhil, H. F. Alhasson, and S. S. Alharbi, \u201cAttention-Based\nDeep Learning Approach for Breast Cancer Histopathological Image\nMulti-Classification,\u201d Diagnostics 14, no. 13 (2024): 1402.\n71. A. Desai and R. Mahto, \u201cMulti-Class Classification of Breast Can-\ncer Subtypes Using ResNet Architectures on Histopathological Images,\u201d\nJournal of Imaging 11, no. 8 (2025): 284.\n72. Y. Wang, X. Deng, H. Shao, and Y. Jiang, \u201cMulti-Scale Feature Fusion\nfor Histopathological Image Categorisation in Breast Cancer,\u201d Computer\nMethods in Biomechanics and Biomedical Engineering: Imaging & Visual-\nization 11, no. 6 (2023): 2350\u20132362.\n73. M. Pal, G. Panda, R. K. Mohapatra, et al., \u201cEnsemble Approach\nof Deep Learning Models for Binary and Multiclass Classification of\nHistopathological Images for Breast Cancer,\u201d Pathology, Research and\nPractice 263 (2024): 155644.\n74. A. Pol\u00f3nia, C. Eloy, and P. Aguiar, BACH Dataset: Grand Challenge on\nBreast Cancer Histology Images, (Zenodo, 2019).\nEngineering Reports, 2026\n19 of 19\n 25778196, 2026, 2, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/eng2.70655, Wiley Online Library on [11/03/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License\n"

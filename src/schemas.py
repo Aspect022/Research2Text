@@ -95,8 +95,10 @@ class MethodStruct(BaseModel):
     equations: List[str] = Field(default_factory=list)
     datasets: List[str] = Field(default_factory=list)
     training: TrainingConfig = Field(default_factory=TrainingConfig)
-    inputs: Dict[str, str] = Field(default_factory=dict)
-    outputs: Dict[str, str] = Field(default_factory=dict)
+    inputs: Optional[Dict[str, str]] = Field(default=None)
+    outputs: Optional[Dict[str, str]] = Field(default=None)
+    inputs_description: Optional[str] = Field(default=None)
+    outputs_description: Optional[str] = Field(default=None)
     references: List[str] = Field(default_factory=list)
 
     # Architecture details for code generation
@@ -108,6 +110,26 @@ class MethodStruct(BaseModel):
         default=None,
         description="2-3 sentence summary of the paper's proposed method",
     )
+
+    @model_validator(mode="before")
+    @classmethod
+    def coerce_none_to_defaults(cls, data: Any) -> Any:
+        # LLMs often return null for list/dict fields — coerce to empty list/dict.
+        if isinstance(data, dict):
+            list_fields = ["equations", "datasets", "references"]
+            dict_fields = ["inputs", "outputs"]
+            for field in list_fields:
+                if data.get(field) is None:
+                    data[field] = []
+            for field in dict_fields:
+                val = data.get(field)
+                if val is None:
+                    data[field] = {}
+                elif isinstance(val, str):
+                    # LLM returned a string instead of dict — move to _description field
+                    data[f"{field}_description"] = val
+                    data[field] = {}
+        return data
 
     # Phase 3: Confidence scores for each extracted field
     confidence: Dict[str, ConfidenceScore] = Field(

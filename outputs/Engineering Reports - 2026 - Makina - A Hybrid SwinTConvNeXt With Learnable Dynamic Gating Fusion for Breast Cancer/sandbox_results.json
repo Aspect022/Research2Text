@@ -27,9 +27,9 @@
             "torch.nn",
             "torch.optim",
             "torch.utils.data",
-            "torchvision.transforms",
-            "utils",
-            "model"
+            "numpy",
+            "model",
+            "utils"
           ],
           "errors": [],
           "warnings": []
@@ -40,8 +40,7 @@
           "imports_valid": true,
           "imports": [
             "torch",
-            "torch.utils.data",
-            "PIL",
+            "random",
             "numpy"
           ],
           "errors": [],
@@ -61,14 +60,14 @@
       "execution": {
         "success": false,
         "attempts": 3,
-        "last_error": "Traceback (most recent call last):\n  File \"C:\\Users\\tgija\\AppData\\Local\\Temp\\r2t_sandbox_bkclu6sr\\train.py\", line 85, in <module>\n    print(f\"  \\u2192 Saved best model (val_acc={val_acc:.2f}%)\")\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\CodingResources\\MiniConda\\Lib\\encodings\\cp1252.py\", line 19, in encode\n    return codecs.charmap_encode(input,self.errors,encoding_table)[0]\n           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'charm",
+        "last_error": "Execution timed out after 90s",
         "entry_point": "train.py"
       },
       "docker_available": false
     },
     "error": null,
     "metadata": {},
-    "processing_time": 513.4810032844543
+    "processing_time": 723.0636878013611
   },
   "success": true,
   "error": null

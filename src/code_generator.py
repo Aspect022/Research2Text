@@ -33,9 +33,11 @@ CRITICAL RULES:
 4. Set random seeds for reproducibility.
 5. Include both training AND validation in the training loop.
 6. Save the best model checkpoint.
-7. Use real dataset loading (torchvision, torchaudio, etc.) when possible.
-8. Add type hints and docstrings.
-9. Do NOT leave TODO placeholders or incomplete code.
+7. IMPORTANT: Use synthetic/placeholder data for training — do NOT hardcode dataset paths. The code must be runnable without external data files. Use TensorDataset with random tensors or create a synthetic data generator.
+8. DO NOT download pretrained models or weights from Hugging Face, Torch Hub, or any external source. Use randomly initialized weights only.
+9. Add type hints and docstrings.
+10. Do NOT leave TODO placeholders or incomplete code.
+11. Use ONLY ASCII characters in code and print statements (e.g., use '->' instead of '→') to prevent UnicodeEncodeError in Windows.
 
 OUTPUT FORMAT:
 Return ONLY a JSON array of file objects. No markdown, no explanation.
