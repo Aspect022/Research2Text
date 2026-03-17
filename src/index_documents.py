@@ -80,11 +80,23 @@ def index_documents(target_base: str = None) -> None:
             model_name="sentence-transformers/all-MiniLM-L6-v2"
         )
 
-    collection = client.get_or_create_collection(
-        name=COLLECTION_NAME,
-        embedding_function=embed_fn,
-        metadata={"hnsw:space": "cosine"},
-    )
+    try:
+        collection = client.get_or_create_collection(
+            name=COLLECTION_NAME,
+            embedding_function=embed_fn,
+            metadata={"hnsw:space": "cosine"},
+        )
+    except ValueError as e:
+        if "Embedding function conflict" in str(e):
+            print("Embedding function conflict detected. Recreating the collection...")
+            client.delete_collection(name=COLLECTION_NAME)
+            collection = client.get_or_create_collection(
+                name=COLLECTION_NAME,
+                embedding_function=embed_fn,
+                metadata={"hnsw:space": "cosine"},
+            )
+        else:
+            raise
 
     # Find all chunk files - need to escape special characters in glob
     # Get all files ending with _chunk_*.txt and extract base names

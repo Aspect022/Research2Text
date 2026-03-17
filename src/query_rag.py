@@ -21,9 +21,19 @@ def retrieve(query: str, top_k: int = 5, base_name: str = None) -> List[dict]:
         List of dictionaries containing id, text, metadata, and distance
     """
     client = chromadb.PersistentClient(path=str(CHROMA_DIR))
-    embed_fn = embedding_functions.SentenceTransformerEmbeddingFunction(
-        model_name=EMBEDDING_MODEL
-    )
+    try:
+        from embeddings import get_embedder
+        embedder = get_embedder(prefer_gemini=True)
+        class HybridEmbeddingFunction(embedding_functions.EmbeddingFunction):
+            def __call__(self, texts: List[str]) -> List[List[float]]:
+                return embedder.embed(texts)
+            def __init__(self):
+                pass
+        embed_fn = HybridEmbeddingFunction()
+    except Exception as e:
+        embed_fn = embedding_functions.SentenceTransformerEmbeddingFunction(
+            model_name=EMBEDDING_MODEL
+        )
     collection = client.get_collection(name=COLLECTION_NAME, embedding_function=embed_fn)
     
     # If base_name is provided, filter by metadata
