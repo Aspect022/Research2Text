@@ -1,0 +1,75 @@
+{
+  "paper_base": "Engineering Reports - 2026 - Makina - A Hybrid SwinTConvNeXt With Learnable Dynamic Gating Fusion for Breast Cancer",
+  "stage": "validation",
+  "validation": {
+    "success": true,
+    "data": {
+      "static_analysis": [
+        {
+          "file": "model.py",
+          "syntax_valid": true,
+          "imports_valid": true,
+          "imports": [
+            "torch",
+            "torch.nn",
+            "torch.nn.functional",
+            "typing"
+          ],
+          "errors": [],
+          "warnings": []
+        },
+        {
+          "file": "train.py",
+          "syntax_valid": true,
+          "imports_valid": true,
+          "imports": [
+            "torch",
+            "torch.nn",
+            "torch.optim",
+            "torch.utils.data",
+            "torchvision.transforms",
+            "utils",
+            "model"
+          ],
+          "errors": [],
+          "warnings": []
+        },
+        {
+          "file": "utils.py",
+          "syntax_valid": true,
+          "imports_valid": true,
+          "imports": [
+            "torch",
+            "torch.utils.data",
+            "PIL",
+            "numpy"
+          ],
+          "errors": [],
+          "warnings": []
+        },
+        {
+          "file": "requirements.txt",
+          "syntax_valid": true,
+          "imports_valid": true,
+          "imports": [],
+          "errors": [],
+          "warnings": []
+        }
+      ],
+      "syntax_correctness": 1.0,
+      "import_resolution": 1.0,
+      "execution": {
+        "success": false,
+        "attempts": 3,
+        "last_error": "Traceback (most recent call last):\n  File \"C:\\Users\\tgija\\AppData\\Local\\Temp\\r2t_sandbox_bkclu6sr\\train.py\", line 85, in <module>\n    print(f\"  \\u2192 Saved best model (val_acc={val_acc:.2f}%)\")\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\CodingResources\\MiniConda\\Lib\\encodings\\cp1252.py\", line 19, in encode\n    return codecs.charmap_encode(input,self.errors,encoding_table)[0]\n           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'charm",
+        "entry_point": "train.py"
+      },
+      "docker_available": false
+    },
+    "error": null,
+    "metadata": {},
+    "processing_time": 513.4810032844543
+  },
+  "success": true,
+  "error": null
+}
