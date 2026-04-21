@@ -2,7 +2,19 @@
   "permissions": {
     "allow": [
       "Bash(find D:/Projects/Research2Text-main/NewResearcher -type f -name *.py -o -name *.md -o -name *.txt -o -name *.json)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(dir \"D:\\\\Projects\\\\Research2Text-main\\\\outputs\")",
+      "Bash(taskkill /F /IM streamlit.exe)",
+      "Bash(Start-Process \"streamlit\" -ArgumentList \"run\",\"src/app_streamlit.py\" -NoNewWindow)",
+      "Bash(taskkill /F /IM python.exe /FI \"WINDOWTITLE eq *streamlit*\")",
+      "Bash(tasklist)",
+      "Bash(findstr streamlit:*)",
+      "Bash(pip install:*)",
+      "Bash(streamlit run:*)",
+      "Bash(pip show:*)",
+      "Bash(taskkill /F /FI \"WINDOWTITLE eq *streamlit*\" /IM python.exe)",
+      "Bash(taskkill:*)",
+      "Bash(timeout /t 2 /nobreak)"
     ]
   }
 }

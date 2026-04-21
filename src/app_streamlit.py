@@ -1206,9 +1206,162 @@ def render_dashboard_tab():
         with phase_cols[1]:
             code_file = OUTPUTS_DIR / selected / "code_generation_results.json"
             st.metric("Phase 2: Code Gen", "&#9989; Complete" if code_file.exists() else "&#9203; Pending")
-        with phase_cols[3]:
+        with phase_cols[2]:
             sandbox_file = OUTPUTS_DIR / selected / "sandbox_results.json"
             st.metric("Phase 3: Sandbox", "&#9989; Complete" if sandbox_file.exists() else "&#9203; Pending")
+
+        # Knowledge Graph Visualization
+        st.subheader("&#128203; Knowledge Graph")
+        kg_data = stages.get("knowledge_graph", {}).get("data", {})
+        if kg_data:
+            nodes = kg_data.get("nodes", [])
+            edges = kg_data.get("edges", [])
+
+            # Show graph stats
+            kg_cols = st.columns(4)
+            with kg_cols[0]:
+                st.metric("Total Nodes", len(nodes))
+            with kg_cols[1]:
+                st.metric("Total Edges", len(edges))
+            with kg_cols[2]:
+                node_types = {}
+                for n in nodes:
+                    t = n.get("type", "Unknown")
+                    node_types[t] = node_types.get(t, 0) + 1
+                st.metric("Node Types", len(node_types))
+            with kg_cols[3]:
+                st.metric("Algorithm", len([n for n in nodes if n.get("type") == "Algorithm"]))
+
+            # Node type filter
+            if node_types:
+                selected_types = st.multiselect(
+                    "Filter by node type",
+                    options=list(node_types.keys()),
+                    default=list(node_types.keys())
+                )
+
+                # Filter nodes
+                filtered_nodes = [n for n in nodes if n.get("type") in selected_types]
+
+                # Display nodes in expandable sections
+                with st.expander(f"&#128202; View {len(filtered_nodes)} Nodes", expanded=False):
+                    for node in filtered_nodes:
+                        node_type = node.get("type", "Unknown")
+                        node_label = node.get("label", "Unknown")
+                        node_id = node.get("id", "")
+
+                        with st.container():
+                            cols = st.columns([1, 4])
+                            with cols[0]:
+                                st.markdown(f"**{node_type}**")
+                            with cols[1]:
+                                st.markdown(f"{node_label}")
+                                if node.get("properties"):
+                                    for k, v in node["properties"].items():
+                                        st.caption(f"{k}: {v}")
+                            st.divider()
+
+            # Edge visualization
+            if edges:
+                with st.expander(f"&#128203; View {len(edges)} Relationships", expanded=False):
+                    for edge in edges:
+                        source = edge.get("source", "Unknown")
+                        target = edge.get("target", "Unknown")
+                        relation = edge.get("relation", "Unknown")
+
+                        st.markdown(f"**{source}** → *{relation}* → **{target}**")
+                        if edge.get("properties"):
+                            for k, v in edge["properties"].items():
+                                st.caption(f"{k}: {v}")
+                        st.divider()
+
+            # Simple graph visualization using nodes/edges
+            st.subheader("Graph Structure")
+            if nodes and edges:
+                # Create a simple adjacency list display
+                adj = {}
+                for edge in edges:
+                    src = edge.get("source", "").split("_")[-1] if edge.get("source") else "?"
+                    tgt = edge.get("target", "").split("_")[-1] if edge.get("target") else "?"
+                    rel = edge.get("relation", "?")
+                    if src not in adj:
+                        adj[src] = []
+                    adj[src].append((tgt, rel))
+
+                # Show top connections
+                for src, targets in list(adj.items())[:10]:
+                    st.markdown(f"**{src}**")
+                    for tgt, rel in targets:
+                        st.caption(f"└─ {rel} → {tgt}")
+
+        else:
+            st.info("No knowledge graph data available for this paper.")
+
+        # Pipeline Verification Section
+        st.subheader("&#128200; Pipeline Verification")
+
+        # Show all stages with their data
+        verification_tabs = st.tabs([
+            "Ingestion", "Vision", "Chunking", "Method Extraction",
+            "Equations", "Datasets", "Knowledge Graph"
+        ])
+
+        with verification_tabs[0]:
+            ingestion_data = stages.get("ingestion", {}).get("data", {})
+            st.write(f"**Status:** {'✅ Complete' if stages.get('ingestion', {}).get('success') else '⏳ Pending'}")
+            if ingestion_data:
+                st.json(ingestion_data)
+
+        with verification_tabs[1]:
+            vision_data = stages.get("vision", {}).get("data", {})
+            st.write(f"**Status:** {'✅ Complete' if stages.get('vision', {}).get('success') else '⏳ Pending'}")
+            if vision_data:
+                st.json(vision_data)
+
+        with verification_tabs[2]:
+            chunking_data = stages.get("chunking", {}).get("data", {})
+            st.write(f"**Status:** {'✅ Complete' if stages.get('chunking', {}).get('success') else '⏳ Pending'}")
+            if chunking_data:
+                chunks = chunking_data.get("chunks", [])
+                st.metric("Total Chunks", len(chunks))
+                for i, chunk in enumerate(chunks[:5]):
+                    with st.expander(f"Chunk {i+1}", expanded=False):
+                        if isinstance(chunk, str):
+                            st.text(chunk[:500])
+                        else:
+                            st.text(chunk.get("text", "")[:500])
+
+        with verification_tabs[3]:
+            method_data = stages.get("method_extraction", {}).get("data", {})
+            st.write(f"**Status:** {'✅ Complete' if stages.get('method_extraction', {}).get('success') else '⏳ Pending'}")
+            if method_data:
+                method_struct = method_data.get("method_struct", {})
+                st.write(f"**Algorithm:** {method_struct.get('algorithm_name', 'N/A')}")
+                st.write(f"**Datasets:** {', '.join(method_struct.get('datasets', []))}")
+                if method_struct.get('architecture', {}).get('layer_types'):
+                    st.write(f"**Layer Types:** {', '.join(method_struct['architecture']['layer_types'])}")
+                st.json(method_struct)
+
+        with verification_tabs[4]:
+            equation_data = stages.get("equations", {}).get("data", {})
+            st.write(f"**Status:** {'✅ Complete' if stages.get('equations', {}).get('success') else '⏳ Pending'}")
+            if equation_data:
+                equations = equation_data.get("equations", [])
+                for eq in equations:
+                    st.markdown(f"**{eq.get('name', 'Equation')}**")
+                    st.code(eq.get('content', ''), language="latex")
+
+        with verification_tabs[5]:
+            dataset_data = stages.get("datasets", {}).get("data", {})
+            st.write(f"**Status:** {'✅ Complete' if stages.get('datasets', {}).get('success') else '⏳ Pending'}")
+            if dataset_data:
+                st.json(dataset_data)
+
+        with verification_tabs[6]:
+            kg_data_detail = stages.get("knowledge_graph", {}).get("data", {})
+            st.write(f"**Status:** {'✅ Complete' if stages.get('knowledge_graph', {}).get('success') else '⏳ Pending'}")
+            if kg_data_detail:
+                st.json(kg_data_detail)
 
     elif results_file.exists():
         results = json.loads(results_file.read_text(encoding="utf-8"))

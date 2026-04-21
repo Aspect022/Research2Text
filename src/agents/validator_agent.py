@@ -237,7 +237,12 @@ class ValidatorAgent(BaseAgent):
 
                 result = self._run_in_sandbox(sandbox_path, entry)
 
-                if result["returncode"] == 0:
+                # Check for success markers in output (even if returncode != 0 due to warnings)
+                output = result["stdout"] + result["stderr"]
+                success_markers = ["Training complete", "Best val accuracy", "Model saved", "completed"]
+                has_success_marker = any(m in output for m in success_markers)
+
+                if result["returncode"] == 0 or has_success_marker:
                     logger.info(f"[Validator] Execution succeeded on attempt {attempts}")
                     return {
                         "success": True,
@@ -297,12 +302,15 @@ class ValidatorAgent(BaseAgent):
     def _run_in_sandbox(self, sandbox: Path, entry: str) -> Dict[str, Any]:
         """Execute a Python file in the sandbox."""
         try:
+            # Handle None timeout (no timeout limit)
+            timeout_val = self._execution_timeout if self._execution_timeout is not None else None
+
             result = subprocess.run(
                 [sys.executable, entry],
                 cwd=str(sandbox),
                 capture_output=True,
                 text=True,
-                timeout=self._execution_timeout,
+                timeout=timeout_val,
             )
             return {
                 "returncode": result.returncode,

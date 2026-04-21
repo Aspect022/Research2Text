@@ -18,7 +18,7 @@
       },
       "error": null,
       "metadata": {},
-      "processing_time": 2.5510787963867188e-05
+      "processing_time": 2.3126602172851562e-05
     },
     "vision": {
       "success": true,
@@ -29,7 +29,7 @@
       },
       "error": null,
       "metadata": {},
-      "processing_time": 1.4543533325195312e-05
+      "processing_time": 1.4781951904296875e-05
     },
     "chunking": {
       "success": true,
@@ -7783,7 +7783,7 @@
       },
       "error": null,
       "metadata": {},
-      "processing_time": 5.745788097381592
+      "processing_time": 5.52666711807251
     },
     "method_extraction": {
       "success": true,
@@ -7832,8 +7832,7 @@
           "architecture": {
             "layer_types": [
               "Swin Transformer",
-              "ConvNeXt",
-              "learnable dynamic gating network"
+              "ConvNeXt"
             ],
             "input_shape": null,
             "output_shape": null,
@@ -7842,9 +7841,8 @@
             "attention_type": "self-attention",
             "preprocessing": [],
             "key_components": [
-              "Swin Transformer backbone",
-              "ConvNeXt backbone",
-              "learnable dynamic gating fusion"
+              "learnable dynamic gating network",
+              "local-global feature fusion"
             ]
           },
           "paper_summary": "A hybrid multi-class classification framework using the Swin Transformer and ConvNeXt model. The proposed SwinTConvNeXt-LDGF model dynamically fuses local-global features within a learnable dynamic gating network and classifies pathological images into different categories.",
@@ -7862,7 +7860,7 @@
             "architecture.layer_types": {
               "score": 1.0,
               "source": "explicit",
-              "evidence": "Found 3/3 layers in text"
+              "evidence": "Found 2/2 layers in text"
             }
           }
         },
@@ -7872,7 +7870,7 @@
       },
       "error": null,
       "metadata": {},
-      "processing_time": 12.400017976760864
+      "processing_time": 11.751904487609863
     },
     "equations": [],
     "datasets": {
@@ -7890,7 +7888,7 @@
       },
       "error": null,
       "metadata": {},
-      "processing_time": 0.00038552284240722656
+      "processing_time": 0.0005633831024169922
     },
     "knowledge_graph": {
       "success": true,
@@ -8175,7 +8173,7 @@
       },
       "error": null,
       "metadata": {},
-      "processing_time": 4.792213439941406e-05
+      "processing_time": 0.00012445449829101562
     }
   },
   "errors": [],
@@ -8224,8 +8222,7 @@
     "architecture": {
       "layer_types": [
         "Swin Transformer",
-        "ConvNeXt",
-        "learnable dynamic gating network"
+        "ConvNeXt"
       ],
       "input_shape": null,
       "output_shape": null,
@@ -8234,9 +8231,8 @@
       "attention_type": "self-attention",
       "preprocessing": [],
       "key_components": [
-        "Swin Transformer backbone",
-        "ConvNeXt backbone",
-        "learnable dynamic gating fusion"
+        "learnable dynamic gating network",
+        "local-global feature fusion"
       ]
     },
     "paper_summary": "A hybrid multi-class classification framework using the Swin Transformer and ConvNeXt model. The proposed SwinTConvNeXt-LDGF model dynamically fuses local-global features within a learnable dynamic gating network and classifies pathological images into different categories.",
@@ -8254,7 +8250,7 @@
       "architecture.layer_types": {
         "score": 1.0,
         "source": "explicit",
-        "evidence": "Found 3/3 layers in text"
+        "evidence": "Found 2/2 layers in text"
       }
     }
   },

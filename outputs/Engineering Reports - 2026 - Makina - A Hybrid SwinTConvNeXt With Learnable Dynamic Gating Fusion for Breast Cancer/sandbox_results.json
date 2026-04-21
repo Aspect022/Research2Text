@@ -39,9 +39,7 @@
           "syntax_valid": true,
           "imports_valid": true,
           "imports": [
-            "torch",
-            "random",
-            "numpy"
+            "torch"
           ],
           "errors": [],
           "warnings": []
@@ -60,14 +58,14 @@
       "execution": {
         "success": false,
         "attempts": 3,
-        "last_error": "Execution timed out after 90s",
+        "last_error": null,
         "entry_point": "train.py"
       },
       "docker_available": false
     },
     "error": null,
     "metadata": {},
-    "processing_time": 723.0636878013611
+    "processing_time": 445.617867231369
   },
   "success": true,
   "error": null
